@@ -1,12 +1,32 @@
 // drawAxesAndLabels.js
 import * as d3 from "d3";
 
-export function drawAxesAndLabels(svg, scales, innerWidth, innerHeight, margin) {
+const formatXAxis = (interval, scalesX, dataLength = 100) => {
+    const tickCount = 6; // Ensure evenly spaced ticks (adjust if needed)
+    
+    const timeFormats = {
+        "1m": "%H:%M",      // 12:30
+        "5m": "%H:%M",
+        "15m": "%H:%M",
+        "30m": "%H:%M",
+        "1h": "%b %d %H:%M",  // Mar 07 12:00 (Shows Date + Time)
+        "4h": "%b %d %H:%M",  // Mar 07 12:00 (Shows Date + Time)
+        "1d": "%b %d",      // Mar 07
+        "1w": "%b %Y",      // Mar 2025
+        "1M": "%b %Y",      // Mar 2025
+    };
+
+    return d3.axisBottom(scalesX)
+        .ticks(Math.min(dataLength, tickCount)) // Ensure even spacing
+        .tickFormat(d3.timeFormat(timeFormats[interval] || "%H:%M"));
+};
+
+
+
+export function drawAxesAndLabels(svg, scales, innerWidth, innerHeight, margin, range) {
     const yTicks = scales.y.ticks(12);
 
-    const xAxis = d3.axisBottom(scales.x)
-        .tickSize(-innerHeight)
-        .tickPadding(10);
+    const xAxis = formatXAxis(range, scales.x)
 
     const yAxis = d3.axisLeft(scales.y)
         .tickValues(yTicks)

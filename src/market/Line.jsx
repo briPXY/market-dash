@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import * as d3 from "d3";
-import { indicator, indicatorChart } from "./indicators";
-import { throttle } from "lodash";
+import { indicator, indicatorChart } from "./indicators"; 
 import LivePriceOverlay from "./overlays/LivePriceOverlay";
 import { drawGrid } from "./grid";
 import { drawAxesAndLabels } from "./axis";
@@ -15,7 +14,8 @@ const LiveLineChart = ({
     indicatorType,
     indicatorMethod,
     isLogScale,
-    livePrice
+    livePrice,
+    range,
 }) => {
     const svgRef = useRef(null);
     const tooltipRef = useRef(null);
@@ -23,24 +23,11 @@ const LiveLineChart = ({
         x: () => {},
         y: () => {},
       });
-
-    const [data, setData] = useState([]);
-
-    const indicatorData = useMemo(() => indicator[indicatorMethod](d3, data), [data, indicatorMethod]);
-
-    // Sync data from parent (historical + live updates)
-    const updateData = useMemo(() => throttle((newData) => {
-        if (newData && newData.length > 1) {
-            setData(newData);
-        }
-    }, 2000), []); // Throttle updates to once per x second
-
+  
+    const indicatorData = useMemo(() => indicator[indicatorMethod](d3, historicalData), [historicalData, indicatorMethod]);
+ 
     useEffect(() => {
-        updateData(historicalData);
-    }, [historicalData, updateData]);
-
-    useEffect(() => {
-        if (data.length < 2) return;
+        if (historicalData.length < 2) return;
 
         const svg = d3.select(svgRef.current);
         const margin = { top: 20, right: 30, bottom: 30, left: 50 };
@@ -51,20 +38,20 @@ const LiveLineChart = ({
 
         if (isLogScale) {
             // Ensure the lower bound is > 0 for log scale.
-            const minY = d3.min(data, d => d.y);
+            const minY = d3.min(historicalData, d => d.y);
             const safeMin = minY > 0 ? minY : 1;
             scalesRef.current.y = d3.scaleLog()
-                .domain([safeMin, d3.max(data, d => d.y) * 1.05])
+                .domain([safeMin, d3.max(historicalData, d => d.y) * 1.05])
                 .range([innerHeight, margin.top]);
         } else {
             scalesRef.current.y = d3.scaleLinear()
-                .domain([0, d3.max(data, d => d.y) * 1.05])
+                .domain([0, d3.max(historicalData, d => d.y) * 1.05])
                 .range([innerHeight, margin.top])
                 .nice(12);
         }
 
         scalesRef.current.x = d3.scaleTime()
-            .domain([d3.min(data, d => d.x), d3.max(data, d => d.x)])
+            .domain([d3.min(historicalData, d => d.x), d3.max(historicalData, d => d.x)])
             .range([margin.left, innerWidth]);
 
         // Generate exactly 12 ticks for the Y axis. 
@@ -83,21 +70,21 @@ const LiveLineChart = ({
         svg.selectAll("*").remove();
 
         // draw axis/label
-        drawAxesAndLabels(svg, scalesRef.current, innerWidth, innerHeight, margin)
+        drawAxesAndLabels(svg, scalesRef.current, innerWidth, innerHeight, margin, range)
 
         //draw grid
         drawGrid(svg, scalesRef.current, innerWidth, innerHeight, margin); 
 
         // Draw area
         svg.append("path")
-            .datum(data)
+            .datum(historicalData)
             .attr("class", "area")
             .attr("fill", fillColor)
             .attr("d", area);
 
         // Draw line
         svg.append("path")
-            .datum(data)
+            .datum(historicalData)
             .attr("class", "line")
             .attr("fill", "none")
             .attr("stroke", lineColor)
@@ -107,7 +94,7 @@ const LiveLineChart = ({
         const tooltip = d3.select(tooltipRef.current); // Select tooltip inside the component
 
         svg.selectAll(".circle")
-            .data(data)
+            .data(historicalData)
             .enter()
             .append("circle")
             .attr("class", "circle")
@@ -117,7 +104,7 @@ const LiveLineChart = ({
             .attr("fill", lineColor)
             .on("mouseover", (event, d) => {
                 tooltip.style("opacity", 1)
-                    .html(`X: ${d3.timeFormat("%H:%M:%S")(d.x)}<br/>Y: ${d.y}`)
+                    .html(`time: ${d3.timeFormat("%H:%M:%S")(d.x)}<br/>price: ${d.y}`)
                     .style("left", `${event.offsetX}px`)
                     .style("top", `${event.offsetY}px`);
             })
@@ -128,7 +115,7 @@ const LiveLineChart = ({
         // Indicator 
         indicatorChart[indicatorType](d3, svg, indicatorData, scalesRef.current.x, scalesRef.current.y);
 
-    }, [data, width, height, fillColor, lineColor, indicatorType, indicatorData, isLogScale]);
+    }, [historicalData, width, height, fillColor, lineColor, indicatorType, indicatorData, isLogScale, range]);
 
 
     return (

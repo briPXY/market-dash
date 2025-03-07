@@ -1,5 +1,5 @@
 
-import { Box, BulletText, Flex } from "../../Layout/Layout";
+import { Box, BulletText, Flex } from "../../Layout/Layout"; 
 
 export function IndicatorList({ setIndicator }) {
     return (
@@ -14,4 +14,27 @@ export function IndicatorList({ setIndicator }) {
             </Flex>
         </Box>
     )
+} 
+
+export function RangeSelector({ setRange, selected }) {
+    const timeframes = ["1m", "5m", "15m", "1h", "4h", "1d", "1w", "1M"]; 
+ 
+    return (
+        <div className="flex space-x-2">
+            {timeframes.map((tf) => (
+                <button
+                    key={tf}
+                    onClick={() => setRange(tf)}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all
+                        ${
+                            selected === tf
+                                ? "text-[var(--acc-01)]" // Increase brightness when selected
+                                : "hover:brightness-110"
+                        }`}
+                >
+                    {tf.toUpperCase()}
+                </button>
+            ))}
+        </div>
+    );
 }

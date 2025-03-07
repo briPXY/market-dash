@@ -13,5 +13,6 @@ export const timeInterval = {
     "1d": 86400000,   // 1 day
     "1w": 604800000,  // 1 week
     "1M": 2592000000, // 1 month (approximate)
+    "1y": 31104000000,
 };
  

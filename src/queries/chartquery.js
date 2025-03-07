@@ -11,7 +11,7 @@ const useChartQuery = ({ dataUrl, transformFn, refetchInterval, queryKey = ["cha
     return useQuery({
         queryKey,
         queryFn: async () => {
-            const { data } = await axios.get(dataUrl);
+            const { data } = await axios.get(dataUrl); 
             return transformFn ? transformFn(data) : data; // Apply transformation if provided
         },
         refetchInterval,

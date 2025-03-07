@@ -1,5 +1,5 @@
 const LivePriceOverlay = ({ livePrice, width, height, yScale }) => {
-    if (!livePrice) return null;
+    if (!livePrice || isNaN(livePrice)) return null;
 
     const priceY = yScale(livePrice);
     const labelWidth = 50; // Width of the label rect

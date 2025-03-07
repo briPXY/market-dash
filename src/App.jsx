@@ -8,7 +8,7 @@ function App() {
   return (
     <>
       <Section className="overflow-visible">
-        <Chart symbol="ETH" range="1h"/>
+        <Chart symbol="ETH"/>
       </Section>
       <Section ></Section>
     </>
