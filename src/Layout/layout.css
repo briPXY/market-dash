@@ -1,0 +1,98 @@
+:root {
+  --border-radius: 8px;
+  /* Default border radius */
+  --padding: 5px;
+  --line-color: rgba(255, 255, 255, 0.1);
+  --border: 1px solid rgba(255, 255, 255, 0.1);
+  --gap: 8px;
+  --section-width: 95%;
+
+  --display-family: 'Chillax-Regular';
+  --display-size: 64px;
+  --display-height: 1.2em;
+  font-weight: 400;
+  font-size: 18px;
+  --menu-size: 14px;
+  color: #B5B7DA;
+  --display-txt-color: #eee;
+
+  --panel-background: #171821;
+}
+  
+/**
+  * Custom fonts
+  * You can control variable axes as shown below:
+  * font-variation-settings: wght 700.0;
+  *
+  * available axes:
+  'wght' (range from 200.0 to 700.0
+  */
+@font-face {
+  font-family: 'Chillax-Variable';
+  src: url('../assets/fonts/Chillax-Variable.woff2') format('woff2'),
+    url('../assets/fonts/Chillax-Variable.woff') format('woff'),
+    url('../assets/fonts/Chillax-Variable.ttf') format('truetype');
+  font-weight: 200 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+
+.flex-flex {
+  display: flex;
+  border-radius: var(--border-radius);
+  box-sizing: border-box; 
+  flex-wrap: nowrap,
+}
+
+.f-wide {
+  width: 100%
+}
+
+.bullet-text {
+  display: flex;
+  align-items: center;  
+}
+
+.section-s { 
+  height: auto;
+  box-sizing: border-box;
+  padding: var(--padding);
+}
+
+.stacked-images {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+.menu-text {
+  font-weight: 600;
+  font-size: var(--menu-size);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.panel{
+  padding: var(--padding);
+  background-color: #171821;
+  border: var(--border);
+  border-radius: var(--border-radius);
+}
+
+.bordered{
+  border: var(--border);
+}
+
+.bordered-side{
+  border-right: var(--border);
+  border-left: var(--border);
+}
+
+.display-text-normal{
+  font-size: var(--display-size);
+}
+
+.display-text-small{
+  font-size: 56px !important;
+}

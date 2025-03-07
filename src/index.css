@@ -1,0 +1,13 @@
+ 
+
+a {  
+  text-decoration: inherit;
+}
+a:hover {
+  color: #686edd;
+}
+
+ 
+button { 
+  cursor: pointer; 
+} 

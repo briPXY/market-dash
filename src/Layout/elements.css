@@ -1,0 +1,73 @@
+.btn {
+    padding: 10px;
+    border-radius: 300px;
+    font-size: var(--menu-size);
+    cursor: pointer;
+    width: fit-content; 
+}
+
+/* Primary button variant */
+.btn-primary {
+    background-color:#1f243f;  
+}
+
+.btn-primary:hover {
+    background-color:#2d345c; 
+}
+
+/* Secondary button variant */
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border-color: #6c757d;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #5a6268;
+}
+
+.btn-clear {
+    background-color: transparent;
+    border-radius: var(--border-radius);
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.btn-clear:hover {
+    background-color: #4a528d;
+    border-color: transparent;
+}
+
+.link-b {
+    font-weight: 700;
+    cursor: pointer;
+    color: #686edd;
+}
+
+.link-n {
+    font-weight: 400;
+    cursor: pointer;
+    color: #686edd;
+}
+
+.btn-grad { 
+    background: linear-gradient(89.57deg, #F694FF .75%, #4FFFF4 36.66%, #FFE7AA 68.47%, #FF79EA 99.25%);
+    background-size: 200% 200%;
+    animation: gradientMove 5s ease infinite;  
+}
+
+/* Keyframes for horizontal movement */
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
