@@ -4,6 +4,7 @@ import { indicator, indicatorChart } from "./indicators";
 import LivePriceOverlay from "./overlays/LivePriceOverlay";
 import { drawGrid } from "./grid";
 import { drawAxesAndLabels } from "./axis";
+import usePriceStore from "../stores/stores";
 
 const LiveLineChart = ({
     width = 600,
@@ -13,8 +14,7 @@ const LiveLineChart = ({
     historicalData,
     indicatorType,
     indicatorMethod,
-    isLogScale,
-    livePrice,
+    isLogScale, 
     range,
 }) => {
     const svgRef = useRef(null);
@@ -25,6 +25,7 @@ const LiveLineChart = ({
       });
   
     const indicatorData = useMemo(() => indicator[indicatorMethod](d3, historicalData), [historicalData, indicatorMethod]);
+    const livePrice = usePriceStore((state) => state.trade);
  
     useEffect(() => {
         if (historicalData.length < 2) return;

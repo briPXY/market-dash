@@ -209,24 +209,7 @@ const Paragraph = ({ fontSize = 'var(--text-normal)', lineHeight = '1.5', p, sty
             {children}
         </p>
     );
-};
-
-
-const DisplayText = ({ children, variant = "normal", style = {}, className, ...props }) => {
-    const displayStyle = {
-        fontFamily: 'var(--display-family, sans-serif)',
-        lineHeight: 'var(--display-height)',
-        color: 'var(--display-txt-color)',
-        ...style,
-    };
-
-    return (
-        <div className={`display-text-${variant} ${className}`} style={displayStyle} {...props}>
-            {children}
-        </div>
-    );
-};
-
+}; 
 
 const Box = ({ children, className, ...props }) => {
 
@@ -340,5 +323,5 @@ const PopoverButton = ({ children, className = '', btnClass, contentClass }) => 
 
 
 
-export { Flex, Section, BoxStretch, Grid, Line, SectionFull, Textbox, DisplayText, Paragraph, FlexBC, FlexCC, FlexSC, Box, StackedImages, BulletText, PopoverButton };
+export { Flex, Section, BoxStretch, Grid, Line, SectionFull, Textbox, Paragraph, FlexBC, FlexCC, FlexSC, Box, StackedImages, BulletText, PopoverButton };
 export default FlexHug;

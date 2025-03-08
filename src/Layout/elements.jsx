@@ -18,7 +18,7 @@ const Link = ({ children, variant = "b", className = '', ...props }) => {
     );
 };
 
-const DetectView = ({ children, height, className, visibleClass, invisibleClass, reachBottomClass, start}) => {
+const DetectView = ({ children, height, className, visibleClass, invisibleClass, reachBottomClass, start }) => {
     const componentRef = useRef(null);
     const [isVisible, setIsVisible] = useState(false);
     const [onBottom, setOnBottom] = useState(false);
@@ -36,8 +36,8 @@ const DetectView = ({ children, height, className, visibleClass, invisibleClass,
 
                 setIsVisible(isInDiv);
 
-                viewportCenter < viewStart ? setOnBottom(false) : true ;
-                viewportCenter > divHeight ? setOnBottom(true) : false ;
+                viewportCenter < viewStart ? setOnBottom(false) : true;
+                viewportCenter > divHeight ? setOnBottom(true) : false;
             }
         };
 
@@ -60,5 +60,21 @@ const DetectView = ({ children, height, className, visibleClass, invisibleClass,
     )
 };
 
-export { Link, DetectView };
+const textStyles = {
+    h1: "text-4xl md:text-5xl lg:text-6xl font-bold",
+    h2: "text-3xl md:text-4xl lg:text-5xl font-semibold",
+    h3: "text-2xl md:text-3xl lg:text-4xl font-semibold",
+    h4: "text-xl md:text-2xl lg:text-3xl font-medium",
+    h5: "text-lg md:text-xl lg:text-2xl font-medium",
+    h6: "text-base md:text-lg lg:text-xl font-medium",
+    p: "text-base md:text-lg text-gray-700",
+    small: "text-sm md:text-base text-gray-500",
+};
+
+const Text = ({ as = "p", className = "", children }) => {
+    const Component = as;
+    return <Component className={`${textStyles[as]} ${className}`.trim()}>{children}</Component>;
+};
+
+export { Link, DetectView, Text };
 export default Button;
