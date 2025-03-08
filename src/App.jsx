@@ -10,7 +10,7 @@ function App() {
     <>
       <PriceUpdater symbol="ETH" type="trade" />  {/* ✅ Updates trade price */}
       <PriceUpdater symbol="ETH" type="index" />  {/* ✅ Updates index price */}
-      <Section className="overflow-visible">
+      <Section className="overflow-visible w-full">
         <Market />
       </Section>
       <Section ></Section>

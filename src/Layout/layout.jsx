@@ -25,12 +25,11 @@ const FlexHug = ({ column, wrap, style = {}, className = "", children, ...props 
     );
 };
 
-const Flex = ({ column, wrap, className = '', style = {}, wide, children, ...props }) => {
-    const flexDirection = column ? "flex-col" : "flex-row";
+const Flex = ({ wrap, className = '', style = {}, wide, children, ...props }) => {
 
     return (
         <div
-            className={`flex-flex ${flexDirection} ${wide ? 'f-wide' : ''} ${className}`}
+            className={`flex-flex ${wide ? 'f-wide' : ''} ${className}`}
             style={{
                 flexWrap: wrap,
                 ...style,

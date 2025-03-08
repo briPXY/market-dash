@@ -1,41 +1,51 @@
 
-import { useChartQuery } from "../queries/chartquery";
-import * as transform from "../queries/transforms";
-import { useState } from "react";
 
+import { useState, useEffect, useRef } from "react"; 
 import LiveLineChart from "./Line";
-import { timeInterval } from "../constants/intervals";
-import { Box, Flex, PopoverButton } from "../Layout/Layout";
+import { Flex, PopoverButton } from "../Layout/Layout";
 import { IndicatorList, RangeSelector } from "./Components/ChartBarMenu";
 import { Yscale } from "./Components/Yscale";
-import { API_DOMAIN, formatAPI } from "../queries/api_formatter";
 
-function Chart({ symbol }) {
- 
-    const [range, setRange] = useState("1h");
-    const [indicator, setIndicator] = useState(["SMA", "SMA5"]);
-    const [yscale, setYscale] = useState("LOG");
- 
-    const { data: historicalData, isLoading } = useChartQuery({ 
-        dataUrl: formatAPI[API_DOMAIN](symbol, range).historical, 
-        transformFn: transform[API_DOMAIN].linear, 
-        refetchInterval: timeInterval[range],
-    }); 
+function Chart({ historicalData, isLoading, setRange, setIndicator, indicator, range }) { 
+    const [yscale, setYscale] = useState("LOG"); 
+    const containerRef = useRef(null);
+    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-    if (isLoading) return <p>Loading...</p>;
+    useEffect(() => {
+        const handleResize = () => {
+            setDimensions({
+                width: window.innerWidth * 0.96,
+                height: window.innerHeight * 0.5 // Keep height dynamic if needed
+            });
+        };
+    
+        handleResize(); // Set initial dimensions
+    
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    if (isLoading || dimensions.width === 0) {
+        return (
+            <div style={{ width: `${dimensions.width}px`, height: `${dimensions.height}px` }} >
+                <p>Loading...</p>
+            </div>
+        )
+    }
 
     return (
-        <Box className="overflow-visible">
-            <Flex column className="overflow-visible">
-                <Flex>
+        <div ref={containerRef} className="overflow-visible h-full w-full" > 
+            <Flex className="flex-col overflow-visible h-full w-full">
+                <Flex className="pb-4 pt-4 items-center">
                     <PopoverButton>
-                        <button>{indicator[0]}</button>
+                        <button>{indicator[1]}</button>
                         <IndicatorList setIndicator={setIndicator} />
                     </PopoverButton>
-                    <RangeSelector setRange={setRange} selected={range}/>
+                    <RangeSelector setRange={setRange} selected={range} />
                 </Flex>
                 <LiveLineChart isLogScale={yscale == "LOG"} indicatorType={indicator[0]}
-                    indicatorMethod={indicator[1]} width={1200} height={500} historicalData={historicalData}/>
+                    indicatorMethod={indicator[1]} historicalData={historicalData}
+                    width={dimensions.width} height={dimensions.height} />
                 <Flex className="overflow-visible">
                     <PopoverButton>
                         <button>{yscale}</button>
@@ -43,7 +53,7 @@ function Chart({ symbol }) {
                     </PopoverButton>
                 </Flex>
             </Flex>
-        </Box>
+        </div>
     );
 }
 

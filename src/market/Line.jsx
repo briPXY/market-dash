@@ -1,6 +1,6 @@
 import { useEffect, useRef, useMemo } from "react";
 import * as d3 from "d3";
-import { indicator, indicatorChart } from "./indicators"; 
+import { indicator, indicatorChart } from "./indicators";
 import LivePriceOverlay from "./overlays/LivePriceOverlay";
 import { drawGrid } from "./grid";
 import { drawAxesAndLabels } from "./axis";
@@ -14,19 +14,19 @@ const LiveLineChart = ({
     historicalData,
     indicatorType,
     indicatorMethod,
-    isLogScale, 
+    isLogScale,
     range,
 }) => {
     const svgRef = useRef(null);
     const tooltipRef = useRef(null);
     const scalesRef = useRef({
-        x: () => {},
-        y: () => {},
-      });
-  
+        x: () => { },
+        y: () => { },
+    });
+
     const indicatorData = useMemo(() => indicator[indicatorMethod](d3, historicalData), [historicalData, indicatorMethod]);
     const livePrice = usePriceStore((state) => state.trade);
- 
+
     useEffect(() => {
         if (historicalData.length < 2) return;
 
@@ -74,7 +74,7 @@ const LiveLineChart = ({
         drawAxesAndLabels(svg, scalesRef.current, innerWidth, innerHeight, margin, range)
 
         //draw grid
-        drawGrid(svg, scalesRef.current, innerWidth, innerHeight, margin); 
+        drawGrid(svg, scalesRef.current, innerWidth, innerHeight, margin);
 
         // Draw area
         svg.append("path")
@@ -120,7 +120,7 @@ const LiveLineChart = ({
 
 
     return (
-        <div className="relative">
+        <div className="relative ml-2 mr-2">
             <svg ref={svgRef} width={width} height={height}></svg>
             <div
                 ref={tooltipRef}
@@ -128,7 +128,7 @@ const LiveLineChart = ({
                 style={{
                     position: "absolute",
                     opacity: 0,
-                    background: "#111", 
+                    background: "#111",
                     padding: "4px",
                     pointerEvents: "none",
                     transform: "translate(-50%, -100%)", // Position above the point
