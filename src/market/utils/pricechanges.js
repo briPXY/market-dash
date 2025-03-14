@@ -1,19 +1,21 @@
-export function calculateHistoricalChange(data) {
-    if (data.length < 2) return null; // Need at least two data points
+export function calculateHistoricalChange(data) {  
+    if (!data || data.length < 2){
+        return {change:0, high: 0, low: 0, percent:0 }; // Need at least two data points
+    }
 
     const first = data[0];  // Oldest price in range
     const last = data[data.length - 1]; // Latest price in range
 
-    let highest = first.y;
-    let lowest = first.y;
+    let highest = first.close;
+    let lowest = first.close;
 
     for (let i = 1; i < data.length; i++) {
-        if (data[i].y > highest) highest = data[i].y;
-        if (data[i].y < lowest) lowest = data[i].y;
+        if (data[i].close > highest) highest = data[i].close;
+        if (data[i].close < lowest) lowest = data[i].close;
     }
 
-    const priceChange = last.y - first.y;
-    const priceChangePercent = (priceChange / first.y) * 100;
+    const priceChange = last.close - first.close;
+    const priceChangePercent = (priceChange / first.close) * 100;
 
     return {
         change: priceChange.toFixed(2),

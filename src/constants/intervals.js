@@ -1,4 +1,4 @@
-export const timeInterval = {
+export const timeFrameToMs = {
     "1s": 1000,       // 1 second
     "5s": 5000,       // 5 seconds
     "15s": 15000,     // 15 seconds

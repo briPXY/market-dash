@@ -25,7 +25,7 @@ export function RangeSelector({ setRange, selected }) {
                 <button
                     key={tf}
                     onClick={() => setRange(tf)}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all
+                    className={`px-2 py-1 rounded-md text-xs font-medium transition-all
                         ${
                             selected === tf
                                 ? "text-[var(--acc-01)]" // Increase brightness when selected

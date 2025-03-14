@@ -13,13 +13,12 @@ export function drawGrid(svg, scales, innerWidth, innerHeight, margin) {
         .selectAll("line")
         .style("stroke", "#ffffff1a")
         .style("stroke-width", 0.5);
-
-    // Y grid lines with darker grid color (#ffffff1a)
+ 
     svg.append("g")
         .attr("class", "grid")
         .attr("transform", `translate(${margin.left},0)`)
         .call(d3.axisLeft(scales.y)
-            .tickSize(-innerWidth)
+            .tickSize(-innerWidth - 100)
             .tickFormat("")
         )
         .selectAll("line")
