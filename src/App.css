@@ -69,7 +69,15 @@ body {
 .domain {
     stroke-opacity: 0.1 !important;
 }
- 
+
+.scroll-stick-left {
+    overflow-x: auto;
+    white-space: nowrap;
+    direction: rtl; /* Makes default scroll at right */
+}
+.scroll-stick-left > * {
+    direction: ltr; /* Prevents content mirroring */
+}
 
 .coolnum::after {
     content: ']';

@@ -1,7 +1,7 @@
 // drawAxesAndLabels.js
 import * as d3 from "d3";
 
-const formatXAxis = (interval, scalesX, dataLength = 100) => {
+const formatXAxis = (range, scalesX, dataLength = 100) => {
     const tickCount = 6; // Ensure evenly spaced ticks (adjust if needed)
 
     const timeFormats = {
@@ -18,14 +18,14 @@ const formatXAxis = (interval, scalesX, dataLength = 100) => {
 
     return d3.axisBottom(scalesX)
         .ticks(Math.min(dataLength, tickCount)) // Ensure even spacing
-        .tickFormat(d3.timeFormat(timeFormats[interval] || "%H:%M"));
+        .tickFormat(d3.timeFormat(timeFormats[range] || "%H:%M"));
 };
 
 
 
-export function drawAxesAndLabels(svg, ySvg, scales, innerHeight, innerWidth, range) {
+export function drawAxesAndLabels(svg, ySvg, scales, innerHeight, length, range) {
     const yTicks = scales.y.ticks(12);
-    const xAxis = formatXAxis(range, scales.x);
+    const xAxis = formatXAxis(range, scales.x, length);
     const yAxis = d3.axisRight(scales.y).tickValues(yTicks).tickSize(0).tickPadding(10);
  
     // Add X axis

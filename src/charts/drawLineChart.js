@@ -1,16 +1,14 @@
-export function drawLineChart(d3, svg, scalesRef, tooltipRef, historicalData, innerHeight, lineColor, fillColor) {
-
-    // Generate exactly 12 ticks for the Y axis. 
-
+export function drawLineChart(d3, svg, scale, tooltipRef, historicalData, innerHeight, lineColor, fillColor) {
+ 
     const line = d3.line()
-        .x(d => scalesRef.current.x(d.x))
-        .y(d => scalesRef.current.y(d.y))
+        .x(d => scale.x(d.date))
+        .y(d => scale.y(d.close))
         .curve(d3.curveMonotoneX);
 
     const area = d3.area()
-        .x(d => scalesRef.current.x(d.x))
+        .x(d => scale.x(d.date))
         .y0(innerHeight)
-        .y1(d => scalesRef.current.y(d.y))
+        .y1(d => scale.y(d.close))
         .curve(d3.curveMonotoneX);
 
 
@@ -37,13 +35,13 @@ export function drawLineChart(d3, svg, scalesRef, tooltipRef, historicalData, in
         .enter()
         .append("circle")
         .attr("class", "circle")
-        .attr("cx", d => scalesRef.current.x(d.x))
-        .attr("cy", d => scalesRef.current.y(d.y))
+        .attr("cx", d => scale.x(d.date))
+        .attr("cy", d => scale.y(d.close))
         .attr("r", 3)
         .attr("fill", lineColor)
         .on("mouseover", (event, d) => {
             tooltip.style("opacity", 1)
-                .html(`time: ${d3.timeFormat("%H:%M:%S")(d.x)}<br/>price: ${d.y}`)
+                .html(`time: ${d3.timeFormat("%H:%M:%S")(d.date)}<br/>price: ${d.close}`)
                 .style("left", `${event.offsetX}px`)
                 .style("top", `${event.offsetY}px`);
         })

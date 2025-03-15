@@ -1,7 +1,7 @@
 
 
 import { useRef } from "react";
-import LiveLineChart from "../charts/Line";
+import LiveChart from "../charts/LiveChart";
 import { Flex, PopoverButton } from "../Layout/Layout";
 import { IndicatorList, RangeSelector } from "./Components/ChartBarMenu"; 
 
@@ -26,8 +26,8 @@ function MarketChart({ OHLCData, isLoading, setRange, setIndicator, indicator, r
                     </PopoverButton>
                     <RangeSelector setRange={setRange} selected={range} />
                 </Flex>
-                <LiveLineChart indicatorType={indicator[0]}
-                    indicatorMethod={indicator[1]} OHLCData={OHLCData} /> 
+                <LiveChart indicatorType={indicator[0]}
+                    indicatorMethod={indicator[1]} OHLCData={OHLCData} range={range} /> 
             </Flex>
         </div>
     );

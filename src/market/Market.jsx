@@ -15,7 +15,6 @@ function Market() {
     const symbolIn = useSymbolStore(state => state.symbolIn);
     const symbolOut = useSymbolStore(state => state.symbolOut);
     
-
     const { data: OHLCData, isLoading } = useChartQuery({
         symbolIn: symbolIn,
         symbolOut: symbolOut,

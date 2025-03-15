@@ -2,9 +2,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './elements.css';
 
-const Button = ({ variant = 'primary', children, className = '', ...props }) => {
+const Button = ({ className = '', children, ...props }) => {
     return (
-        <button className={`btn btn-${variant} ${className}`} {...props}>
+        <button className={`flex items-center p-2 text-sm justify-center bg-secondary rounded-sm ${className}`} {...props}>
             {children}
         </button>
     );

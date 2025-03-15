@@ -5,23 +5,19 @@ const drawSMA = (d3, svg, data, xScale, yScale) => {
         .datum(data)
         .attr("fill", "none")
         .attr("stroke", "orange")
-        .attr("stroke-width", 2)
+        .attr("stroke-width", 1)
         .attr("d", line);
 };
 
-const SMA5 = (d3, data) => {
-    if (!Array.isArray(data) || data.length < 5) return [];
-
-    // Detect OHLC or Time:Value based on object length
-    const isOHLC = Object.keys(data[0]).length === 4;
+const SMA5 = (d3, data) => { 
 
     return data.map((d, i) => {
-        if (i < 5) return { date: d.x, value: null };
+        if (i < 5) return { date: d.date, value: null };
 
         const slice = data.slice(i - 5, i);
-        const avg = d3.mean(slice, (p) => (isOHLC ? p.C : p.y)) || 0;
+        const avg = d3.mean(slice, (p) => p.close );
 
-        return { date: d.x, value: avg };
+        return { date: d.date, value: avg };
     }).filter(d => d.value !== null);
 };
 

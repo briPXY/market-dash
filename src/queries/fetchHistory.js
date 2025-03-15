@@ -13,7 +13,7 @@ const binance = async function (symbolIn, symbolOut, interval) {
         const data = response.data; // Extracting data properly
  
         return data.map((candle) => ({
-            date: new Date(candle[0]),
+            date: +(candle[0]),
             open: +candle[1],
             high: +candle[2],
             low: +candle[3],
