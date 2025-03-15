@@ -59,9 +59,8 @@ const LiveChart = ({
         //draw grid
         drawGrid(svg, scale, innerWidth, innerHeight, margin.current);
 
-        drawLineChart(d3, svg, scale, tooltipRef, OHLCData, innerHeight, lineColor, fillColor);
-
-        console.log(indicatorData[0]);
+        drawLineChart(d3, svg, scale, tooltipRef, OHLCData, innerHeight, lineColor, fillColor); 
+        
         // Indicator 
         indicatorChart[indicatorType](d3, svg, indicatorData, scale.x, scale.y);
         setDraw(true);
@@ -89,8 +88,7 @@ const LiveChart = ({
                 ref={tooltipRef}
                 className="tooltip absolute opacity-0 bg-black p-2 whitespace-nowrap"
                 style={{
-                    pointerEvents: "none",
-                    transform: "translate(-50%, -100%)", // Position above the point 
+                    pointerEvents: "none", 
                 }}
             ></div>
             <LivePriceOverlay draw={draw} isLogScale={isLogScale == "LOG"} OHLCData={OHLCData} margin={margin} innerHeight={innerHeight} />

@@ -1,3 +1,5 @@
+import { showToolTip } from "./tooltip";
+
 export function drawLineChart(d3, svg, scale, tooltipRef, historicalData, innerHeight, lineColor, fillColor) {
  
     const line = d3.line()
@@ -40,10 +42,7 @@ export function drawLineChart(d3, svg, scale, tooltipRef, historicalData, innerH
         .attr("r", 3)
         .attr("fill", lineColor)
         .on("mouseover", (event, d) => {
-            tooltip.style("opacity", 1)
-                .html(`time: ${d3.timeFormat("%H:%M:%S")(d.date)}<br/>price: ${d.close}`)
-                .style("left", `${event.offsetX}px`)
-                .style("top", `${event.offsetY}px`);
+           showToolTip(d3, event, tooltip, d);
         })
         .on("mouseout", () => {
             tooltip.style("opacity", 0);

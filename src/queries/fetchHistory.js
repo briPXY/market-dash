@@ -13,12 +13,15 @@ const binance = async function (symbolIn, symbolOut, interval) {
         const data = response.data; // Extracting data properly
  
         return data.map((candle) => ({
-            date: +(candle[0]),
+            date: +(candle[6]), // timestamp close
             open: +candle[1],
             high: +candle[2],
             low: +candle[3],
             close: +candle[4],
             volume: +candle[5],
+            dateOpen: +candle[0], // timestamp open
+            quote: +candle[7], // quotes asset volume
+            trades: +candle[8],
         }));
     } catch (error) {
         console.error("Error fetching Binance data:", error);

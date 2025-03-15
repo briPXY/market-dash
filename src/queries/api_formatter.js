@@ -1,5 +1,6 @@
 function binance(base = "USDT", symbol = "ETH", range = "50"){
     const result = {}
+    result.hour24 = `https://api.binance.com/api/v3/klines?symbol=${symbol.toUpperCase()}${base.toUpperCase()}&interval=5m&limit=288`
     result.historical = `https://api.binance.com/api/v3/klines?symbol=${symbol.toUpperCase()}${base.toUpperCase()}&interval=${range}&limit=150`;
     result.index = `wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}${base.toLowerCase()}@indexPrice`;
     result.mark = `wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}${base.toLowerCase()}@markPrice`;

@@ -27,15 +27,19 @@
     }
 
     .text-primary {
-        color: #0f0f14;
+        color: #ffffff;
     }
 
-    .text-secondary {
-        color: #1b1f27;
+    .text-washed {
+        color: #ffffff54;
     }
 
     .text-accent {
         color: #2fb59c;
+    }
+
+    .text-negative-accent{
+        color: tomato;
     }
 
     .hide-scrollbar::-webkit-scrollbar {

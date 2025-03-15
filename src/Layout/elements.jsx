@@ -76,5 +76,10 @@ const Text = ({ as = "p", className = "", children }) => {
     return <Component className={`${textStyles[as]} ${className}`.trim()}>{children}</Component>;
 };
 
-export { Link, DetectView, Text };
+const NumberSign = ({ num = 0, baseNum = 0, unit = '', className = "" }) => {
+    const textColor = Number(num) >= baseNum ? "text-accent" : "text-negative-accent";
+    return <div className={`text-base ${textColor} ${className}`}>{`${num}${unit}`}</div>;
+};
+
+export { Link, DetectView, Text, NumberSign };
 export default Button;
