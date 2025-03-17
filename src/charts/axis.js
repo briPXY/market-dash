@@ -36,7 +36,8 @@ export function drawAxesAndLabels(svg, ySvg, scales, innerHeight, length, range)
         .style("text-anchor", "end")
         .attr("dx", "1em")
         .attr("dy", "0.8em")
-        .style("fill", "#ffffff1a");
+        .style("fill", "#ffffff1a")
+        .attr("class", "main");
 
     d3.selectAll(".domain").each(function () {
         this.setAttribute("stroke", "#ffffff1a");
@@ -46,6 +47,7 @@ export function drawAxesAndLabels(svg, ySvg, scales, innerHeight, length, range)
     // Add Y axis
     ySvg.append("g") 
         .call(yAxis)
+        .attr("class", "main")
         .selectAll("text")
         .style("fill", "rgb(255,255,255,0.3)")
         .style("font-size", "12px")

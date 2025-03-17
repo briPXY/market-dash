@@ -2,32 +2,26 @@
 
 import { useRef } from "react";
 import LiveChart from "../charts/LiveChart";
-import { Flex, PopoverButton } from "../Layout/Layout";
-import { IndicatorList, RangeSelector } from "./Components/ChartBarMenu"; 
+import { Flex } from "../Layout/Layout";
+import { RangeSelector } from "./Components/ChartBarMenu";
 
-function MarketChart({ OHLCData, isLoading, setRange, setIndicator, indicator, range }) {
+function MarketChart({ OHLCData, isLoading, isError, setRange, range }) {
     const containerRef = useRef(null);
- 
-    if (isLoading) {
-        return (
-            <div className="w-full h-full" >
-                <p>Loading...</p>
-            </div>
-        )
-    }
 
     return (
         <div ref={containerRef} className="bg-primary p-4 overflow-visible h-full w-full" >
             <Flex className="flex-col overflow-visible h-full w-full">
                 <Flex className="pb-4 pt-4 items-center">
-                    <PopoverButton>
-                        <button>{indicator[1]}</button>
-                        <IndicatorList setIndicator={setIndicator} />
-                    </PopoverButton>
                     <RangeSelector setRange={setRange} selected={range} />
+                    <div>{isLoading ? "Loading data.." : ''}</div>
+                    <div>{isError ? "Connection error" : ''}</div>
                 </Flex>
-                <LiveChart indicatorType={indicator[0]}
-                    indicatorMethod={indicator[1]} OHLCData={OHLCData} range={range} /> 
+                <LiveChart 
+                    OHLCData={OHLCData}
+                    range={range}
+                    isLoading={isLoading}
+                    isError={isError}
+                />
             </Flex>
         </div>
     );

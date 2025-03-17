@@ -11,12 +11,11 @@ import { use24HourQuery } from "../queries/24hourQuery";
 import { Hour24Changes } from "./Components/Hour24Changes";
 
 function Market() {  
-    const [range, setRange] = useState("1h");
-    const [indicator, setIndicator] = useState(["SMA", "SMA5"]);
+    const [range, setRange] = useState("1h"); 
     const symbolIn = useSymbolStore(state => state.symbolIn);
     const symbolOut = useSymbolStore(state => state.symbolOut);
     
-    const { data: OHLCData, isLoading } = useChartQuery({
+    const { data: OHLCData, isLoading, isError } = useChartQuery({
         symbolIn: symbolIn,
         symbolOut: symbolOut,
         interval: range,
@@ -37,13 +36,12 @@ function Market() {
                    <Hour24Changes hour24Loading={hour24Loading} priceChanges={priceChanges} /> 
                 </Flex>
                 <MarketChart
-                    symbol={symbolOut}
-                    setIndicator={setIndicator}
+                    symbol={symbolOut} 
                     setRange={setRange}
                     range={range}
                     OHLCData={OHLCData}
-                    isLoading={isLoading}
-                    indicator={indicator}
+                    isLoading={isLoading} 
+                    isError={isError}
                 />
             </Flex>
         </div>

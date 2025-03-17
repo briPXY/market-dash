@@ -4,7 +4,7 @@ import { Box, BulletText, Flex } from "../../Layout/Layout";
 export function IndicatorList({ setIndicator }) {
     return (
         <Box>
-            <Flex column>
+            <Flex>
                 < BulletText>
                     <img alt="icon" /><div onClick={() => setIndicator(["SMA", "SMA10"])}>SMA10</div>
                 </BulletText>

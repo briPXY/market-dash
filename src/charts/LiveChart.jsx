@@ -1,27 +1,26 @@
-import { useEffect, useRef, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
-import { indicator, indicatorChart } from "./indicators";
 import LivePriceOverlay from "./LivePriceOverlay";
 import { drawGrid } from "./grid";
 import { drawAxesAndLabels } from "./axis";
 import { ZoomOverlay } from "./ZoomOverlay";
 import { Yscale } from "../market/Components/Yscale";
 import { Flex, PopoverButton } from "../Layout/Layout";
-import { drawLineChart } from "./drawLineChart";
+import { line } from "./charts/line";
 import Button from "../Layout/elements";
-import { yScaler } from "./yScaler";
+import { xyScaler } from "./xyScaler";
+import { IndicatorSelector } from "./indicators/IndicatorSelector";
 
 const LiveChart = ({
-    fillColor = "rgba(12,176,133,0.1)",
-    lineColor = "#0cb085",
-    OHLCData,
-    indicatorType,
-    indicatorMethod,
+    OHLCData, 
     range,
+    isLoading,
+    isError,
 }) => {
     const svgRef = useRef(null);
     const ySvgRef = useRef(null);
     const tooltipRef = useRef(null);
+    const [showedIndicators, setShowedIndicators] = useState([]);
 
     const [lengthPerItem, setLengthPerItem] = useState(16);
 
@@ -33,39 +32,32 @@ const LiveChart = ({
     const [isLogScale, setYscale] = useState("LOG");
     const [draw, setDraw] = useState(false);
 
-    const indicatorData = useMemo(() => indicator[indicatorMethod](d3, OHLCData), [OHLCData, indicatorMethod]);
+    const svg = d3.select(svgRef.current);
+    const ySvg = d3.select(ySvgRef.current);
+    const scale = useMemo(() => xyScaler(d3, OHLCData, isLogScale, innerWidth, innerHeight, margin.current), [OHLCData, innerHeight, innerWidth, isLogScale]);
 
     useEffect(() => {
-        if (OHLCData.length < 2) return;
-
-        const svg = d3.select(svgRef.current);
-        const ySvg = d3.select(ySvgRef.current);
-
-        const scale = { x: null, y: null }
-
-        svg.selectAll("*").remove();
+        if (!OHLCData.length || isLoading || isError) return;
+ 
+        svg.selectAll(".main").remove();
         ySvg.selectAll('*').remove();
-
-        // Conditionally create Y scale: logarithmic or linear.
-        scale.y = yScaler(d3, OHLCData, isLogScale, innerHeight, margin);
-
-        scale.x = d3.scaleTime()
-            .domain([d3.min(OHLCData, d => d.date), d3.max(OHLCData, d => d.date)])
-            .range([margin.current.left, innerWidth]);
-
+ 
         // draw axis/label
         drawAxesAndLabels(svg, ySvg, scale, innerHeight, OHLCData.length, range)
 
         //draw grid
         drawGrid(svg, scale, innerWidth, innerHeight, margin.current);
 
-        drawLineChart(d3, svg, scale, tooltipRef, OHLCData, innerHeight, lineColor, fillColor); 
-        
-        // Indicator 
-        indicatorChart[indicatorType](d3, svg, indicatorData, scale.x, scale.y);
-        setDraw(true);
+        line(d3, svg, scale, tooltipRef, OHLCData, innerHeight);
 
-    }, [OHLCData, lengthPerItem, fillColor, lineColor, indicatorType, indicatorData, isLogScale, range, height, innerWidth, innerHeight]);
+        setDraw(true); 
+
+    }, [OHLCData, lengthPerItem, isLogScale, range, height, innerWidth, innerHeight, scale, svg, ySvg, isLoading, isError]);
+
+    useEffect(() => {
+        console.log(`PARENT Mounted `); 
+    }, []);
+
 
     return (
         <div className="relative">
@@ -88,7 +80,7 @@ const LiveChart = ({
                 ref={tooltipRef}
                 className="tooltip absolute opacity-0 bg-black p-2 whitespace-nowrap"
                 style={{
-                    pointerEvents: "none", 
+                    pointerEvents: "none",
                 }}
             ></div>
             <LivePriceOverlay draw={draw} isLogScale={isLogScale == "LOG"} OHLCData={OHLCData} margin={margin} innerHeight={innerHeight} />
@@ -99,6 +91,12 @@ const LiveChart = ({
                 </PopoverButton>
                 <ZoomOverlay setLengthPerItem={setLengthPerItem} />
             </Flex>
+            <div className="absolute top-0 right-6 md:right-22">
+                <PopoverButton right="0%" showClass="z-15 right-0" hideClass="h-0 w-0 overflow-hidden">
+                    <Button className="text-xs shadow-2xl">Indicator</Button>
+                    <IndicatorSelector d3={d3} svg={svg} scale={scale} data={OHLCData} showedIndicators={showedIndicators} setShowedIndicators={setShowedIndicators} />
+                </PopoverButton>
+            </div>
         </div>
     )
 };

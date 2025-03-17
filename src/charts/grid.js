@@ -12,7 +12,8 @@ export function drawGrid(svg, scales, innerWidth, innerHeight, margin) {
         )
         .selectAll("line")
         .style("stroke", "#ffffff1a")
-        .style("stroke-width", 0.5);
+        .style("stroke-width", 0.5)
+        .attr("class", "main");
  
     svg.append("g")
         .attr("class", "grid")
@@ -23,5 +24,6 @@ export function drawGrid(svg, scales, innerWidth, innerHeight, margin) {
         )
         .selectAll("line")
         .style("stroke", "#ffffff1a")
-        .style("stroke-width", 0.5);
+        .style("stroke-width", 0.5)
+        .attr("class", "main");
 }

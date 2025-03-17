@@ -52,6 +52,10 @@
         scrollbar-width: none;
         /* Firefox */
     }
+
+    .border-washed{
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 }
 
 html {

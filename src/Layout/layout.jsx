@@ -26,12 +26,11 @@ const FlexHug = ({ column, wrap, style = {}, className = "", children, ...props 
 };
 
 const Flex = ({ wrap, className = '', style = {}, wide, children, ...props }) => {
-
     return (
         <div
-            className={`flex-flex ${wide ? 'f-wide' : ''} ${className}`}
+            className={`flex ${wide ? 'f-wide' : ''} ${className}`}
             style={{
-                flexWrap: wrap,
+                flexWrap: wrap ? "wrap" : "nowrap",
                 ...style,
             }}
             {...props}
@@ -208,7 +207,7 @@ const Paragraph = ({ fontSize = 'var(--text-normal)', lineHeight = '1.5', p, sty
             {children}
         </p>
     );
-}; 
+};
 
 const Box = ({ children, className, ...props }) => {
 
@@ -218,7 +217,7 @@ const Box = ({ children, className, ...props }) => {
         </div>
     );
 };
- 
+
 
 const StackedImages = ({ images, className = '', style = {}, align = 'center', children, ...props }) => {
     return (
@@ -289,7 +288,7 @@ BulletText.propTypes = {
     style: PropTypes.object,
 };
 
-const PopoverButton = ({ children, className = '', btnClass, contentClass }) => {
+const PopoverButton = ({ children, className = '', showClass = "w-full h-full top-[100%] right-0 z-15", hideClass = "hidden" }) => {
     const [isOpen, setIsOpen] = useState(false);
     const popoverRef = useRef(null);
 
@@ -306,16 +305,16 @@ const PopoverButton = ({ children, className = '', btnClass, contentClass }) => 
     return (
         <div ref={popoverRef} style={{ position: "relative", display: "inline-block" }} className={`${className}`}>
             {/* Button */}
-            <div onClick={() => setIsOpen(!isOpen)} className={`${btnClass}`}>
+            <div onClick={() => setIsOpen(!isOpen)} >
                 {children[0]}
             </div>
 
             {/* Popover Content */}
-            {isOpen && (
-                <div className={`absolute top-full left-0 shadow-md ${contentClass}`} style={{ zIndex: "9" }}>
-                    {children[1]}
-                </div>
-            )}
+
+            <div className={`absolute shadow-md ${isOpen ? showClass : hideClass}`}>
+                {children[1]}
+            </div>
+
         </div>
     );
 };

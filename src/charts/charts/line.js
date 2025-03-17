@@ -1,6 +1,6 @@
-import { showToolTip } from "./tooltip";
+import { showToolTip } from "../tooltip";
 
-export function drawLineChart(d3, svg, scale, tooltipRef, historicalData, innerHeight, lineColor, fillColor) {
+export function line(d3, svg, scale, tooltipRef, historicalData, innerHeight, lineColor="#2fb59c", fillColor = "#2fb59c26") {
  
     const line = d3.line()
         .x(d => scale.x(d.date))
@@ -19,7 +19,8 @@ export function drawLineChart(d3, svg, scale, tooltipRef, historicalData, innerH
         .datum(historicalData)
         .attr("class", "area")
         .attr("fill", fillColor)
-        .attr("d", area);
+        .attr("d", area)
+        .attr("class", "main");
 
     // Draw line
     svg.append("path")
@@ -28,14 +29,17 @@ export function drawLineChart(d3, svg, scale, tooltipRef, historicalData, innerH
         .attr("fill", "none")
         .attr("stroke", lineColor)
         .attr("stroke-width", 2)
-        .attr("d", line);
+        .attr("d", line)
+        .attr("class", "main");
 
     const tooltip = d3.select(tooltipRef.current); // Select tooltip inside the component
+
+    svg.selectAll(".circle").remove();
 
     svg.selectAll(".circle")
         .data(historicalData)
         .enter()
-        .append("circle")
+        .append("circle") 
         .attr("class", "circle")
         .attr("cx", d => scale.x(d.date))
         .attr("cy", d => scale.y(d.close))
