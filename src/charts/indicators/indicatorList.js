@@ -2,6 +2,7 @@
 import { ALMA } from "./ALMA";
 import { EMA } from "./EMA";
 import { SMA } from "./SMA";
+import { MACD } from "./subs/MACD";
 import { Supertrend } from "./supertrend";
 import { VWAP } from "./VWAP";
 
@@ -33,3 +34,10 @@ export const indicatorList = [
         fn: VWAP,
     },
 ];
+
+export const subIndicatorList = [
+    {
+        n: "MACD",
+        fn: MACD,
+    },
+]

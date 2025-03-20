@@ -1,8 +1,6 @@
 
-import { useEffect } from "react";
-import PropTypes from 'prop-types';
-import { useRef } from "react";
-import { useState } from "react";
+ 
+import PropTypes from 'prop-types'; 
 import './layout.css';
 
 const FlexHug = ({ column, wrap, style = {}, className = "", children, ...props }) => {
@@ -286,40 +284,7 @@ BulletText.propTypes = {
     children: PropTypes.node.isRequired,
     className: PropTypes.string,
     style: PropTypes.object,
-};
+}; 
 
-const PopoverButton = ({ children, className = '', showClass = "w-full h-full top-[100%] right-0 z-15", hideClass = "hidden" }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const popoverRef = useRef(null);
-
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (popoverRef.current && !popoverRef.current.contains(event.target)) {
-                setIsOpen(false);
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
-    return (
-        <div ref={popoverRef} style={{ position: "relative", display: "inline-block" }} className={`${className}`}>
-            {/* Button */}
-            <div onClick={() => setIsOpen(!isOpen)} >
-                {children[0]}
-            </div>
-
-            {/* Popover Content */}
-
-            <div className={`absolute shadow-md ${isOpen ? showClass : hideClass}`}>
-                {children[1]}
-            </div>
-
-        </div>
-    );
-};
-
-
-
-export { Flex, Section, BoxStretch, Grid, Line, SectionFull, Textbox, Paragraph, FlexBC, FlexCC, FlexSC, Box, StackedImages, BulletText, PopoverButton };
+export { Flex, Section, BoxStretch, Grid, Line, SectionFull, Textbox, Paragraph, FlexBC, FlexCC, FlexSC, Box, StackedImages, BulletText };
 export default FlexHug;

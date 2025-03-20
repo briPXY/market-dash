@@ -1,68 +1,106 @@
-import { useEffect, useRef, useState } from "react"
-import { indicatorList } from "./indicatorList"
+import { useEffect, useRef, useState, useCallback } from "react"
+import { ActiveIndicatorButtons } from "./ActiveIndicatorButtons";
+import Button from "../../Layout/elements";
 
-export const IndicatorSelector = ({ d3, data, svg, scale, showedIndicators, setShowedIndicators }) => {
-    const [names, setNames] = useState([]);
+export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDimension }) => {
+    const activeIndicators = useRef({});
+    const dropdownRef = useRef(null);
 
-    const drawIndicator = (funcName, func, param, redraw, color = "white") => {
+    const [showedIndicators, setShowedIndicators] = useState({});
+    const [showSelector, setShowSelector] = useState(false);
 
-        if (redraw == "redraw") {
+    const addNewIndicator = (name, params) => {
+        setShowedIndicators(prev => ({
+            ...prev,
+            [name]: params
+        }));
+        activeIndicators.current[name] = params;
+        const { color, fn, ...fnParam } = params;
+        drawIndicator(name, fn, fnParam, color);
+    };
+
+    const drawIndicator = useCallback(
+        (funcName, fn, param, color = "white") => {
             svg.select(`#${funcName}`).remove();
-            const indicatorData = func(d3, data, Object.values(param));
-            func.draw(d3, svg, indicatorData, scale.x, scale.y, color, funcName);
+            svg.selectAll(`.${funcName}`).remove();
+            const indicatorData = fn(d3, data, ...Object.values(param));
+            fn.draw(d3, svg, indicatorData, scale, color, funcName, outDimension);
+        },
+        [svg, d3, data, scale, outDimension] // Dependencies (make sure these are stable)
+    );
 
-            showedIndicators.funcName = { color: color, ...param };
-            setShowedIndicators(showedIndicators);
-            return
+    // delete listener
+    useEffect(() => {
+        for (const name in activeIndicators.current) {
+            if (!Object.prototype.hasOwnProperty.call(showedIndicators, name)) {
+                svg.select(`#${name}`).remove();
+                svg.selectAll(`.${name}`).remove();
+                delete activeIndicators.current[name];
+            }
+        }
+    }, [showedIndicators, svg]);
+
+    // update on data changes
+    useEffect(() => {
+        for (const name in activeIndicators.current) {
+            const { color, fn, ...fnParams } = activeIndicators.current[name]; 
+            data ? drawIndicator(name, fn, fnParams, color) : '';
         }
 
-        if (names.includes(funcName)) return
+    }, [data, drawIndicator]);
 
-        const newNames = names.concat(funcName);
-        setNames(newNames);
-
-        const indicatorData = func(d3, data, Object.values(param));
-        func.draw(d3, svg, indicatorData, scale.x, scale.y, color, funcName);
-
-        showedIndicators.funcName = { color: color, ...param };
-        setShowedIndicators(showedIndicators);
-    }
-
-    return (
-        <div className="rounded-md px-6 flex items-start py-8 flex-col gap-2 bg-secondary overflow-y-scroll w-fit max-h-[60vh]">
-            {
-                indicatorList.map(({ n, fn }) => <IndicatorItem key={n} n={n} fn={fn} drawIndicator={drawIndicator} data={data} />)
+    // handle outside click
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowSelector(false);
             }
-        </div>
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []); 
+    
+    return (
+        <>
+            <div className="flex gap-1">
+                <Button onClick={() => setShowSelector(!showSelector)} className="text-[12px]">{outDimension ? "Sub" : "Main"}</Button>
+                <ActiveIndicatorButtons showedIndicators={showedIndicators} setShowedIndicators={setShowedIndicators} />
+            </div>
+            <div
+                style={{
+                    width: showSelector ? "100%" : "0px",
+                    height: showSelector ? "100%" : "0px",
+                }}
+                ref={dropdownRef}
+                className="rounded-md flex items-start py-6 z-20 flex-col gap-2 bg-secondary overflow-y-scroll max-h-[60vh]">
+                {
+                    indicatorList.map(({ n, fn }) => <IndicatorItem
+                        key={n}
+                        n={n}
+                        fn={fn}
+                        data={data}
+                        addNewIndicator={addNewIndicator}
+                    />)
+                }
+            </div>
+        </>
     )
 }
 
-const IndicatorItem = ({ n, fn, drawIndicator, data }) => {
+const IndicatorItem = ({ n, fn, drawIndicator, addNewIndicator }) => {
     const [param, setParam] = useState(getParamsWithDefaults(fn));
-    const active = useRef(false);
-    const color = useRef(fn.defaultCol)
+    const [color, setColor] = useState(fn.defaultCol);
 
     const updateParam = (prop, value) => {
         setParam((prev) => ({ ...prev, [prop]: value }));
     };
 
-    const clickHandler = () => {
-        drawIndicator(n, fn, param, false, color.current);
-        active.current = true;
-    } 
-
-    useEffect(() => {
-        if (active.current == true) {
-            drawIndicator(n, fn, param, "redraw", color.current);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data, drawIndicator, fn, n])
-
     return (
-        <div key={n} className="flex text-xs items-center min-h-12 border-washed rounded-md px-2">
+        <div key={n} className="flex text-xs items-center min-h-12 mx-4 border-washed rounded-md px-2">
             <div className="w-20 md:w-28 overflow-hidden text-sm font-semibold text-left">{n}</div>
-            <div className="w-6 md:w-14 text-xs cursor-pointer font-semibold" onClick={() => clickHandler()}>Add</div>
-            <input className="w-5 p-0 border-none" type="color" value={color.current} onChange={(e) => color.current = e.target.value} name="colorPicker"></input>
+            <div className="w-6 md:w-14 text-xs cursor-pointer font-semibold" onClick={() => addNewIndicator(n, { color: color, fn: fn, ...param })}>Add</div>
+            <input className="w-5 p-0 border-none" type="color" value={color} onChange={(e) => setColor(e.target.value)} name="colorPicker"></input>
             <div className="md:w-8 w-4"></div>
             <ListOfInput fParam={param} func={fn} drawIndicator={drawIndicator} updateParam={updateParam} />
         </div>
@@ -74,8 +112,8 @@ const ListOfInput = ({ fParam, updateParam }) => {
         <div className="flex gap-1">
             {Object.entries(fParam).map(([key, value]) => (
                 <div className="flex flex-col items-start" key={key}>
-                    <label className="text-washed" htmlFor="numInput">{key}</label>
-                    <input className="bg-primary w-14 md:w-22 p-1" type="number" id="numInput" value={value} onChange={(e) => updateParam(key, e.target.value)} />
+                    <label className="text-washed text-xs" htmlFor="numInput">{key}</label>
+                    <input className="bg-primary w-14 md:w-22 rounded-sm p-1" type="number" id="numInput" value={value} onChange={(e) => updateParam(key, e.target.value)} />
                 </div>
             ))}
         </div>

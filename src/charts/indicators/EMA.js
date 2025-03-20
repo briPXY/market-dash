@@ -1,9 +1,9 @@
-import { singleLine } from "./draw";
+import { singleLine } from "./draw/line";
 
 export const EMA = (d3, data, period = 5) => {
     const multiplier = 2 / (period + 1);
     let ema = [];
-
+    
     data.forEach((d, i) => {
         if (i < period - 1) {
             ema.push({ date: d.date, value: null });
@@ -13,7 +13,7 @@ export const EMA = (d3, data, period = 5) => {
             const sma = d3.mean(slice, (p) => p.close);
             ema.push({ date: d.date, value: sma });
         } else {
-            // EMA = (Current Price - Previous EMA) * Multiplier + Previous EMA
+            // EMA = (Current Price - Previous EMA) * Multiplier + Previous EMA 
             const prevEMA = ema[i - 1].value;
             const currentEMA = (d.close - prevEMA) * multiplier + prevEMA;
             ema.push({ date: d.date, value: currentEMA });

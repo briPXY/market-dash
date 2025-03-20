@@ -5,14 +5,15 @@ import { drawGrid } from "./grid";
 import { drawAxesAndLabels } from "./axis";
 import { ZoomOverlay } from "./ZoomOverlay";
 import { Yscale } from "../market/Components/Yscale";
-import { Flex, PopoverButton } from "../Layout/Layout";
+import { Flex } from "../Layout/Layout";
 import { line } from "./charts/line";
-import Button from "../Layout/elements";
+import { Button, PopoverButton } from "../Layout/elements";
 import { xyScaler } from "./xyScaler";
 import { IndicatorSelector } from "./indicators/IndicatorSelector";
+import { indicatorList, subIndicatorList } from "./indicators/indicatorList"
 
 const LiveChart = ({
-    OHLCData, 
+    OHLCData,
     range,
     isLoading,
     isError,
@@ -20,7 +21,7 @@ const LiveChart = ({
     const svgRef = useRef(null);
     const ySvgRef = useRef(null);
     const tooltipRef = useRef(null);
-    const [showedIndicators, setShowedIndicators] = useState([]);
+    const subRef = useRef(null);
 
     const [lengthPerItem, setLengthPerItem] = useState(16);
 
@@ -30,18 +31,18 @@ const LiveChart = ({
     const innerHeight = height - margin.current.top - margin.current.bottom;
 
     const [isLogScale, setYscale] = useState("LOG");
-    const [draw, setDraw] = useState(false);
 
     const svg = d3.select(svgRef.current);
     const ySvg = d3.select(ySvgRef.current);
-    const scale = useMemo(() => xyScaler(d3, OHLCData, isLogScale, innerWidth, innerHeight, margin.current), [OHLCData, innerHeight, innerWidth, isLogScale]);
+    const subSvg = d3.select(subRef.current);
+    const scale = useMemo(() => xyScaler(d3, OHLCData, "date", "close", isLogScale, innerWidth, innerHeight, margin.current), [OHLCData, innerHeight, innerWidth, isLogScale]);
 
     useEffect(() => {
         if (!OHLCData.length || isLoading || isError) return;
- 
+
         svg.selectAll(".main").remove();
         ySvg.selectAll('*').remove();
- 
+
         // draw axis/label
         drawAxesAndLabels(svg, ySvg, scale, innerHeight, OHLCData.length, range)
 
@@ -50,13 +51,7 @@ const LiveChart = ({
 
         line(d3, svg, scale, tooltipRef, OHLCData, innerHeight);
 
-        setDraw(true); 
-
     }, [OHLCData, lengthPerItem, isLogScale, range, height, innerWidth, innerHeight, scale, svg, ySvg, isLoading, isError]);
-
-    useEffect(() => {
-        console.log(`PARENT Mounted `); 
-    }, []);
 
 
     return (
@@ -68,6 +63,8 @@ const LiveChart = ({
                         {/* Scrollable Chart Content (Grid, X-Axis, Lines, etc.) */}
                         <g className="chart-content" ></g>
                     </svg>
+                    {/*sub indicator */}
+                    <svg ref={subRef} width={lengthPerItem * OHLCData.length + 100} height={height * 0.5}></svg>
                 </div>
                 <svg
                     width={'3rem'}
@@ -83,7 +80,11 @@ const LiveChart = ({
                     pointerEvents: "none",
                 }}
             ></div>
-            <LivePriceOverlay draw={draw} isLogScale={isLogScale == "LOG"} OHLCData={OHLCData} margin={margin} innerHeight={innerHeight} />
+
+            <LivePriceOverlay isLogScale={isLogScale == "LOG"} OHLCData={OHLCData} margin={margin} innerHeight={innerHeight} />
+
+            {/** buttons*/}
+
             <Flex className="overflow-visible items-center gap-4 text-sm">
                 <PopoverButton>
                     <Button>{isLogScale}</Button>
@@ -91,11 +92,24 @@ const LiveChart = ({
                 </PopoverButton>
                 <ZoomOverlay setLengthPerItem={setLengthPerItem} />
             </Flex>
-            <div className="absolute top-0 right-6 md:right-22">
-                <PopoverButton right="0%" showClass="z-15 right-0" hideClass="h-0 w-0 overflow-hidden">
-                    <Button className="text-xs shadow-2xl">Indicator</Button>
-                    <IndicatorSelector d3={d3} svg={svg} scale={scale} data={OHLCData} showedIndicators={showedIndicators} setShowedIndicators={setShowedIndicators} />
-                </PopoverButton>
+            <div className="absolute top-0 left-0 max-w-[90vh] max-h-100">
+                <IndicatorSelector
+                    d3={d3}
+                    svg={svg}
+                    scale={scale}
+                    data={OHLCData}
+                    indicatorList={indicatorList}
+                />
+            </div>
+            <div className="absolute top-80 left-0 max-w-[90vh] max-h-100">
+                <IndicatorSelector
+                    d3={d3}
+                    svg={subSvg}
+                    scale={scale}
+                    data={OHLCData}
+                    indicatorList={subIndicatorList}
+                    outDimension={{ w: innerWidth, h: innerHeight * 0.5, m: margin.current }}
+                />
             </div>
         </div>
     )

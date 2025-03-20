@@ -1,4 +1,4 @@
-import { singleLine } from "./draw";
+import { singleLine } from "./draw/line";
 
 export const SMA = (d3, data) => {
     return data.map((d, i) => {

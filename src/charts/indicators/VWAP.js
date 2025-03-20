@@ -1,4 +1,4 @@
-import { singleLine } from "./draw";
+import { singleLine } from "./draw/line";
 
 export const VWAP = (d3, data) => {
     let cumulativeVolume = 0;

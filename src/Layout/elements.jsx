@@ -81,5 +81,38 @@ const NumberSign = ({ num = 0, baseNum = 0, unit = '', className = "" }) => {
     return <div className={`text-base ${textColor} ${className}`}>{`${num}${unit}`}</div>;
 };
 
-export { Link, DetectView, Text, NumberSign };
+
+
+const PopoverButton = ({ children, className = '', showClass = "w-full h-full top-[100%] right-0 z-15", hideClass = "hidden" }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const popoverRef = useRef(null);
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (popoverRef.current && !popoverRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    return (
+        <div ref={popoverRef} style={{ position: "relative", display: "inline-block" }} className={`${className}`}>
+            {/* Button */}
+            <div onClick={() => setIsOpen(!isOpen)} >
+                {children[0]}
+            </div>
+
+            {/* Popover Content */}
+
+            <div className={`absolute shadow-md ${isOpen ? showClass : hideClass}`}>
+                {children[1]}
+            </div>
+
+        </div>
+    );
+};
+
+export { Link, DetectView, Text, NumberSign, PopoverButton, Button };
 export default Button;
