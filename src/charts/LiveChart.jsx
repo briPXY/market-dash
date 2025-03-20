@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
 import LivePriceOverlay from "./LivePriceOverlay";
-import { drawGrid } from "./grid";
+import { drawGrid, drawSubIndicatorGrid } from "./grid";
 import { drawAxesAndLabels } from "./axis";
 import { ZoomOverlay } from "./ZoomOverlay";
 import { Yscale } from "../market/Components/Yscale";
@@ -24,11 +24,13 @@ const LiveChart = ({
     const subRef = useRef(null);
 
     const [lengthPerItem, setLengthPerItem] = useState(16);
+    const [subIndicators, setSubIndicators] = useState([]);
 
-    const margin = useRef({ top: 20, right: 0, bottom: 30, left: 0 })
+    const margin = useRef({ top: 15, right: 5, bottom: 15, left: 5 })
     const height = window.innerHeight * 0.4;
     const innerWidth = (lengthPerItem * OHLCData.length) - margin.current.left - margin.current.right;
     const innerHeight = height - margin.current.top - margin.current.bottom;
+    const subIndicatorHeight = useMemo(() => innerHeight * 0.5 * subIndicators.length, [innerHeight, subIndicators])
 
     const [isLogScale, setYscale] = useState("LOG");
 
@@ -44,14 +46,19 @@ const LiveChart = ({
         ySvg.selectAll('*').remove();
 
         // draw axis/label
-        drawAxesAndLabels(svg, ySvg, scale, innerHeight, OHLCData.length, range)
+        drawAxesAndLabels(svg, ySvg, scale, innerHeight, OHLCData.length, range);
 
         //draw grid
-        drawGrid(svg, scale, innerWidth, innerHeight, margin.current);
+        drawGrid(svg, scale, innerWidth, innerHeight);
 
         line(d3, svg, scale, tooltipRef, OHLCData, innerHeight);
 
     }, [OHLCData, lengthPerItem, isLogScale, range, height, innerWidth, innerHeight, scale, svg, ySvg, isLoading, isError]);
+
+    useEffect(() => {
+        if (isLoading) return;
+        drawSubIndicatorGrid(subSvg, innerWidth, subIndicatorHeight, margin.current, subIndicators.length);
+    }, [innerWidth, isLoading, scale, subIndicatorHeight, subIndicators, subSvg])
 
 
     return (
@@ -64,7 +71,7 @@ const LiveChart = ({
                         <g className="chart-content" ></g>
                     </svg>
                     {/*sub indicator */}
-                    <svg ref={subRef} width={lengthPerItem * OHLCData.length + 100} height={height * 0.5}></svg>
+                    <svg ref={subRef} width={lengthPerItem * OHLCData.length + 100} height={height * 0.5 * subIndicators.length}></svg>
                 </div>
                 <svg
                     width={'3rem'}
@@ -108,7 +115,8 @@ const LiveChart = ({
                     scale={scale}
                     data={OHLCData}
                     indicatorList={subIndicatorList}
-                    outDimension={{ w: innerWidth, h: innerHeight * 0.5, m: margin.current }}
+                    outDimension={{ w: innerWidth, h: subIndicatorHeight, m: margin.current }}
+                    setSubIndicators={setSubIndicators}
                 />
             </div>
         </div>

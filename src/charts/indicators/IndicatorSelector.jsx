@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react"
 import { ActiveIndicatorButtons } from "./ActiveIndicatorButtons";
 import Button from "../../Layout/elements";
 
-export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDimension }) => {
+export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDimension, setSubIndicators }) => {
     const activeIndicators = useRef({});
     const dropdownRef = useRef(null);
 
@@ -17,7 +17,12 @@ export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDime
         activeIndicators.current[name] = params;
         const { color, fn, ...fnParam } = params;
         drawIndicator(name, fn, fnParam, color);
+        setSubIndicators ? setSubIndicators(prev => [...prev, name]) : name;
     };
+
+    const deleteSubindicator = useCallback((name) => {
+        setSubIndicators(prev => prev.filter(subIndicator => subIndicator !== name));
+    }, [setSubIndicators]);
 
     const drawIndicator = useCallback(
         (funcName, fn, param, color = "white") => {
@@ -36,14 +41,16 @@ export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDime
                 svg.select(`#${name}`).remove();
                 svg.selectAll(`.${name}`).remove();
                 delete activeIndicators.current[name];
+                setSubIndicators ? deleteSubindicator(name) : name;
             }
         }
-    }, [showedIndicators, svg]);
+    }, [deleteSubindicator, setSubIndicators, showedIndicators, svg]);
+ 
 
     // update on data changes
     useEffect(() => {
         for (const name in activeIndicators.current) {
-            const { color, fn, ...fnParams } = activeIndicators.current[name]; 
+            const { color, fn, ...fnParams } = activeIndicators.current[name];
             data ? drawIndicator(name, fn, fnParams, color) : '';
         }
 
@@ -59,8 +66,8 @@ export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDime
 
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []); 
-    
+    }, []);
+
     return (
         <>
             <div className="flex gap-1">
