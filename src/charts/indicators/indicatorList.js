@@ -8,7 +8,8 @@ import { VWAP } from "./VWAP";
 
 export const indicatorList = {
     SMA: { fn: SMA },
-    EMA: { fn: EMA, period: 5 },
+    EMA1: { fn: EMA, period: 5 },
+    EMA2: { fn: EMA, period: 5 },
     ALMA: { fn: ALMA, period: 9, offset: 0.85, sigma: 6 },
     Supertrend: { fn: Supertrend, atrPeriod: 10, multiplier: 3 },
     VWAP: { fn: VWAP }

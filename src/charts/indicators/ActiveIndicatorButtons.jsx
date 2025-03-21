@@ -1,13 +1,24 @@
-import { useMemo } from "react"
+import { useCallback, useMemo } from "react"
+import { saveState } from "../../idb/stateDB";
 
-export const ActiveIndicatorButtons = ({ showedIndicators, setShowedIndicators, className }) => {
+export const ActiveIndicatorButtons = ({svg, showedIndicators, setShowedIndicators, className, setSubIndicators, dbId }) => {
     const indicatorNames = useMemo(() => Object.keys(showedIndicators), [showedIndicators]);
+
+    // delete a sub indicator
+    const deleteSubindicator = useCallback((name) => {
+        setSubIndicators(prev => prev.filter(subIndicator => subIndicator !== name));
+    }, [setSubIndicators]);
 
     const deleteIndicator = (name) => {
         const { [name]: _unused, ...rest } = showedIndicators;
-        _unused 
+        _unused
+        saveState(dbId, rest);
         setShowedIndicators(rest);
+        svg.select(`#${name}`).remove();
+        svg.selectAll(`.${name}`).remove(); 
+        setSubIndicators ? deleteSubindicator(name) : name
     }
+
     return (
         <div className={`flex flex-wrap max-w-100 gap-2 z-20 ${className}`}>
             {

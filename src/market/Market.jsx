@@ -21,7 +21,7 @@ function Market() {
     });
 
     const { data: hour24data, isLoading: hour24Loading } = use24HourQuery({ symbolIn: symbolIn, symbolOut: symbolOut });
-    console.log(OHLCData.length)
+
     return (
         <div>
             <Flex className="flex-col gap-2">

@@ -4,18 +4,16 @@ import Button from "../../Layout/elements";
 import { isSavedStateExist, loadState, saveState } from "../../idb/stateDB";
 
 export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDimension, setSubIndicators, dbId, init }) => {
-    const activeIndicators = useRef({});
     const dropdownRef = useRef(null);
 
     const [showedIndicators, setShowedIndicators] = useState({});
     const [showSelector, setShowSelector] = useState(false);
 
-    // draw an indicator 
+    // Draw an indicator (no shit Sherlock)
     const drawIndicator = useCallback(
         (funcName, fn, param, color = "white") => {
             svg.select(`#${funcName}`).remove();
             svg.selectAll(`.${funcName}`).remove();
-
             const indicatorData = fn(d3, data, ...Object.values(param));
             fn.draw(d3, svg, indicatorData, scale, color, funcName, outDimension);
         },
@@ -28,44 +26,22 @@ export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDime
             ...prev,
             [name]: params
         }));
-        activeIndicators.current[name] = params;
-        const { color, fn, ...fnParam } = params;
-        drawIndicator(name, fn, fnParam, color);
         setSubIndicators ? setSubIndicators(prev => [...prev, name]) : name;
         saveState(dbId, showedIndicators);
-    }, [dbId, drawIndicator, setSubIndicators, showedIndicators]);
- 
-
-    // delete a sub indicator
-    const deleteSubindicator = useCallback((name) => {
-        setSubIndicators(prev => prev.filter(subIndicator => subIndicator !== name));
-    }, [setSubIndicators]);
+    }, [dbId, setSubIndicators, showedIndicators]);
 
 
-    // delete listener
+    // Update on data/state changes
     useEffect(() => {
-        for (const name in activeIndicators.current) {
-            if (!Object.prototype.hasOwnProperty.call(showedIndicators, name)) {
-                svg.select(`#${name}`).remove();
-                svg.selectAll(`.${name}`).remove();
-                delete activeIndicators.current[name];
-                setSubIndicators ? deleteSubindicator(name) : name;
-                saveState(dbId, showedIndicators)
-            }
-        }
-    }, [dbId, deleteSubindicator, setSubIndicators, showedIndicators, svg]);
-
-    // update on data changes
-    useEffect(() => {
-        for (const name in activeIndicators.current) {
-            let { color, fn, ...fnParams } = activeIndicators.current[name];
+        for (const name in showedIndicators) {
+            let { color, fn, ...fnParams } = showedIndicators[name];
             // fn not saved on db 
             data ? drawIndicator(name, fn, fnParams, color) : '';
         }
 
-    }, [data, drawIndicator, indicatorList]);
+    }, [data, drawIndicator, indicatorList, showedIndicators]);
 
-    // handle outside click
+    // Handle outside click
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -77,7 +53,7 @@ export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDime
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // check if there are saved states
+    // Check if there are saved states
     useEffect(() => {
         async function check(id) {
             const checkSavedStates = await isSavedStateExist(id);
@@ -85,10 +61,9 @@ export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDime
             if (checkSavedStates) {
                 const savedState = await loadState(id);
                 // Restore function reference
-                for (const name in savedState) { 
+                for (const name in savedState) {
                     savedState[name].fn = indicatorList[name].fn;
                 }
-                activeIndicators.current = savedState; 
                 setShowedIndicators(savedState);
                 setSubIndicators ? setSubIndicators(Object.keys(savedState)) : null;
             }
@@ -96,7 +71,8 @@ export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDime
             else {
                 const fn = indicatorList[init].fn;
                 const params = getParamsWithDefaults(fn);
-                addNewIndicator(init, { fn: fn, color: fn.defaultCol, ...params })
+                setShowedIndicators({ [init]: { fn: fn, color: fn.defaultCol, ...params } }); 
+                setSubIndicators ? setSubIndicators([init]) : init;
             }
         }
 
@@ -108,7 +84,7 @@ export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDime
         <>
             <div className="flex gap-1">
                 <Button onClick={() => setShowSelector(!showSelector)} className="text-[12px]">{outDimension ? "Sub" : "Main"}</Button>
-                <ActiveIndicatorButtons showedIndicators={showedIndicators} setShowedIndicators={setShowedIndicators} />
+                <ActiveIndicatorButtons svg={svg} showedIndicators={showedIndicators} setShowedIndicators={setShowedIndicators} setSubIndicators={setSubIndicators} dbId={dbId} />
             </div>
             <div
                 style={{

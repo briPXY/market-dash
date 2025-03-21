@@ -40,39 +40,31 @@ const LiveChart = ({
 
     const [isLogScale, setYscale] = useState("LOG");
 
-    const svg = useRef(null);
-    const ySvg = useRef(null);
-    const subSvg = useRef(null);
+    const svg = d3.select(svgRef.current);
+    const ySvg = d3.select(ySvgRef.current);
+    const subSvg = d3.select(subRef.current);
     const scale = useMemo(() => xyScaler(d3, OHLCData, "date", "close", isLogScale, innerWidth, innerHeight, margin.current), [OHLCData, innerHeight, innerWidth, isLogScale]);
 
     useEffect(() => {
-        svg.current = d3.select(svgRef.current);
-        ySvg.current = d3.select(ySvgRef.current);
-        subSvg.current = d3.select(subRef.current);
-    }, [])
+        svg.selectAll(".main").remove();
+        ySvg.selectAll('*').remove();
 
-    useEffect(() => {
         if (!OHLCData.length || isFetching || isError) return;
-
-        svg.current.selectAll(".main").remove();
-        ySvg.current.selectAll('*').remove();
-
         // draw axis/label
-        drawAxesAndLabels(svg.current, ySvg.current, scale, innerHeight, OHLCData.length, range);
+        drawAxesAndLabels(svg, ySvg, scale, innerHeight, OHLCData.length, range);
 
         //draw grid
-        drawGrid(svg.current, scale, innerWidth, innerHeight);
+        drawGrid(svg, scale, innerWidth, innerHeight);
 
-        line(d3, svg.current, scale, tooltipRef, OHLCData, innerHeight);
+        line(d3, svg, scale, tooltipRef, OHLCData, innerHeight);
 
     }, [OHLCData, lengthPerItem, isLogScale, range, height, innerWidth, innerHeight, scale, svg, ySvg, isFetching, isError]);
 
     useEffect(() => {
         if (isFetching) return;
-        drawSubIndicatorGrid(subSvg.current, innerWidth, subIndicatorHeight, margin.current, subIndicators.length);
+        drawSubIndicatorGrid(subSvg, innerWidth, subIndicatorHeight, margin.current, subIndicators.length);
     }, [innerWidth, isFetching, scale, subIndicatorHeight, subIndicators, subSvg])
-
-
+    
     return (
         <div className="relative">
             <div className="flex gap-0 ">
@@ -114,7 +106,7 @@ const LiveChart = ({
             <div className="absolute top-0 left-0 max-w-[94vh] max-h-100 z-30">
                 <IndicatorSelector
                     d3={d3}
-                    svg={svg.current}
+                    svg={svg}
                     scale={scale}
                     data={OHLCData}
                     indicatorList={indicatorList}
@@ -125,7 +117,7 @@ const LiveChart = ({
             <div className="absolute top-80 left-0 max-w-[94vh] max-h-100 z-30">
                 <IndicatorSelector
                     d3={d3}
-                    svg={subSvg.current}
+                    svg={subSvg}
                     scale={scale}
                     data={OHLCData}
                     indicatorList={subIndicatorList}
