@@ -62,12 +62,12 @@ export function drawSubIndicatorGrid(svg, innerWidth, innerIndicatorHeight, marg
         .attr("class", "subGrid");
 
     // Middle line in the sub-indicator panel
-    svg.append("line")
-    .attr("class", "subGrid")
-    .attr("x1", 0)
-    .attr("x2", innerWidth)
-    .attr("y1", yIndicator(middleValue))  
-    .attr("y2", yIndicator(middleValue))
-    .style("stroke", "#ffffff80")
-    .style("stroke-width", 0.5);
+    // svg.append("line")
+    // .attr("class", "subGrid")
+    // .attr("x1", 0)
+    // .attr("x2", innerWidth)
+    // .attr("y1", yIndicator(middleValue))  
+    // .attr("y2", yIndicator(middleValue))
+    // .style("stroke", "#ffffff80")
+    // .style("stroke-width", 0.5);
 }

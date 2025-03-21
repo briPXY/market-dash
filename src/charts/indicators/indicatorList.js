@@ -6,38 +6,14 @@ import { MACD } from "./subs/MACD";
 import { Supertrend } from "./supertrend";
 import { VWAP } from "./VWAP";
 
-export const indicatorList = [
-    {
-        n: "SMA",
-        fn: SMA,
-    },
-    {
-        n: "EMA",
-        fn: EMA,
-        period: 5,
-    },
-    {
-        n: "ALMA",
-        fn: ALMA,
-        period: 9,
-        offset: 0.85,
-        sigma: 6,
-    },
-    {
-        n: "Supertrend",
-        fn: Supertrend,
-        atrPeriod: 10,
-        multiplier: 3,
-    },
-    {
-        n: "VWAP",
-        fn: VWAP,
-    },
-];
+export const indicatorList = {
+    SMA: { fn: SMA },
+    EMA: { fn: EMA, period: 5 },
+    ALMA: { fn: ALMA, period: 9, offset: 0.85, sigma: 6 },
+    Supertrend: { fn: Supertrend, atrPeriod: 10, multiplier: 3 },
+    VWAP: { fn: VWAP }
+};
 
-export const subIndicatorList = [
-    {
-        n: "MACD",
-        fn: MACD,
-    },
-]
+export const subIndicatorList = {
+    MACD: { fn: MACD }
+}

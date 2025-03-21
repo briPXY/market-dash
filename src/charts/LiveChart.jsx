@@ -32,32 +32,44 @@ const LiveChart = ({
     const innerHeight = height - margin.current.top - margin.current.bottom;
     const subIndicatorHeight = useMemo(() => innerHeight * 0.5 * subIndicators.length, [innerHeight, subIndicators])
 
+    const outDimension = useMemo(() => ({
+        w: innerWidth,
+        h: subIndicatorHeight,
+        m: margin.current
+    }), [innerWidth, subIndicatorHeight, margin]);
+
     const [isLogScale, setYscale] = useState("LOG");
 
-    const svg = d3.select(svgRef.current);
-    const ySvg = d3.select(ySvgRef.current);
-    const subSvg = d3.select(subRef.current);
+    const svg = useRef(null);
+    const ySvg = useRef(null);
+    const subSvg = useRef(null);
     const scale = useMemo(() => xyScaler(d3, OHLCData, "date", "close", isLogScale, innerWidth, innerHeight, margin.current), [OHLCData, innerHeight, innerWidth, isLogScale]);
+
+    useEffect(() => {
+        svg.current = d3.select(svgRef.current);
+        ySvg.current = d3.select(ySvgRef.current);
+        subSvg.current = d3.select(subRef.current);
+    }, [])
 
     useEffect(() => {
         if (!OHLCData.length || isLoading || isError) return;
 
-        svg.selectAll(".main").remove();
-        ySvg.selectAll('*').remove();
+        svg.current.selectAll(".main").remove();
+        ySvg.current.selectAll('*').remove();
 
         // draw axis/label
-        drawAxesAndLabels(svg, ySvg, scale, innerHeight, OHLCData.length, range);
+        drawAxesAndLabels(svg.current, ySvg.current, scale, innerHeight, OHLCData.length, range);
 
         //draw grid
-        drawGrid(svg, scale, innerWidth, innerHeight);
+        drawGrid(svg.current, scale, innerWidth, innerHeight);
 
-        line(d3, svg, scale, tooltipRef, OHLCData, innerHeight);
+        line(d3, svg.current, scale, tooltipRef, OHLCData, innerHeight);
 
     }, [OHLCData, lengthPerItem, isLogScale, range, height, innerWidth, innerHeight, scale, svg, ySvg, isLoading, isError]);
 
     useEffect(() => {
         if (isLoading) return;
-        drawSubIndicatorGrid(subSvg, innerWidth, subIndicatorHeight, margin.current, subIndicators.length);
+        drawSubIndicatorGrid(subSvg.current, innerWidth, subIndicatorHeight, margin.current, subIndicators.length);
     }, [innerWidth, isLoading, scale, subIndicatorHeight, subIndicators, subSvg])
 
 
@@ -92,7 +104,7 @@ const LiveChart = ({
 
             {/** buttons*/}
 
-            <Flex className="overflow-visible items-center gap-4 text-sm">
+            <Flex className="overflow-visible justify-end items-center gap-4 text-sm">
                 <PopoverButton>
                     <Button>{isLogScale}</Button>
                     <Yscale setYscale={setYscale}></Yscale>
@@ -102,21 +114,25 @@ const LiveChart = ({
             <div className="absolute top-0 left-0 max-w-[90vh] max-h-100">
                 <IndicatorSelector
                     d3={d3}
-                    svg={svg}
+                    svg={svg.current}
                     scale={scale}
                     data={OHLCData}
                     indicatorList={indicatorList}
+                    dbId={"main-indicator"}
+                    init={"SMA"}
                 />
             </div>
             <div className="absolute top-80 left-0 max-w-[90vh] max-h-100">
                 <IndicatorSelector
                     d3={d3}
-                    svg={subSvg}
+                    svg={subSvg.current}
                     scale={scale}
                     data={OHLCData}
                     indicatorList={subIndicatorList}
-                    outDimension={{ w: innerWidth, h: subIndicatorHeight, m: margin.current }}
+                    outDimension={outDimension}
                     setSubIndicators={setSubIndicators}
+                    dbId={"sub-indicator"}
+                    init={"MACD"}
                 />
             </div>
         </div>

@@ -45,3 +45,4 @@ export function MACD(d3, data, fast = 12, slow = 26, signal = 9) {
 
 
 MACD.draw = drawMACD;
+MACD.defaultCol = "#FF4444";
