@@ -79,9 +79,7 @@ const Text = ({ as = "p", className = "", children }) => {
 const NumberSign = ({ num = 0, baseNum = 0, unit = '', className = "" }) => {
     const textColor = Number(num) >= baseNum ? "text-accent" : "text-negative-accent";
     return <div className={`text-base ${textColor} ${className}`}>{`${num}${unit}`}</div>;
-};
-
-
+}; 
 
 const PopoverButton = ({ children, className = '', showClass = "w-full h-full top-[100%] right-0 z-15", hideClass = "hidden" }) => {
     const [isOpen, setIsOpen] = useState(false);

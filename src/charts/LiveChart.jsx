@@ -15,7 +15,7 @@ import { indicatorList, subIndicatorList } from "./indicators/indicatorList"
 const LiveChart = ({
     OHLCData,
     range,
-    isLoading,
+    isFetching,
     isError,
 }) => {
     const svgRef = useRef(null);
@@ -52,7 +52,7 @@ const LiveChart = ({
     }, [])
 
     useEffect(() => {
-        if (!OHLCData.length || isLoading || isError) return;
+        if (!OHLCData.length || isFetching || isError) return;
 
         svg.current.selectAll(".main").remove();
         ySvg.current.selectAll('*').remove();
@@ -65,12 +65,12 @@ const LiveChart = ({
 
         line(d3, svg.current, scale, tooltipRef, OHLCData, innerHeight);
 
-    }, [OHLCData, lengthPerItem, isLogScale, range, height, innerWidth, innerHeight, scale, svg, ySvg, isLoading, isError]);
+    }, [OHLCData, lengthPerItem, isLogScale, range, height, innerWidth, innerHeight, scale, svg, ySvg, isFetching, isError]);
 
     useEffect(() => {
-        if (isLoading) return;
+        if (isFetching) return;
         drawSubIndicatorGrid(subSvg.current, innerWidth, subIndicatorHeight, margin.current, subIndicators.length);
-    }, [innerWidth, isLoading, scale, subIndicatorHeight, subIndicators, subSvg])
+    }, [innerWidth, isFetching, scale, subIndicatorHeight, subIndicators, subSvg])
 
 
     return (
@@ -111,7 +111,7 @@ const LiveChart = ({
                 </PopoverButton>
                 <ZoomOverlay setLengthPerItem={setLengthPerItem} />
             </Flex>
-            <div className="absolute top-0 left-0 max-w-[90vh] max-h-100">
+            <div className="absolute top-0 left-0 max-w-[94vh] max-h-100 z-30">
                 <IndicatorSelector
                     d3={d3}
                     svg={svg.current}
@@ -122,7 +122,7 @@ const LiveChart = ({
                     init={"SMA"}
                 />
             </div>
-            <div className="absolute top-80 left-0 max-w-[90vh] max-h-100">
+            <div className="absolute top-80 left-0 max-w-[94vh] max-h-100 z-30">
                 <IndicatorSelector
                     d3={d3}
                     svg={subSvg.current}

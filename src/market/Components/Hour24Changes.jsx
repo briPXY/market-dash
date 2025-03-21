@@ -1,7 +1,11 @@
+import { useMemo } from "react";
 import { Flex } from "../../Layout/Layout"
 import { CardValueChange } from "./CardValueChange"
+import { calculateHistoricalChange } from "../utils/pricechanges";
 
-export const Hour24Changes = ({ priceChanges }) => {
+export const Hour24Changes = ({ hour24data }) => {
+    const priceChanges = useMemo(() => calculateHistoricalChange(hour24data), [hour24data]); 
+    
     return (
         <Flex className="gap-7">
             <Flex className="flex-col gap-4">

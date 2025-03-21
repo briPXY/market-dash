@@ -12,17 +12,18 @@ import { useMemo } from "react";
 const useChartQuery = ({ symbolIn = "usdt", symbolOut, interval }) => {
 
     const queryKey = useMemo(() => ["historical", symbolIn, symbolOut, interval], [symbolIn, symbolOut, interval]);
-    const placeHolder = useMemo(() => { return [{ open: 0, high: 0, low: 0, close: 0, volume: 0, date: 16000 }] }, [])
+    const initialData = useMemo(() => { return [{ open: 0, high: 0, low: 0, close: 0, volume: 0, date: 16000 }] }, [])
 
     return useQuery({
         queryKey: queryKey,
         queryFn: async () => {
-            const data = await fetchHistory[API_DOMAIN](symbolIn, symbolOut, interval);
+            const data = await fetchHistory[API_DOMAIN](symbolIn, symbolOut, interval); 
             return data; // Apply transformation if provided
         },
         refetchInterval: timeFrameToMs[interval],
-        staleTime: timeFrameToMs[interval], // Default: Cache data for 1 min
-        placeholderData: placeHolder,
+        staleTime: 0, 
+        cacheTime: timeFrameToMs[interval],
+        initialData,
     });
 };
 
