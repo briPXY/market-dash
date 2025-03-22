@@ -5,8 +5,7 @@ import { drawGrid, drawSubIndicatorGrid } from "./grid";
 import { drawAxesAndLabels } from "./axis";
 import { ZoomOverlay } from "./ZoomOverlay";
 import { Yscale } from "../market/Components/Yscale";
-import { Flex } from "../Layout/Layout";
-import { line } from "./charts/line";
+import { Flex } from "../Layout/Layout"; 
 import { Button, PopoverButton } from "../Layout/elements";
 import { xyScaler } from "./xyScaler";
 import { IndicatorSelector } from "./indicators/IndicatorSelector";
@@ -17,6 +16,7 @@ const LiveChart = ({
     range,
     isFetching,
     isError,
+    chart,
 }) => {
     const svgRef = useRef(null);
     const ySvgRef = useRef(null);
@@ -56,15 +56,16 @@ const LiveChart = ({
         //draw grid
         drawGrid(svg, scale, innerWidth, innerHeight);
 
-        line(d3, svg, scale, tooltipRef, OHLCData, innerHeight);
+        chart(d3, svg, scale, tooltipRef, OHLCData, innerHeight);
+        //line(d3, svg, scale, tooltipRef, OHLCData, innerHeight);
 
-    }, [OHLCData, lengthPerItem, isLogScale, range, height, innerWidth, innerHeight, scale, svg, ySvg, isFetching, isError]);
+    }, [OHLCData, lengthPerItem, isLogScale, range, height, innerWidth, innerHeight, scale, svg, ySvg, isFetching, isError, chart]);
 
     useEffect(() => {
         if (isFetching) return;
         drawSubIndicatorGrid(subSvg, innerWidth, subIndicatorHeight, margin.current, subIndicators.length);
     }, [innerWidth, isFetching, scale, subIndicatorHeight, subIndicators, subSvg])
-    
+
     return (
         <div className="relative">
             <div className="flex gap-0 ">
@@ -92,7 +93,7 @@ const LiveChart = ({
                 }}
             ></div>
 
-            <LivePriceOverlay isLogScale={isLogScale == "LOG"} OHLCData={OHLCData} margin={margin} innerHeight={innerHeight} />
+            <LivePriceOverlay isLogScale={isLogScale == "LOG"} OHLCData={OHLCData} margin={margin} innerHeight={innerHeight}/>
 
             {/** buttons*/}
 

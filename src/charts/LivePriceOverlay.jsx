@@ -7,7 +7,7 @@ const LivePriceOverlay = ({ isLogScale, OHLCData, margin, innerHeight }) => {
     const [width, setWidth] = useState(window.innerWidth * 0.96);
     const labelWidth = 55; // 8vw for label width
     const livePrice = usePriceStore((state) => state.trade);
-    const lastPrice = OHLCData[OHLCData.length - 1].close;
+    const lastPrice = useMemo(() => OHLCData[OHLCData.length - 1].close, [OHLCData])
     const color = livePrice >= lastPrice ? "#0cb085" : "#ef3f3f";
 
     const yScale = useMemo(() => {

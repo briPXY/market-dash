@@ -16,7 +16,7 @@ export function line(d3, svg, scale, tooltipRef, historicalData, innerHeight, li
     // Draw area
     svg.append("path")
         .datum(historicalData)
-        .attr("class", "area")
+        .attr("class", "main")
         .attr("fill", fillColor)
         .attr("d", area)
         .attr("class", "main");
@@ -24,22 +24,20 @@ export function line(d3, svg, scale, tooltipRef, historicalData, innerHeight, li
     // Draw line
     svg.append("path")
         .datum(historicalData)
-        .attr("class", "line")
+        .attr("class", "main")
         .attr("fill", "none")
         .attr("stroke", lineColor)
         .attr("stroke-width", 2)
         .attr("d", line)
         .attr("class", "main");
 
-    const tooltip = d3.select(tooltipRef.current); // Select tooltip inside the component
+    const tooltip = d3.select(tooltipRef.current); // Select tooltip inside the component 
 
-    svg.selectAll(".circle").remove();
-
-    svg.selectAll(".circle")
+    svg.selectAll(".main")
         .data(historicalData)
         .enter()
         .append("circle") 
-        .attr("class", "circle")
+        .attr("class", "main")
         .attr("cx", d => scale.x(d.date))
         .attr("cy", d => scale.y(d.close))
         .attr("r", 3)
