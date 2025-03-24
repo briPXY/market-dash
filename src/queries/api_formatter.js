@@ -27,10 +27,9 @@ function dex(base="usdt", symbol = "eth") { // USE L2 Polygon, chain id=137
         gasPrice: "50000000000" // 50 Gwei (estimate)
     });
 
-    result.trade = `${baseUrl}?${params.toString()}`;
+    result.trade = `https://localhost:3001/uniswap/live/${base.toUpperCase()}/${symbol.toUpperCase()}`;
     result.mark = `${baseUrl}?${params.toString()}`;
-    result.index = `${baseUrl}?${params.toString()}`;
-    
+    result.index = `${baseUrl}?${params.toString()}`; 
     return result;
 }
 

@@ -9,8 +9,8 @@ const usePriceStore = create((set) => ({
 }));
 
 export const useSymbolStore = create((set) => ({
-	symbolIn: 'USDT',
-	symbolOut: 'ETH',
+	symbolIn: 'ETH',
+	symbolOut: 'USDT',
 	setSymbolIn: (value) => set({ symbolIn: value, }),
 	setSymbolOut: (value) => set({ symbolOut: value }),
 }));
