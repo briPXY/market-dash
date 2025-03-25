@@ -10,8 +10,8 @@ const binance = async function (symbolIn, symbolOut, interval) {
         const dataUrl = formatAPI.binance(symbolOut, symbolIn, interval).historical;
 
         const response = await axios.get(dataUrl);
-        const data = response.data; // Extracting data properly
-
+        const data = response.data; // Extracting data properly 
+        
         return data.map((candle) => ({
             date: +(candle[6]), // timestamp close
             open: +candle[1],
@@ -68,6 +68,8 @@ async function dex(symbolIn, symbolOut, interval, count = 150) {
         }
         const poolAddress = PoolAddress[symbolOut.toUpperCase()][symbolIn.toUpperCase()]
         const timeframes = { "1h": "1h", "1d": "1d" };
+        const timeProp = { "1h": "periodStartUnix", "1d": "date" };
+
         if (!timeframes[interval]) {
             throw new Error("Invalid timeframe. Use '1h' or '1d'.");
         }
@@ -83,20 +85,23 @@ async function dex(symbolIn, symbolOut, interval, count = 150) {
         });
 
         const data = await response.json();
-        if (!data || !data.poolHourDatas) {
+
+        if (!data) { 
             throw new Error("Invalid data received");
         }
-  
+
+        const multiplyUnixTime = timeProp[interval] == "periodStartUnix" ? 1000 : 1;
         // Convert ETH per USDT to USDT per ETH
+
         const convertedData = data[poolInterval[interval]].map(entry => ({
-            date: entry.periodStartUnix,
+            date: entry[timeProp[interval]] * multiplyUnixTime,
             open: Number((1 / parseFloat(entry.open)).toFixed(2)),
             high: Number((1 / parseFloat(entry.low)).toFixed(2)), // Swap high/low
             low: Number((1 / parseFloat(entry.high)).toFixed(2)),
             close: Number((1 / parseFloat(entry.close)).toFixed(2)),
             volume: Number(parseFloat(entry.volumeUSD).toFixed(2))
         }));
- 
+        
         return convertedData;
     } catch (error) {
         console.error("Error fetching Uniswap data:", error);

@@ -57,8 +57,7 @@
 }
 
 .section-s {  
-  box-sizing: border-box;
-  padding: var(--padding);
+  box-sizing: border-box; 
 }
 
 .stacked-images {

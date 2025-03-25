@@ -23,7 +23,7 @@ const LiveChart = ({
     const tooltipRef = useRef(null);
     const subRef = useRef(null);
 
-    const [lengthPerItem, setLengthPerItem] = useState(16);
+    const [lengthPerItem, setLengthPerItem] = useState(14);
     const [subIndicators, setSubIndicators] = useState([]);
 
     const margin = useRef({ top: 15, right: 5, bottom: 15, left: 5 })

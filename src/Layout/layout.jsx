@@ -93,7 +93,7 @@ const FlexSC = ({ column, wrap, className = '', style = {}, wide, children, ...p
 const Section = ({ children, style = {}, className = "", ...props }) => {
     return (
         <section
-            className={`section-s  p-[var(--padding)] ${className}`}
+            className={`section-s mb-1 ${className}`}
             style={style}
             {...props}
         >

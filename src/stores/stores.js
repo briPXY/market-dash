@@ -1,4 +1,3 @@
-
 import { create } from "zustand";
 
 const usePriceStore = create((set) => ({
@@ -11,8 +10,14 @@ const usePriceStore = create((set) => ({
 export const useSymbolStore = create((set) => ({
 	symbolIn: 'ETH',
 	symbolOut: 'USDT',
-	setSymbolIn: (value) => set({ symbolIn: value, }),
+	setSymbolIn: (value) => set({ symbolIn: value }),
 	setSymbolOut: (value) => set({ symbolOut: value }),
+	setAll: (symbolIn, symbolOut) => set({ symbolIn: symbolIn, symbolOut: symbolOut }),
+}));
+
+export const useSourceStore = create((set) => ({
+	src: 'binance',
+	setSrc: (value) => set({ src: value }),
 }));
 
 export default usePriceStore;

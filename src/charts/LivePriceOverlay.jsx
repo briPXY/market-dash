@@ -46,7 +46,7 @@ const LivePriceOverlay = ({ isLogScale, OHLCData, margin, innerHeight }) => {
 
             {/* Live Price Text (Right Side) */}
             <text x={width - labelWidth - 5} y={priceY + 5} fill="black" fontSize="13px" fontWeight="bold">
-                {livePrice.toFixed(2)}
+                {livePrice}
             </text>
         </svg>
     );

@@ -1,33 +1,35 @@
 import { useState } from "react";
 import { Flex } from "../Layout/Layout";
-import { Text } from "../Layout/elements";
 import MarketChart from "./MarketChart";
 
 import { useChartQuery } from "../queries/chartquery";
 import { LivePriceText } from "./Components/LivePriceText";
-import { useSymbolStore } from "../stores/stores";
+import { useSourceStore, useSymbolStore } from "../stores/stores";
 import { use24HourQuery } from "../queries/24hourQuery";
 import { Hour24Changes } from "./Components/Hour24Changes";
+import { SymbolSelector } from "./Components/SymbolSelector"; 
 
 function Market() {
     const [range, setRange] = useState("1h");
     const symbolIn = useSymbolStore(state => state.symbolIn);
     const symbolOut = useSymbolStore(state => state.symbolOut);
+    const src = useSourceStore(state => state.src);
 
     const { data: OHLCData, isFetching, isError } = useChartQuery({
         symbolIn: symbolIn,
         symbolOut: symbolOut,
         interval: range,
-    });
-
-    const { data: hour24data, isLoading: hour24Loading } = use24HourQuery({ symbolIn: symbolIn, symbolOut: symbolOut });
+        src: src,
+    }); 
+    
+    const { data: hour24data, isLoading: hour24Loading } = use24HourQuery({ symbolIn: symbolIn, symbolOut: symbolOut, src: src });
 
     return (
         <div>
-            <Flex className="flex-col gap-2">
+            <Flex className="flex-col gap-1">
                 <Flex className="justify-between bg-primary p-4">
                     <Flex className="flex-col items-start">
-                        <Text setSymbol={symbolOut} as="h6">{`${symbolOut}-${symbolIn}`}</Text>
+                        <SymbolSelector symbolIn={symbolIn} symbolOut={symbolOut} />
                         <LivePriceText OHLCData={OHLCData} />
                     </Flex>
                     <Hour24Changes hour24Loading={hour24Loading} hour24data={hour24data} />

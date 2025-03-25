@@ -1,5 +1,7 @@
 
+import { SourceConst } from "../../constants/sourceConst";
 import { Box, BulletText, Flex } from "../../Layout/Layout"; 
+import { useSourceStore } from "../../stores/stores";
 
 export function IndicatorList({ setIndicator }) {
     return (
@@ -17,7 +19,8 @@ export function IndicatorList({ setIndicator }) {
 } 
 
 export function RangeSelector({ setRange, selected }) {
-    const timeframes = ["1m", "5m", "15m", "1h", "4h", "1d", "1w", "1M"]; 
+    const source = useSourceStore(state => state.src);
+    const timeframes = SourceConst[source].intervals;
  
     return (
         <div className="flex space-x-2">

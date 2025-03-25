@@ -12,6 +12,10 @@ import { candlestick } from "../charts/charts/candlestick";
 function MarketChart({ OHLCData, isFetching, isError, setRange, range }) {
     const [chart, setChart] = useState({ n: "Candlestick", f: candlestick });
 
+    if (!OHLCData.length) {
+        return (<div>waiting for the network...</div>)
+    }
+
     return (
         <div className="bg-primary p-4 overflow-visible h-full w-full" >
             <Flex className="flex-col overflow-visible h-full w-full">
@@ -25,8 +29,7 @@ function MarketChart({ OHLCData, isFetching, isError, setRange, range }) {
                         </Button>
                         <ChartSelector setChart={setChart} activeChart={chart.n} />
                     </PopoverButton>
-                </Flex>
-                <LiveChart
+                </Flex>  <LiveChart
                     OHLCData={OHLCData}
                     range={range}
                     isFetching={isFetching}

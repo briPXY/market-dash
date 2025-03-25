@@ -15,22 +15,23 @@ fastify.post("/uniswap/ohlc", async (request, reply) => {
 
     // Map frontend timeframes to Uniswap subgraph entities
     const timeframeMapping = {
-        "1h": "poolHourDatas",
-        "1d": "poolDayDatas"
-    };
+        "1h": { type: "poolHourDatas", timeField: "periodStartUnix" },
+        "1d": { type: "poolDayDatas", timeField: "date" }
+    }; 
 
     if (!timeframeMapping[timeframe]) {
         return reply.code(400).send({ error: "Invalid timeframe. Use 1h or 1d." });
     }
+    const { type, timeField } = timeframeMapping[timeframe];
 
     const query = `{
-        ${timeframeMapping[timeframe]}(
+        ${type}(
             first: ${count},
-            orderBy: periodStartUnix,
+            orderBy: ${timeField},
             orderDirection: desc,
             where: { pool: "${poolAddress}" }
         ) {
-            periodStartUnix
+            ${timeField}
             open
             high
             low
@@ -49,11 +50,12 @@ fastify.post("/uniswap/ohlc", async (request, reply) => {
                     "Content-Type": "application/json"
                 }
             }
-        );
+        ); 
  
-        reply.header('Cache-Control', 'public, max-age=600');
+        reply.header('Cache-Control', 'public, max-age=900');
         return reply.send(response.data.data);
     } catch (error) {
+        console.error(error);
         return reply.code(500).send({ error: error.message });
     }
 });

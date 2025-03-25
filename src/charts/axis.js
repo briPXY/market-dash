@@ -41,7 +41,6 @@ export function drawAxesAndLabels(svg, ySvg, scales, innerHeight, length, range)
 
     d3.selectAll(".domain").each(function () {
         this.setAttribute("stroke", "#ffffff1a");
-        this.setAttribute("stroke-opacity", "0.1");
     });
 
     // Add Y axis

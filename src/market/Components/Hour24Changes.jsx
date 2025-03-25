@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Flex } from "../../Layout/Layout"
 import { CardValueChange } from "./CardValueChange"
-import { calculateHistoricalChange } from "../utils/pricechanges";
+import { calculateHistoricalChange } from "../../utils/pricechanges";
 
 export const Hour24Changes = ({ hour24data }) => {
     const priceChanges = useMemo(() => calculateHistoricalChange(hour24data), [hour24data]); 
@@ -18,7 +18,7 @@ export const Hour24Changes = ({ hour24data }) => {
             </Flex>
             <Flex className="flex-col gap-4">
                 <CardValueChange num={priceChanges.volume.toFixed(0)} text={`24h volume`} />
-                <CardValueChange num={priceChanges.trades.toFixed(0)} text={`24h trades`} />
+                <CardValueChange num={priceChanges.trades ? priceChanges.trades.toFixed(0) : "-"} text={`24h trades`} />
             </Flex>
         </Flex>
     );

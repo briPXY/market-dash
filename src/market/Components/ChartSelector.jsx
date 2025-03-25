@@ -10,10 +10,10 @@ export const ChartSelector = ({ setChart, activeChart }) => {
     ]);
 
     return (
-        <div className="bg-secondary p-4 pb-8 flex flex-col gap-2 text-sm rounded-md">
+        <div className="bg-secondary p-2 pb-8 flex flex-col gap-2 text-sm rounded-md">
             {
                 charts.current.map((chart) => (
-                    <Button key={chart.n} onClick={() => setChart(chart)} className={`w-32 gap-2 justify-start ${activeChart == chart.n ? "border-active" : "border-washed"}`}>
+                    <Button key={chart.n} onClick={() => setChart(chart)} className={`w-32 gap-2 justify-start ${activeChart == chart.n ? "border-active" : "border-none"}`}>
                         <img className="w-4 h-4 invert" src={`/svg/${chart.n}.svg`} />
                         <div>{chart.n}</div>
                     </Button>

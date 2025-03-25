@@ -1,9 +1,13 @@
 
 export const PoolAddress = {
     USDT: {
-        "ETH": "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36",
-        "WBTC": "0x9db9e0e53058c89e5b94e29621a205198648425b",
-        "DAI": "0x60594a405d53811d3bc4766596efd80fd545a270",
+        ETH: "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36",
+        WBTC: "0x9db9e0e53058c89e5b94e29621a205198648425b",
+    },
+    WETH: {
+        WBTC: "0x4585fe77225b41b697c938b018e2ac67ac5a20c0",
+        PEPE: "0x11950d141ecb863f01007add7d1a342041227b58",
+        LINK: "0xa6cc3c2531fdaa6ae1a3ca84c2855806728693e8",
     }
 };
 
