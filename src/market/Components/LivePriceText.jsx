@@ -10,5 +10,5 @@ export const LivePriceText = ({ OHLCData }) => {
         return OHLCData[OHLCData.length - 1].close;
     }, [OHLCData]);
 
-    return (<NumberSign num={tradePrice} baseNum={lastClosePrice} className="text-lg font-semibold">{tradePrice}</NumberSign>)
+    return (<NumberSign num={tradePrice} baseNum={lastClosePrice} className="text-base md:text-lg font-semibold">{tradePrice}</NumberSign>)
 }

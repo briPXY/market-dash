@@ -17,8 +17,8 @@ export const SymbolSelector = ({ symbolIn, symbolOut }) => {
 
     return (
         <PopoverButton showClass={"bg-secondary w-[65vw] md:w-80 h-fit top-[100%] p-2 left-0 z-65 rounded-md"}>
-            <div className="flex cursor-pointer font-medium text-lg items-center gap-1 justify-start hover:brightness-125 rounded-md">
-                <div>{`${symbolIn}/${symbolOut}`}</div>
+            <div className="flex cursor-pointer font-medium items-center gap-1 justify-start hover:brightness-125 rounded-md">
+                <div className="text-base md:text-lg">{`${symbolIn}/${symbolOut}`}</div>
                 <TokenIcon symbol={symbolIn.toLowerCase()} size={32} color="#fff" variant="branded" className="bg-secondary rounded-full p-0.5" />
                 <div className="text-xs text-washed">▼</div>
             </div>
