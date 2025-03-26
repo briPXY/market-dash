@@ -5,11 +5,12 @@ import { drawGrid, drawSubIndicatorGrid } from "./grid";
 import { drawAxesAndLabels } from "./axis";
 import { ZoomOverlay } from "./ZoomOverlay";
 import { Yscale } from "../market/Components/Yscale";
-import { Flex } from "../Layout/Layout"; 
+import { Flex } from "../Layout/Layout";
 import { Button, PopoverButton } from "../Layout/elements";
 import { xyScaler } from "./xyScaler";
 import { IndicatorSelector } from "./indicators/IndicatorSelector";
 import { indicatorList, subIndicatorList } from "./indicators/indicatorList"
+import { drawVolumeBars } from "./charts/volume";
 
 const LiveChart = ({
     OHLCData,
@@ -56,6 +57,9 @@ const LiveChart = ({
         //draw grid
         drawGrid(svg, scale, innerWidth, innerHeight);
 
+        // Draw volume bar overlay
+        drawVolumeBars(d3, svg, scale, OHLCData, innerHeight, tooltipRef);
+
         chart(d3, svg, scale, tooltipRef, OHLCData, innerHeight);
         //line(d3, svg, scale, tooltipRef, OHLCData, innerHeight);
 
@@ -63,8 +67,8 @@ const LiveChart = ({
 
     useEffect(() => {
         if (isFetching) return;
-        drawSubIndicatorGrid(subSvg, innerWidth, subIndicatorHeight, margin.current, subIndicators.length);
-    }, [innerWidth, isFetching, scale, subIndicatorHeight, subIndicators, subSvg])
+        drawSubIndicatorGrid(subSvg, innerWidth, OHLCData, subIndicatorHeight, margin.current, subIndicators.length);
+    }, [OHLCData, innerWidth, isFetching, scale, subIndicatorHeight, subIndicators, subSvg])
 
     return (
         <div className="relative">
@@ -93,7 +97,7 @@ const LiveChart = ({
                 }}
             ></div>
 
-            <LivePriceOverlay isLogScale={isLogScale == "LOG"} OHLCData={OHLCData} margin={margin} innerHeight={innerHeight}/>
+            <LivePriceOverlay isLogScale={isLogScale == "LOG"} OHLCData={OHLCData} margin={margin} innerHeight={innerHeight} />
 
             {/** buttons*/}
 

@@ -29,7 +29,8 @@ function MarketChart({ OHLCData, isFetching, isError, setRange, range }) {
                         </Button>
                         <ChartSelector setChart={setChart} activeChart={chart.n} />
                     </PopoverButton>
-                </Flex>  <LiveChart
+                </Flex>
+                <LiveChart
                     OHLCData={OHLCData}
                     range={range}
                     isFetching={isFetching}

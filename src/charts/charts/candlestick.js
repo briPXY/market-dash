@@ -1,7 +1,12 @@
 import { showToolTip } from "../tooltip";
 
 export function candlestick(d3, svg, scale, tooltipRef, historicalData, innerHeight, bullishColor = "#2fb59c", bearishColor = "#e74c3c") {
-    const candleWidth = Math.max(3, scale.x(historicalData[1]?.date) - scale.x(historicalData[0]?.date) - 2); // Dynamic width
+    const xScale = d3.scaleBand()
+        .domain(historicalData.map(d => d.date))
+        .range([0, innerWidth])
+        .padding(0.1); // Adjust padding
+
+    const candleWidth = xScale.bandwidth(); // Ensures even spacing
     const tooltip = d3.select(tooltipRef.current);
 
     svg.selectAll(".main").remove();

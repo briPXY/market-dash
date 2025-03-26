@@ -10,11 +10,9 @@ export const LoadSymbol = ({ src }) => {
 
         if (exist) {
             const state = await loadState(`savedTick-${src}`);
-            console.log(exist);
             setAll(state[0], state[1]);
         }
         else {
-            console.log(src, exist);
             setAll("ETH", "USDT");
         }
     }
