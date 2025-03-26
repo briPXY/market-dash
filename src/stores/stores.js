@@ -8,16 +8,20 @@ const usePriceStore = create((set) => ({
 }));
 
 export const useSymbolStore = create((set) => ({
-	symbolIn: 'ETH',
-	symbolOut: 'USDT',
+	symbolIn: null,
+	symbolOut: null,
 	setSymbolIn: (value) => set({ symbolIn: value }),
 	setSymbolOut: (value) => set({ symbolOut: value }),
 	setAll: (symbolIn, symbolOut) => set({ symbolIn: symbolIn, symbolOut: symbolOut }),
+	resetSymbols: () => set({ symbolIn: null, symbolOut: null }),
 }));
 
 export const useSourceStore = create((set) => ({
-	src: 'binance',
-	setSrc: (value) => set({ src: value }),
+	src: null,
+	setSrc: (value) => {
+		set({ src: value });
+		useSymbolStore.getState().resetSymbols(); // Reset symbols when source changes
+	},
 }));
 
 export default usePriceStore;

@@ -7,12 +7,13 @@ import { LivePriceText } from "./Components/LivePriceText";
 import { useSourceStore, useSymbolStore } from "../stores/stores";
 import { use24HourQuery } from "../queries/24hourQuery";
 import { Hour24Changes } from "./Components/Hour24Changes";
-import { SymbolSelector } from "./Components/SymbolSelector"; 
+import { SymbolSelector } from "./Components/SymbolSelector";
+import { NetworkSelection } from "./Components/NetworkSelection";
+import { LoadSymbol } from "./Components/LoadSymbol";
 
 function Market() {
     const [range, setRange] = useState("1h");
-    const symbolIn = useSymbolStore(state => state.symbolIn);
-    const symbolOut = useSymbolStore(state => state.symbolOut);
+    const { symbolIn, symbolOut } = useSymbolStore();
     const src = useSourceStore(state => state.src);
 
     const { data: OHLCData, isFetching, isError } = useChartQuery({
@@ -20,9 +21,17 @@ function Market() {
         symbolOut: symbolOut,
         interval: range,
         src: src,
-    }); 
-    
+    });
+
     const { data: hour24data, isLoading: hour24Loading } = use24HourQuery({ symbolIn: symbolIn, symbolOut: symbolOut, src: src });
+
+    if (!src) {
+        return (<NetworkSelection />);
+    }
+
+    if (src && !symbolIn) {
+        return (<LoadSymbol src={src} />)
+    }
 
     return (
         <div>

@@ -56,7 +56,7 @@ const binance = async function (symbolIn, symbolOut, interval) {
 //     return pairs.length ? pairs[0].id : null;
 // }
 
-async function dex(symbolIn, symbolOut, interval, count = 150) {
+async function dex(symbolIn, symbolOut, interval, count = 250) {
     const poolInterval = {
         "1h": "poolHourDatas",
         "1d": "poolDayDatas",

@@ -2,12 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import * as fetch24Hour from "./fetch24hour.js" 
 
-export const use24HourQuery = ({ symbolIn = "usdt", symbolOut, src }) => {
+export const use24HourQuery = ({ symbolIn, symbolOut, src }) => {
 
     const queryKey = useMemo(() => ["24h", symbolIn, symbolOut, src], [symbolIn, symbolOut, src]);
 
     return useQuery({
         queryKey: queryKey,
+        enabled: !!(symbolIn && symbolOut), // Disable query if either symbol is missing
         queryFn: async () => {
             const data = await fetch24Hour[src](symbolIn, symbolOut);
             return data; // Apply transformation if provided

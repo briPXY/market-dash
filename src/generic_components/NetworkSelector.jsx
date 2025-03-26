@@ -1,12 +1,22 @@
-import { NetworkIcon } from "@web3icons/react";
+import { NetworkIcon } from "@web3icons/react"; 
+import { saveState } from "../idb/stateDB";
 import { useSourceStore } from "../stores/stores";
-import { SourceConst } from "../constants/sourceConst";
-import { Flex } from "../Layout/Layout";
 import { PopoverButton } from "../Layout/elements";
+import { Flex } from "../Layout/Layout";
+import { SourceConst } from "../constants/sourceConst";
 
 export const NetworkSelector = () => {
     const src = useSourceStore(state => state.src);
-    const setNetwork = useSourceStore(state => state.setSrc)
+    const setSrc = useSourceStore(state => state.setSrc)
+
+    const setNetwork = async (network) => {
+        await saveState(`savedNetwork`, network)
+        setSrc(network);
+    }
+
+    if (!src){
+        return <div className="text-sm">Network Unselected</div>
+    }
 
     return (
         <PopoverButton showClass={"w-min h-fit top-[100%] p-2 z-65 rounded-md bg-secondary"}>

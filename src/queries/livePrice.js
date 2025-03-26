@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { PoolAddress, TokenDecimal } from "../constants/uniswapAddress"; 
+import { decimalTrimmer } from "../utils/decimalTrimmer";
 
 export const dexLivePrice = async (symbolIn, symbolOut) => {
     const provider = new ethers.JsonRpcProvider("https://eth.llamarpc.com");  // Public RPC
@@ -21,7 +22,8 @@ export const dexLivePrice = async (symbolIn, symbolOut) => {
     const rawPrice = Number(numerator) / Number(denominator);
 
     const adjustedPrice = rawPrice * 10 ** (TokenDecimal[symbolIn.toUpperCase()] - TokenDecimal[symbolOut.toUpperCase()]);
-    return parseFloat(adjustedPrice);
+    const price = decimalTrimmer(adjustedPrice);
+    return parseFloat(price);
 }
 
 

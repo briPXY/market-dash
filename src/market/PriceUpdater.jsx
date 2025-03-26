@@ -26,6 +26,8 @@ const PriceUpdater = ({ type }) => {
 
     useEffect(() => {
 
+        if (!symbolIn || !src) return;
+
         const fetchREST = async () => {
             const provider = new ethers.JsonRpcProvider("https://eth.llamarpc.com");  // Public RPC
 
