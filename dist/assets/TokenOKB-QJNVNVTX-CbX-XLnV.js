@@ -1,0 +1,1 @@
+import{r as t,j as r,B as v}from"./index-D2ERf_o0.js";var a=t.forwardRef(({fallback:e,...o},s)=>r.jsx(v,{fallback:e,...o,ref:s,children:r.jsx("path",{fill:"currentColor",d:"M3 3h6v6H3zm12 6H9v6H3v6h6v-6h6v6h6v-6h-6zm0 0V3h6v6z"})}));a.displayName="TokenOKB";var l=a;export{l as default};

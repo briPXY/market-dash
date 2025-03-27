@@ -1,0 +1,1 @@
+import{r as t,j as r,B as l}from"./index-D2ERf_o0.js";var a=t.forwardRef(({fallback:e,...o},s)=>r.jsx(l,{fallback:e,...o,ref:s,children:r.jsx("path",{fill:"currentColor",d:"m7.522 4.125 4.493 2.595 4.583-2.595L21 6.72 12.015 12 3 6.72zm0 7.875 4.493 2.595L16.598 12 21 14.595l-8.985 5.28L3 14.595z"})}));a.displayName="TokenELA";var d=a;export{d as default};
