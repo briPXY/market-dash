@@ -24,7 +24,7 @@ export const SymbolSelector = ({ symbolIn, symbolOut }) => {
             </div>
             <div className="flex flex-col gap-3">
                 <Flex className="justify-between text-washed text-xs px-2">
-                    <div>Symbol</div>
+                    <div>{src == "dex"? "Pool" : "Symbol"}</div>
                     <div>Latest price/swap</div>
                 </Flex>
                 {SourceConst[src].symbols.map((pair, i) => (

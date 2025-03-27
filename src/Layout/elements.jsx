@@ -79,7 +79,7 @@ const Text = ({ as = "p", className = "", children }) => {
 const NumberSign = ({ num = 0, baseNum = 0, unit = '', className = "" }) => {
     const textColor = Number(num) >= baseNum ? "text-accent" : "text-negative-accent";
     return <div className={`${textColor} ${className}`}>{`${num}${unit}`}</div>;
-}; 
+};
 
 const PopoverButton = ({ children, className = '', showClass = "w-full h-full top-[100%] right-0 z-15", hideClass = "hidden" }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -111,6 +111,54 @@ const PopoverButton = ({ children, className = '', showClass = "w-full h-full to
         </div>
     );
 };
+
+export const LoadingIcon = ({ className, style, fill = "#fff" }) => {
+    return (
+        <svg
+            className={className}
+            style={style}
+            version="1.1"
+            id="L9"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 10 100 100"
+        >
+            <rect x="20" y="50" width="2" height="14" fill={fill}>
+                <animateTransform
+                    attributeType="XML"
+                    attributeName="transform"
+                    type="translate"
+                    values="0 0; 0 10; 0 0"
+                    begin="0s"
+                    dur="1.6s"
+                    repeatCount="indefinite"
+                />
+            </rect>
+            <rect x="30" y="50" width="2" height="14" fill={fill}>
+                <animateTransform
+                    attributeType="XML"
+                    attributeName="transform"
+                    type="translate"
+                    values="0 0; 0 10; 0 0"
+                    begin="0.5s"
+                    dur="1.6s"
+                    repeatCount="indefinite"
+                />
+            </rect>
+            <rect x="40" y="50" width="2" height="14" fill={fill}>
+                <animateTransform
+                    attributeType="XML"
+                    attributeName="transform"
+                    type="translate"
+                    values="0 0; 0 10; 0 0"
+                    begin="1s"
+                    dur="1.6s"
+                    repeatCount="indefinite"
+                />
+            </rect>
+        </svg>
+    );
+};
+
 
 export { Link, DetectView, Text, NumberSign, PopoverButton, Button };
 export default Button;

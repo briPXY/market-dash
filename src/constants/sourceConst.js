@@ -12,6 +12,9 @@ SourceConst.binance.desc = "Binance CEX";
 SourceConst.dex.network = "ethereum";
 SourceConst.binance.network = "bsc";
 
+SourceConst.dex.isDex = true;
+SourceConst.binance.isDex = false;
+
 // intervals
 SourceConst.dex.intervals = ["1h", "1d"];
 SourceConst.binance.intervals = ["1m", "5m", "15m", "1h", "4h", "1d", "1w", "1M"];

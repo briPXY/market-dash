@@ -11,7 +11,7 @@ const binance = async function (symbolIn, symbolOut, interval) {
 
         const response = await axios.get(dataUrl);
         const data = response.data; // Extracting data properly 
-        
+
         return data.map((candle) => ({
             date: +(candle[6]), // timestamp close
             open: +candle[1],
@@ -56,7 +56,7 @@ const binance = async function (symbolIn, symbolOut, interval) {
 //     return pairs.length ? pairs[0].id : null;
 // }
 
-async function dex(symbolIn, symbolOut, interval, count = 250) {
+async function dex(symbolIn, symbolOut, interval) {
     const poolInterval = {
         "1h": "poolHourDatas",
         "1d": "poolDayDatas",
@@ -66,7 +66,7 @@ async function dex(symbolIn, symbolOut, interval, count = 250) {
         if (!PoolAddress[symbolOut.toUpperCase()][symbolIn.toUpperCase()]) {
             throw new Error(`Pool address not found for ${symbolIn}`);
         }
-        const poolAddress = PoolAddress[symbolOut.toUpperCase()][symbolIn.toUpperCase()]
+        //const poolAddress = PoolAddress[symbolOut.toUpperCase()][symbolIn.toUpperCase()]
         const timeframes = { "1h": "1h", "1d": "1d" };
         const timeProp = { "1h": "periodStartUnix", "1d": "date" };
 
@@ -74,44 +74,39 @@ async function dex(symbolIn, symbolOut, interval, count = 250) {
             throw new Error("Invalid timeframe. Use '1h' or '1d'.");
         }
 
-        const response = await fetch("http://localhost:3001/uniswap/ohlc", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                poolAddress,
-                timeframe: timeframes[interval],
-                count: count,
-            })
-        });
+        const response = await fetch(`http://localhost:3001/uniswap/ohlc/${symbolIn}/${symbolOut}/${interval}`);
 
-        const data = await response.json();
-
-        if (!data) { 
+        const data = await response.json(); 
+        if (!data) {
             throw new Error("Invalid data received");
         }
 
-        const multiplyUnixTime = timeProp[interval] == "periodStartUnix" ? 1000 : 1;
-        // Convert ETH per USDT to USDT per ETH
+        const onlyReturn = (num) => parseFloat(num);
+        const divideByOne = (num) => parseFloat(1 / num);
 
-        const convertedData = data[poolInterval[interval]].map(entry => ({
+        
+        symbolIn.toUpperCase() == "LINK" ? console.log(data.data[poolInterval[interval]]) : null;
+
+        const multiplyUnixTime = timeProp[interval] == "periodStartUnix" ? 1000 : 1;
+        const sampleValue = data.data[poolInterval[interval]][0].close;
+        const operator = sampleValue > 1 ? onlyReturn : divideByOne;
+
+        const convertedData = data.data[poolInterval[interval]].map(entry => ({
             date: entry[timeProp[interval]] * multiplyUnixTime,
-            open: Number((1 / parseFloat(entry.open)).toFixed(2)),
-            high: Number((1 / parseFloat(entry.low)).toFixed(2)), // Swap high/low
-            low: Number((1 / parseFloat(entry.high)).toFixed(2)),
-            close: Number((1 / parseFloat(entry.close)).toFixed(2)),
+            open: Number(operator(entry.open).toFixed(2)),
+            high: Number(operator(entry.low).toFixed(2)), // Swap high/low
+            low: Number(operator(entry.high).toFixed(2)),
+            close: Number(operator(entry.close).toFixed(2)),
             volume: Number(parseFloat(entry.volumeUSD).toFixed(2))
         }));
-        
+
         return convertedData;
+
     } catch (error) {
         console.error("Error fetching Uniswap data:", error);
-        return null;
+        return [{ date: 0, open: 0, high: 0, low: 0, close: 0, volume: 0, error: true }];
     }
 }
-
-
-
-
 
 // 🔹 Convert swap data to D3.js candlestick format
 // function formatForD3(data, interval) {

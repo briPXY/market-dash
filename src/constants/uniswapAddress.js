@@ -6,11 +6,22 @@ export const PoolAddress = {
     },
     WETH: {
         WBTC: "0x4585fe77225b41b697c938b018e2ac67ac5a20c0",
-        PEPE: "0x11950d141ecb863f01007add7d1a342041227b58",
         LINK: "0xa6cc3c2531fdaa6ae1a3ca84c2855806728693e8",
-    }
+        UNI: "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801",
+        MKR: "0xe8c6c9227491c0a8156a0106a0204d881bb7e531",
+    },
+    USDC: {
+        WBTC: "0x99ac8ca7087fa4a2a1fb6357269965a2014abc35",
+    },
+    beraSTONE: {
+        WETH: "0x6dcba3657ee750a51a13a235b4ed081317da3066",
+    },
+    USDM: {
+        HKDM: "0x5796d7ad51583ae2c7297652edb7006bcd90519d",
+    },
 };
 
+// Unused
 export const TokenAddress = {
     USDT: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
     ETH: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
@@ -23,4 +34,12 @@ export const TokenDecimal = {
     ETH: 18,
     WBTC: 8,
     DAI: 18,
+    LINK: 18,
+    WETH: 18,
+    USDC: 6,
+    UNI: 18,
+    beraSTONE: 18,
+    USDM: 6,
+    MKR: 18,
+    HKDM: 6,
 }

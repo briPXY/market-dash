@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
-import { PoolAddress, TokenDecimal } from "../constants/uniswapAddress"; 
-import { decimalTrimmer } from "../utils/decimalTrimmer";
+import { PoolAddress, TokenDecimal } from "../constants/uniswapAddress";
+import { decimalTrimmer } from "../utils/decimalTrimmer"; 
 
 export const dexLivePrice = async (symbolIn, symbolOut) => {
     const provider = new ethers.JsonRpcProvider("https://eth.llamarpc.com");  // Public RPC
@@ -13,16 +13,22 @@ export const dexLivePrice = async (symbolIn, symbolOut) => {
 
     const poolContract = new ethers.Contract(poolAddress, poolABI, provider);
 
-    const slot0 = await poolContract.slot0(); 
-
-    // Extract sqrtPriceX96 from slot0
-    const sqrtPriceX96 = BigInt(slot0[0]); // Get sqrtPriceX96 as BigInt 
+    const slot0 = await poolContract.slot0();
+ 
+    const sqrtPriceX96 = BigInt(slot0[0])
     const numerator = sqrtPriceX96 * sqrtPriceX96;
     const denominator = BigInt(2) ** BigInt(192);
     const rawPrice = Number(numerator) / Number(denominator);
 
-    const adjustedPrice = rawPrice * 10 ** (TokenDecimal[symbolIn.toUpperCase()] - TokenDecimal[symbolOut.toUpperCase()]);
-    const price = decimalTrimmer(adjustedPrice);
+    let decimalDiff = TokenDecimal[symbolIn.toUpperCase()] - TokenDecimal[symbolOut.toUpperCase()];
+    let adjustedPrice = rawPrice * 10 ** decimalDiff;
+    
+    // 🔹 If price is too small (< 1), invert it
+    if (adjustedPrice < 1) {
+        adjustedPrice = 1 / adjustedPrice;
+    }
+    
+    const price = decimalTrimmer(adjustedPrice); 
     return parseFloat(price);
 }
 

@@ -10,6 +10,7 @@ import { Hour24Changes } from "./Components/Hour24Changes";
 import { SymbolSelector } from "./Components/SymbolSelector";
 import { NetworkSelection } from "./Components/NetworkSelection";
 import { LoadSymbol } from "./Components/LoadSymbol";
+import { PoolAddressView } from "./Components/PoolAddressView";
 
 function Market() {
     const [range, setRange] = useState("1h");
@@ -40,6 +41,7 @@ function Market() {
                     <Flex className="flex-col items-start">
                         <SymbolSelector symbolIn={symbolIn} symbolOut={symbolOut} />
                         <LivePriceText OHLCData={OHLCData} />
+                        <PoolAddressView src={src} symbolIn={symbolIn} symbolOut={symbolOut} />
                     </Flex>
                     <Hour24Changes hour24Loading={hour24Loading} hour24data={hour24data} />
                 </Flex>
