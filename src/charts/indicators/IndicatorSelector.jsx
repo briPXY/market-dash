@@ -71,7 +71,7 @@ export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDime
             else {
                 const fn = indicatorList[init].fn;
                 const params = getParamsWithDefaults(fn);
-                setShowedIndicators({ [init]: { fn: fn, color: fn.defaultCol, ...params } }); 
+                setShowedIndicators({ [init]: { fn: fn, color: fn.defaultCol, ...params } });
                 setSubIndicators ? setSubIndicators([init]) : init;
             }
         }
@@ -83,7 +83,10 @@ export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDime
     return (
         <>
             <div className="flex gap-1">
-                <Button onClick={() => setShowSelector(!showSelector)} className="text-[12px]">{outDimension ? "Sub" : "Main"}</Button>
+                <Button onClick={() => setShowSelector(!showSelector)} className="text-[12px] gap-2">
+                    <img className="w-2.5 h-2.5" src="/svg/g5.svg"></img>
+                    <div>{outDimension ? "Sub" : "Main"}</div>
+                </Button>
                 <ActiveIndicatorButtons svg={svg} showedIndicators={showedIndicators} setShowedIndicators={setShowedIndicators} setSubIndicators={setSubIndicators} dbId={dbId} />
             </div>
             <div

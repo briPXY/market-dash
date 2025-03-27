@@ -1,11 +1,17 @@
 import { showToolTip } from "../tooltip";
 
-export function drawVolumeBars(d3, svg, scale, historicalData, innerHeight, tooltipRef, volumeColor = "rgba(255, 255, 255, 0.1)") {
-    const barWidth = Math.max(3, scale.x(historicalData[1]?.date) - scale.x(historicalData[0]?.date) - 2); // Dynamic width
+export function drawVolumeBars(d3, svg, scale, historicalData, innerHeight, innerWidth, tooltipRef, volumeColor = "rgba(255, 255, 255, 0.1)") {
+    const xScale = d3.scaleBand()
+        .domain(historicalData.map(d => d.date))
+        .range([0, innerWidth])
+        .padding(0.2); // Adjust padding
+
+    const barWidth = xScale.bandwidth(); 
+
     svg.selectAll(".volume-bar").remove();
     const tooltip = d3.select(tooltipRef.current);
     // Append a group for volume bars (ensure it's below candlesticks)
-    const volumeGroup = svg.append("g").attr("class", "volume-bars");
+    const volumeGroup = svg.append("g").attr("class", "volume-bar");
 
     // Find the max volume to scale bars correctly
     const maxVolume = d3.max(historicalData, d => d.volume);
@@ -13,7 +19,7 @@ export function drawVolumeBars(d3, svg, scale, historicalData, innerHeight, tool
     // Create a separate y-scale for volume
     const yVolume = d3.scaleLinear()
         .domain([0, maxVolume])
-        .range([innerHeight, innerHeight * 0.7]); // Scale volume bars to be smaller
+        .range([innerHeight, innerHeight * 0.6]); // Scale volume bars to be smaller
 
     // Draw volume bars
     volumeGroup.selectAll(".volume-bar")

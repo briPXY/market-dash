@@ -9,7 +9,7 @@ export const dexLivePrice = async (symbolIn, symbolOut) => {
         "function slot0() external view returns (uint160 sqrtPriceX96, int24 tick, uint16 observationIndex, uint16 observationCardinality, uint16 observationCardinalityNext, uint8 feeProtocol, bool unlocked)"
     ];
 
-    const poolAddress = PoolAddress[symbolOut][symbolIn]
+    const poolAddress = PoolAddress[symbolOut.toUpperCase()][symbolIn.toUpperCase()]
 
     const poolContract = new ethers.Contract(poolAddress, poolABI, provider);
 
@@ -27,7 +27,7 @@ export const dexLivePrice = async (symbolIn, symbolOut) => {
     if (adjustedPrice < 1) {
         adjustedPrice = 1 / adjustedPrice;
     }
-    
+
     const price = decimalTrimmer(adjustedPrice); 
     return parseFloat(price);
 }

@@ -3,10 +3,6 @@ import * as d3 from "d3";
 import LivePriceOverlay from "./LivePriceOverlay";
 import { drawGrid, drawSubIndicatorGrid } from "./grid";
 import { drawAxesAndLabels } from "./axis";
-import { ZoomOverlay } from "./ZoomOverlay";
-import { Yscale } from "../market/Components/Yscale";
-import { Flex } from "../Layout/Layout";
-import { Button, PopoverButton } from "../Layout/elements";
 import { xyScaler } from "./xyScaler";
 import { IndicatorSelector } from "./indicators/IndicatorSelector";
 import { indicatorList, subIndicatorList } from "./indicators/indicatorList"
@@ -18,17 +14,18 @@ const LiveChart = ({
     isFetching,
     isError,
     chart,
+    lengthPerItem,
+    isLogScale,
 }) => {
     const svgRef = useRef(null);
     const ySvgRef = useRef(null);
     const tooltipRef = useRef(null);
     const subRef = useRef(null);
 
-    const [lengthPerItem, setLengthPerItem] = useState(14);
     const [subIndicators, setSubIndicators] = useState([]);
 
     const margin = useRef({ top: 15, right: 5, bottom: 15, left: 5 })
-    const height = window.innerHeight * 0.4;
+    const height = window.innerHeight * 0.425;
     const innerWidth = (lengthPerItem * OHLCData.length) - margin.current.left - margin.current.right;
     const innerHeight = height - margin.current.top - margin.current.bottom;
     const subIndicatorHeight = useMemo(() => innerHeight * 0.5 * subIndicators.length, [innerHeight, subIndicators])
@@ -39,7 +36,6 @@ const LiveChart = ({
         m: margin.current
     }), [innerWidth, subIndicatorHeight, margin]);
 
-    const [isLogScale, setYscale] = useState("LOG");
 
     const svg = d3.select(svgRef.current);
     const ySvg = d3.select(ySvgRef.current);
@@ -58,9 +54,9 @@ const LiveChart = ({
         drawGrid(svg, scale, innerWidth, innerHeight);
 
         // Draw volume bar overlay
-        drawVolumeBars(d3, svg, scale, OHLCData, innerHeight, tooltipRef);
+        drawVolumeBars(d3, svg, scale, OHLCData, innerHeight, innerWidth, tooltipRef);
 
-        chart(d3, svg, scale, tooltipRef, OHLCData, innerHeight);
+        chart(d3, svg, scale, tooltipRef, OHLCData, innerHeight, innerWidth);
         //line(d3, svg, scale, tooltipRef, OHLCData, innerHeight);
 
     }, [OHLCData, lengthPerItem, isLogScale, range, height, innerWidth, innerHeight, scale, svg, ySvg, isFetching, isError, chart]);
@@ -99,16 +95,7 @@ const LiveChart = ({
 
             <LivePriceOverlay isLogScale={isLogScale == "LOG"} OHLCData={OHLCData} margin={margin} innerHeight={innerHeight} />
 
-            {/** buttons*/}
-
-            <Flex className="overflow-visible justify-end items-center gap-4 text-sm">
-                <PopoverButton>
-                    <Button>{isLogScale}</Button>
-                    <Yscale setYscale={setYscale}></Yscale>
-                </PopoverButton>
-                <ZoomOverlay setLengthPerItem={setLengthPerItem} />
-            </Flex>
-            <div className="absolute top-0 left-0 max-w-[94vh] max-h-100 z-30">
+            <div className="absolute left-0 top-0 max-w-[94vh] max-h-100 z-10">
                 <IndicatorSelector
                     d3={d3}
                     svg={svg}
@@ -119,7 +106,7 @@ const LiveChart = ({
                     init={"SMA"}
                 />
             </div>
-            <div className="absolute top-80 left-0 max-w-[94vh] max-h-100 z-30">
+            <div style={{ top: `${height}px` }} className="absolute left-0 max-w-[94vh] max-h-100 z-10">
                 <IndicatorSelector
                     d3={d3}
                     svg={subSvg}

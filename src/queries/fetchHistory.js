@@ -74,7 +74,7 @@ async function dex(symbolIn, symbolOut, interval) {
             throw new Error("Invalid timeframe. Use '1h' or '1d'.");
         }
 
-        const response = await fetch(`http://localhost:3001/uniswap/ohlc/${symbolIn}/${symbolOut}/${interval}`);
+        const response = await fetch(`${import.meta.env.VITE_OLHC_URL}${symbolIn}/${symbolOut}/${interval}`);
 
         const data = await response.json(); 
         if (!data) {

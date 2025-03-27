@@ -13,7 +13,7 @@ export const PoolAddress = {
     USDC: {
         WBTC: "0x99ac8ca7087fa4a2a1fb6357269965a2014abc35",
     },
-    beraSTONE: {
+    BERASTONE: {
         WETH: "0x6dcba3657ee750a51a13a235b4ed081317da3066",
     },
     USDM: {

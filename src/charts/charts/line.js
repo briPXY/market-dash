@@ -1,6 +1,6 @@
 import { showToolTip } from "../tooltip";
 
-export function line(d3, svg, scale, tooltipRef, historicalData, innerHeight, lineColor="#2fb59c", fillColor = "#2fb59c26") {
+export function line(d3, svg, scale, tooltipRef, historicalData, innerHeight, innerWidth, lineColor="#2fb59c", fillColor = "#2fb59c26") {
     const line = d3.line()
         .x(d => scale.x(d.date))
         .y(d => scale.y(d.close))
