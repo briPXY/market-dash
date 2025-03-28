@@ -1,5 +1,4 @@
 export const formatSwapData = (swaps) => {
-    console.log(swaps[0])
     return swaps.map((trade) => {
         const date = new Date(parseInt(trade.timestamp) * 1000).toLocaleString();
         const price = Math.abs(parseFloat(trade.amount1) / parseFloat(trade.amount0)).toFixed(6);

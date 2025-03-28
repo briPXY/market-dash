@@ -85,8 +85,6 @@ async function dex(symbolIn, symbolOut, interval) {
         const onlyReturn = (num) => parseFloat(num);
         const divideByOne = (num) => parseFloat(1 / num);
 
-        symbolIn.toUpperCase() == "LINK" ? console.log(data.data[poolInterval[interval]]) : null;
-
         const multiplyUnixTime = timeProp[interval] == "periodStartUnix" ? 1000 : 1;
         const sampleValue = data.data[poolInterval[interval]][0].close;
         const operator = sampleValue > 1 ? onlyReturn : divideByOne;
