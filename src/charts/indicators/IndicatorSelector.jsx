@@ -20,26 +20,27 @@ export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDime
         [svg, d3, data, scale, outDimension] // Dependencies (make sure these are stable)
     );
 
-    // add a new indicator
     const addNewIndicator = useCallback((name, params) => {
         setShowedIndicators(prev => ({
             ...prev,
             [name]: params
         }));
-        setSubIndicators ? setSubIndicators(prev => [...prev, name]) : name;
-        saveState(dbId, showedIndicators);
-    }, [dbId, setSubIndicators, showedIndicators]);
-
+        
+        if (setSubIndicators) {
+            setSubIndicators(prev => [...prev, name]);
+        }
+    }, [setSubIndicators]); 
 
     // Update on data/state changes
     useEffect(() => {
         for (const name in showedIndicators) {
             let { color, fn, ...fnParams } = showedIndicators[name];
             // fn not saved on db 
+            saveState(dbId, showedIndicators);
             data ? drawIndicator(name, fn, fnParams, color) : '';
         }
 
-    }, [data, drawIndicator, indicatorList, showedIndicators]);
+    }, [data, dbId, drawIndicator, indicatorList, showedIndicators]);
 
     // Handle outside click
     useEffect(() => {
@@ -132,10 +133,10 @@ const IndicatorItem = ({ n, fn, drawIndicator, addNewIndicator }) => {
 const ListOfInput = ({ fParam, updateParam }) => {
     return (
         <div className="flex gap-1">
-            {Object.entries(fParam).map(([key, value]) => (
-                <div className="flex flex-col items-start" key={key}>
-                    <label className="text-washed text-xs" htmlFor="numInput">{key}</label>
-                    <input className="bg-primary w-14 md:w-22 rounded-sm p-1" type="number" id="numInput" value={value} onChange={(e) => updateParam(key, e.target.value)} />
+            {Object.entries(fParam).map(([oaramName, value]) => (
+                <div className="flex flex-col items-start" key={oaramName}>
+                    <label className="text-washed text-xs" htmlFor="numInput">{oaramName}</label>
+                    <input className="bg-primary w-14 md:w-22 rounded-sm p-1" type="number" id="numInput" value={value} onChange={(e) => updateParam(oaramName, e.target.value)} />
                 </div>
             ))}
         </div>
