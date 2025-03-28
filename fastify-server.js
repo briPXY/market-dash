@@ -3,6 +3,17 @@ const fastify = Fastify({ logger: true });
 
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+ 
+let PORT = 3000; // Default local port
+let HOST = '0.0.0.0'; // Allow external access
+
+try {
+    // eslint-disable-next-line no-undef
+    const config = require("platformsh-config").config();
+    PORT = config.port; // Use Platform.sh assigned port
+} catch (err) {
+    console.log("Platform.sh config not found. Running in LOCAL MODE. \n", err.toString().slice(0,0));
+}
 
 // Convert __dirname to work with ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -27,4 +38,9 @@ fastify.get('/', function (req, reply) {
 
 
 // Start the proxy server
-fastify.listen({ port: 3001 }, () => console.log("Proxy running on http://localhost:3000"));
+fastify.listen({ port: PORT, host: HOST }, (err, address) => {
+    if (err) {
+        fastify.log.error(err); 
+    }
+    console.log(`Fastify server running at ${address}`);
+});
