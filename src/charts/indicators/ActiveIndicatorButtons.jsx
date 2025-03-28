@@ -20,7 +20,7 @@ export const ActiveIndicatorButtons = ({svg, showedIndicators, setShowedIndicato
     }
 
     return (
-        <div className={`flex flex-wrap max-w-100 gap-2 z-20 ${className}`}>
+        <div className={`flex flex-wrap max-w-100 gap-2 ${className}`}>
             {
                 indicatorNames.map((item) =>
                 (

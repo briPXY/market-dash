@@ -19,9 +19,17 @@ mounts:
     source: local
     source_path: uploads
 
+# build frontend
+hooks:
+  build: |
+    npm install
+    npm run build
+
 # The size of the persistent disk of the application (in MB).
 disk: 2048
 
 web:
     commands:
         start: "node fastify-server.js"
+
+        

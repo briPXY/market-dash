@@ -13,9 +13,9 @@ export const PoolAddressView = ({ src, symbolOut, symbolIn }) => {
     };
 
     return (
-        <Flex className="text-xs text-washed gap-1 items-center">
+        <Flex className="text-xs text-washed gap-1 items-center font-normal">
             <div>Pool:</div>
-            <div className="max-w-[7.5rem] truncate">{address}</div>
+            <div className="max-w-[5rem] md:max-w-19 truncate">{address}</div>
             <Button onClick={copyToClipboard} className="text-[11px]" >copy</Button>
         </Flex>
     )

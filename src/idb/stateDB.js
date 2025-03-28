@@ -13,8 +13,7 @@ const dbPromise = openDB('dex-market-database', 1, {
 export async function saveState(id, state) {
     try {
         const db = await dbPromise;
-        await db.put('stateStore', { id, value: JSON.stringify(state) });
-        console.log(`State saved for ID: ${id}`);
+        await db.put('stateStore', { id, value: JSON.stringify(state) }); 
     } catch (error) {
         console.error("Failed to save state:", error);
     }

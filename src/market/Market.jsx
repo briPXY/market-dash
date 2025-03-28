@@ -11,13 +11,14 @@ import { SymbolSelector } from "./Components/SymbolSelector";
 import { NetworkSelection } from "./Components/NetworkSelection";
 import { LoadSymbol } from "./Components/LoadSymbol";
 import { PoolAddressView } from "./Components/PoolAddressView";
+import { SwapHistory } from "./SwapHistory";
 
 function Market() {
     const [range, setRange] = useState("1h");
     const { symbolIn, symbolOut } = useSymbolStore();
     const src = useSourceStore(state => state.src);
 
-    const { data: OHLCData, isFetching, isError } = useChartQuery({
+    const { data, isFetching, isError } = useChartQuery({
         symbolIn: symbolIn,
         symbolOut: symbolOut,
         interval: range,
@@ -37,10 +38,10 @@ function Market() {
     return (
         <div>
             <Flex className="flex-col gap-1">
-                <Flex className="justify-between bg-primary p-4">
-                    <Flex className="flex-col items-start">
+                <Flex className="justify-between gap-2 bg-primary p-2 py-4 md:p-4 ">
+                    <Flex className="flex-col items-start text-sm md:text-lg font-semibold">
                         <SymbolSelector symbolIn={symbolIn} symbolOut={symbolOut} />
-                        <LivePriceText OHLCData={OHLCData} />
+                        <LivePriceText OHLCData={data.ohlc ? data.ohlc : data} />
                         <PoolAddressView src={src} symbolIn={symbolIn} symbolOut={symbolOut} />
                     </Flex>
                     <Hour24Changes hour24Loading={hour24Loading} hour24data={hour24data} />
@@ -49,10 +50,11 @@ function Market() {
                     symbol={symbolOut}
                     setRange={setRange}
                     range={range}
-                    OHLCData={OHLCData}
+                    OHLCData={data.ohlc ? data.ohlc : data}
                     isFetching={isFetching}
                     isError={isError}
                 />
+                <SwapHistory swaps={data.swaps ? data.swaps : null} />
             </Flex>
         </div>
     );

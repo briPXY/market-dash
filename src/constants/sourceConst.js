@@ -10,7 +10,7 @@ SourceConst.dex.desc = "Uniswap V3 Ethereum Mainnet";
 SourceConst.binance.desc = "Binance CEX";
 
 SourceConst.dex.network = "ethereum";
-SourceConst.binance.network = "bsc";
+SourceConst.binance.network = "binance-smart-chain";
 
 SourceConst.dex.isDex = true;
 SourceConst.binance.isDex = false;

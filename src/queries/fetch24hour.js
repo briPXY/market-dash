@@ -26,5 +26,5 @@ export const binance = async function (symbolIn, symbolOut) {
 
 export const dex = async function(symbolIn, symbolOut) {
     const result = await history.dex(symbolIn, symbolOut, "1h", 24);
-    return result;
+    return result.ohlc ? result.ohlc : result;
 }

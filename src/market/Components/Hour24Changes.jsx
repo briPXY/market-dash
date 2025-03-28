@@ -7,7 +7,7 @@ export const Hour24Changes = ({ hour24data }) => {
     const priceChanges = useMemo(() => calculateHistoricalChange(hour24data), [hour24data]); 
     
     return (
-        <Flex className="gap-4 md:gap-7">
+        <Flex className="gap-2 md:gap-7">
             <Flex className="flex-col gap-2 md:gap-4">
                 <CardValueChange num={priceChanges.change} baseNum={0} text={`24h changes`} />
                 <CardValueChange num={priceChanges.percent} baseNum={0} unit={'%'} text="changes" />

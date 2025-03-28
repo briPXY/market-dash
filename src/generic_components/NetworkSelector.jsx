@@ -19,19 +19,19 @@ export const NetworkSelector = () => {
     }
 
     return (
-        <PopoverButton showClass={"w-min h-fit top-[100%] p-4 z-65 rounded-md bg-secondary"}>
-            <div className="flex flex-col cursor-pointer items-start md:items-center gap-1 hover:brightness-125">
-                <div className="text-xs text-washed">Network</div>
+        <PopoverButton showClass={"w-min h-fit top-[100%] z-65 rounded-md bg-secondary"}>
+            <div className="flex flex-col cursor-pointer items-start gap-1 hover:brightness-125">
+                <div className="text-xs text-washed md:visible hidden">Network</div>
                 <Flex className="items-center gap-2">
-                    <NetworkIcon network={SourceConst[src].network} size={32} variant="branded" className="p-0.5" />
-                    <div className="font-medium text-sm md:text-base">{SourceConst[src].desc}</div>
+                    <NetworkIcon id={SourceConst[src].network} size={32} variant="branded" className="p-0.5 bg-secondary rounded-md" />
+                    <div className="text-sm text-left">{SourceConst[src].desc}</div>
                     <div className="text-xs text-washed">▼</div>
                 </Flex>
             </div>
-            <div className="flex flex-col gap-3 w-max">
+            <div className="flex flex-col p-4 gap-3 w-max">
                 {Object.keys(SourceConst).map((network) => (
-                    <Flex key={network} onClick={() => setNetwork(network)} className="cursor-pointer hover:brightness-125">
-                        <NetworkIcon network={SourceConst[network].network} size={32} variant="branded" className="p-0.5" />
+                    <Flex key={network} onClick={() => setNetwork(network)} className="cursor-pointer gap-2 hover:brightness-125">
+                        <NetworkIcon id={SourceConst[network].network} size={24} variant="branded" />
                         <div className="text-sm">{SourceConst[network].desc}</div>
                     </Flex>
                 ))}

@@ -96,7 +96,7 @@ export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDime
                     height: showSelector ? "100%" : "0px",
                 }}
                 ref={dropdownRef}
-                className="rounded-md flex items-start py-6 z-20 flex-col gap-2 bg-secondary overflow-y-scroll max-h-[60vh]">
+                className="rounded-md flex items-start py-6 z-50 flex-col gap-2 bg-secondary overflow-y-scroll max-w-[94vw] max-h-[60vh]">
                 {
                     Object.keys(indicatorList).map((name) => <IndicatorItem
                         key={name}
@@ -120,9 +120,9 @@ const IndicatorItem = ({ n, fn, drawIndicator, addNewIndicator }) => {
     };
 
     return (
-        <div key={n} className="flex text-xs items-center min-h-12 mx-4 border-washed rounded-md px-2">
-            <div className="w-20 md:w-28 overflow-hidden text-sm font-semibold text-left">{n}</div>
-            <div className="w-6 md:w-14 text-xs cursor-pointer font-semibold" onClick={() => addNewIndicator(n, { color: color, fn: fn, ...param })}>Add</div>
+        <div key={n} className="flex text-xs justify-start max-w-full items-center min-h-12 mx-2 md:mx-4 border-washed rounded-md p-2">
+            <div className="w-14 md:w-28 overflow-hidden text-sm text-left">{n}</div>
+            <div className="text-xs mr-1 cursor-pointer font-semibold" onClick={() => addNewIndicator(n, { color: color, fn: fn, ...param })}>Add</div>
             <input className="w-5 p-0 border-none" type="color" value={color} onChange={(e) => setColor(e.target.value)} name="colorPicker"></input>
             <div className="md:w-8 w-4"></div>
             <ListOfInput fParam={param} func={fn} drawIndicator={drawIndicator} updateParam={updateParam} />
@@ -132,9 +132,9 @@ const IndicatorItem = ({ n, fn, drawIndicator, addNewIndicator }) => {
 
 const ListOfInput = ({ fParam, updateParam }) => {
     return (
-        <div className="flex gap-1">
+        <div className="flex flex-wrap gap-1">
             {Object.entries(fParam).map(([oaramName, value]) => (
-                <div className="flex flex-col items-start" key={oaramName}>
+                <div className="flex flex-col items-start gap-0.5" key={oaramName}>
                     <label className="text-washed text-xs" htmlFor="numInput">{oaramName}</label>
                     <input className="bg-primary w-14 md:w-22 rounded-sm p-1" type="number" id="numInput" value={value} onChange={(e) => updateParam(oaramName, e.target.value)} />
                 </div>

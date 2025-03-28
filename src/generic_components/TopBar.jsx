@@ -4,11 +4,10 @@ import { NetworkSelector } from "./NetworkSelector";
 
 export const TopBar = () => {
     return (
-        <Flex className="justify-between items-center w-full max-h-21 bg-primary p-4"> 
-            <div className="min-w-35 text-xs md:inline-block hidden">DEX Swap and Scanner</div>
+        <Flex className="justify-between items-center w-full max-h-21 bg-primary py-4 p-2 md:p-4"> 
             <NetworkSelector />
-            <Flex className="min-w-35 justify-end">
-                <Button>Login</Button>
+            <Flex className="justify-end">
+                <Button className="p-1 text-sm">Login</Button>
             </Flex>
         </Flex>
     );

@@ -7,8 +7,8 @@ import { PoolAddress } from "./poolAddress.js";
 dotenv.config(); // Load .env variables
 
 export const queryRespData = {
-    "1h":{},
-    "1d":{}
+    "1h": {},
+    "1d": {}
 };
 
 const timeframeMapping = {
@@ -35,7 +35,23 @@ async function uniswapQuery(poolAddress, timeframe, count, pairString) {
                 close
                 volumeUSD
             }
-        }`;
+
+            swaps(
+                first: 50,
+                orderBy: timestamp,
+                orderDirection: desc,
+                where: { pool: "${poolAddress}" }
+            ) {
+                timestamp
+                amount0
+                amount1
+                sender
+                recipient
+                transaction {
+                id
+                }
+            }
+    }`;
 
     try {
         const response = await axios.post(
@@ -51,7 +67,7 @@ async function uniswapQuery(poolAddress, timeframe, count, pairString) {
 
         queryRespData[timeframe][pairString] = response.data.data;
     } catch (error) {
-        console.error(error);
+        console.error("\x1b[31mUniswapQuery error:\x1b[0m", error);
         throw new Error(error);
     }
 }

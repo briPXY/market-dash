@@ -34,9 +34,29 @@ console.log('\x1b[36m%s\x1b[0m', `Starting server on port ${PORT} (Local: ${!!pr
 
 fastify.get('/', function (req, reply) {
     reply.header('Cache-Control', 'public, max-age=300');
-    reply.sendFile('index.html') 
+    reply.sendFile('index.html')
 })
 
+fastify.setErrorHandler((error, request, reply) => {
+    fastify.log.error(error); // Logs full error details
+
+    reply.status(500).send({
+        success: false,
+        message: "Internal Server Error",
+        error: error.message, // Show only the error message
+    });
+});
+
+// ✅ Handle Uncaught JavaScript Errors (for background modules, etc.)
+// eslint-disable-next-line no-undef
+process.on("uncaughtException", (error) => {
+    console.error("❌ Uncaught Exception:", error);
+});
+
+// eslint-disable-next-line no-undef
+process.on("unhandledRejection", (reason) => {
+    console.error("❌ Unhandled Promise Rejection:", reason);
+});
 
 // Start the proxy server
 fastify.listen({ port: PORT, host: HOST }, (err) => {

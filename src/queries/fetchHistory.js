@@ -2,6 +2,7 @@
 import axios from "axios";
 import { formatAPI } from "./api_formatter";
 import { PoolAddress } from "../constants/uniswapAddress";
+import { formatSwapData } from "../utils/formatSwapData";
 
 // BINANCE
 
@@ -76,7 +77,7 @@ async function dex(symbolIn, symbolOut, interval) {
 
         const response = await fetch(`${import.meta.env.VITE_OLHC_URL}${symbolIn}/${symbolOut}/${interval}`);
 
-        const data = await response.json(); 
+        const data = await response.json();
         if (!data) {
             throw new Error("Invalid data received");
         }
@@ -84,7 +85,6 @@ async function dex(symbolIn, symbolOut, interval) {
         const onlyReturn = (num) => parseFloat(num);
         const divideByOne = (num) => parseFloat(1 / num);
 
-        
         symbolIn.toUpperCase() == "LINK" ? console.log(data.data[poolInterval[interval]]) : null;
 
         const multiplyUnixTime = timeProp[interval] == "periodStartUnix" ? 1000 : 1;
@@ -99,6 +99,12 @@ async function dex(symbolIn, symbolOut, interval) {
             close: Number(operator(entry.close).toFixed(2)),
             volume: Number(parseFloat(entry.volumeUSD).toFixed(2))
         }));
+
+        if (data.data.swaps) {
+            const swapHistory = formatSwapData(data.data.swaps);
+
+            return { ohlc: convertedData, swaps: swapHistory }
+        }
 
         return convertedData;
 

@@ -12,7 +12,7 @@ export default async function reqOHLC(fastify) {
             // Check if data exists
             if (!queryRespData[timeFrame][pairString]) {
                 console.error("Data not found for:", timeFrame, pairString);
-                console.error("TheGraph fetched:", Object.keys(queryRespData[timeFrame]))
+                console.error("object:", Object.keys(queryRespData[timeFrame]));
                 return reply.status(404).send({
                     success: false,
                     message: "Data not found",
