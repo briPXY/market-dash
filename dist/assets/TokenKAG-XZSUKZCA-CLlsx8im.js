@@ -1,1 +1,0 @@
-import{r as t,j as a,B as l}from"./index-D2ERf_o0.js";var r=t.forwardRef(({fallback:e,...o},s)=>a.jsx(l,{fallback:e,...o,ref:s,children:a.jsx("path",{fill:"currentColor",d:"m12.29 9.387-3.484 3.484 4.715 7.142a2.5 2.5 0 0 0 2.02.987H21a11 11 0 0 1-2.323-2.323zM3 3h5.226v10.097l-5.226 5zm10.452 0h4.645L13.45 7.645z"})}));r.displayName="TokenKAG";var d=r;export{d as default};
