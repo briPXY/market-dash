@@ -1,4 +1,4 @@
-import { NumberSign } from "../../Layout/elements";
+import { NumberSign } from "../../Layout/Elements";
 import { Flex } from "../../Layout/Layout";
 
 export function CardValueChange({ num, baseNum = null, unit, text }) {

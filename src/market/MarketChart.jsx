@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import LiveChart from "../charts/LiveChart";
-import Button, { PopoverButton } from "../Layout/elements";
+import Button, { PopoverButton } from "../Layout/Elements";
 import { Flex } from "../Layout/Layout";
 import { RangeSelector } from "./Components/ChartBarMenu";
 import { ChartSelector } from "./Components/ChartSelector";

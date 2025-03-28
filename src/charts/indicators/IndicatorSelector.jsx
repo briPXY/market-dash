@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 import { ActiveIndicatorButtons } from "./ActiveIndicatorButtons";
-import Button from "../../Layout/elements";
+import Button from "../../Layout/Elements";
 import { isSavedStateExist, loadState, saveState } from "../../idb/stateDB";
 
 export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDimension, setSubIndicators, dbId, init }) => {

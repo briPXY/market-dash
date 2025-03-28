@@ -4,7 +4,7 @@ import { Flex } from "../../Layout/Layout";
 import { useEffect, useState } from "react";
 import { isSavedStateExist, loadState, saveState } from "../../idb/stateDB";
 import { useSourceStore } from "../../stores/stores";
-import { LoadingIcon } from "../../Layout/elements";
+import { LoadingIcon } from "../../Layout/Elements";
 
 export const NetworkSelection = () => {
     const setSrc = useSourceStore(state => state.setSrc);

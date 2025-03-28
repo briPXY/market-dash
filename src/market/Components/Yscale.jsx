@@ -1,4 +1,4 @@
-import Button from "../../Layout/elements";
+import Button from "../../Layout/Elements";
 import {Flex } from "../../Layout/Layout";
 
 export function Yscale({ setYscale }) {

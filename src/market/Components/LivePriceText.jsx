@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { NumberSign } from "../../Layout/elements"
+import { NumberSign } from "../../Layout/Elements"
 import usePriceStore from "../../stores/stores";
 
 export const LivePriceText = ({ OHLCData }) => {

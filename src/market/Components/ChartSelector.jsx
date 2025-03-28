@@ -1,7 +1,7 @@
 import { useRef } from "react"
 import { candlestick } from "../../charts/charts/candlestick"
 import { line } from "../../charts/charts/line"
-import Button from "../../Layout/elements"
+import Button from "../../Layout/Elements"
 
 export const ChartSelector = ({ setChart, activeChart }) => {
     const charts = useRef([

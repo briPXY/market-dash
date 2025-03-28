@@ -1,4 +1,4 @@
-import { NumberSign } from "../Layout/elements";
+import { NumberSign } from "../Layout/Elements";
 
 export const SwapHistory = ({ swaps }) => {
 

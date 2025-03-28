@@ -1,6 +1,6 @@
 import { TokenIcon } from "@web3icons/react";
 import { SourceConst } from "../../constants/sourceConst";
-import Button, { PopoverButton } from "../../Layout/elements"
+import Button, { PopoverButton } from "../../Layout/Elements"
 import { useSourceStore, useSymbolStore } from "../../stores/stores";
 import { Flex } from "../../Layout/Layout";
 import { useEffect, useState } from "react";

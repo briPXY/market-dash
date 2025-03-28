@@ -1,7 +1,7 @@
 import { NetworkIcon } from "@web3icons/react"; 
 import { saveState } from "../idb/stateDB";
 import { useSourceStore } from "../stores/stores";
-import { PopoverButton } from "../Layout/elements";
+import { PopoverButton } from "../Layout/Elements";
 import { Flex } from "../Layout/Layout";
 import { SourceConst } from "../constants/sourceConst";
 
