@@ -41,7 +41,7 @@ const SymbolSelectorItem = ({ pair, setSymbol, src }) => {
     useEffect(() => {
         const liveUpdate = async () => {
             const livePrice = await SourceConst[src].livePrice(pair[0], pair[1]);
-            setPrice(livePrice);
+            setPrice(isNaN(livePrice) ? '-' : Number(livePrice).toFixed(2));
         }
         liveUpdate();
     }, [pair, src])

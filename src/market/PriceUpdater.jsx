@@ -1,12 +1,20 @@
 import { useEffect, useRef } from "react";
 import usePriceStore, { useSourceStore, useSymbolStore } from "../stores/stores";
-import {  formatAPI } from "../queries/api_formatter"; 
-import { decimalTrimmer } from "../utils/decimalTrimmer"; 
+import { formatAPI } from "../queries/api_formatter";
+import { decimalTrimmer } from "../utils/decimalTrimmer";
 import { SourceConst } from "../constants/sourceConst";
 
 const supportWebSocket = {
     binance: true,
     dex: false,
+}
+
+const closeWebSocket = (ws) => {
+    if (!ws.current) return;
+    ws.current.onclose = null;
+    ws.current.onerror = null;
+    ws.current.close();
+    ws.current = null;
 }
 
 /**
@@ -19,7 +27,7 @@ const PriceUpdater = ({ type }) => {
     const setPrice = usePriceStore((state) => type == "trade" ? state.setTradePrice : state.setIndexPrice);
     const symbolIn = useSymbolStore(state => state.symbolIn);
     const symbolOut = useSymbolStore(state => state.symbolOut);
-    const src = useSourceStore(state => state.src); 
+    const src = useSourceStore(state => state.src);
     const ws = useRef(null);
     let reconnectTimer = useRef(null);
 
@@ -33,9 +41,9 @@ const PriceUpdater = ({ type }) => {
         }
 
         // Websockt for Binance
-        const connectWebSocket = () => {  
+        const connectWebSocket = () => {
             if (ws.current !== null) {
-                ws.current.close(); // Close existing connection before creating a new one
+                closeWebSocket(ws);
             }
 
             const socket = new WebSocket(formatAPI[src](symbolOut, symbolIn)[type]);
@@ -53,22 +61,27 @@ const PriceUpdater = ({ type }) => {
 
         const handleReconnect = () => {
             if (ws.current) {
-                ws.current.close();
-                ws.current = null;
+                closeWebSocket(ws);
             }
             clearTimeout(reconnectTimer.current);
             reconnectTimer.current = setTimeout(connectWebSocket, 5000);
         };
 
-        const updateTicker = supportWebSocket[src] ? connectWebSocket() : setInterval(() => fetchREST(), 5000);
+        let updateTicker;
+
+        if (supportWebSocket[src]) {
+            connectWebSocket();
+        } else {
+            closeWebSocket(ws);
+            updateTicker = setInterval(() => fetchREST(), 5000);
+        }
 
         return () => {
             if (ws.current) {
-                ws.current.close();
-                ws.current = null;
+                closeWebSocket(ws);
             }
             clearTimeout(reconnectTimer.current);
-            clearInterval(updateTicker);
+            if (updateTicker) clearInterval(updateTicker);
         };
 
     }, [setPrice, src, symbolIn, symbolOut, type]);

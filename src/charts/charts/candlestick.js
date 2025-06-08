@@ -6,6 +6,7 @@ export function candlestick(d3, svg, scale, tooltipRef, historicalData, innerHei
         .range([0, innerWidth])
         .padding(0.2); // Adjust padding
 
+        console.log( historicalData.length )
     const candleWidth = xScale.bandwidth(); // Ensures even spacing
     const tooltip = d3.select(tooltipRef.current);
 

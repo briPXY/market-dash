@@ -1,33 +1,32 @@
 
 import { useEffect, useState, useMemo } from "react";
-import usePriceStore from "../stores/stores";
-import * as d3 from "d3";
+import usePriceStore from "../stores/stores"; 
 
-const LivePriceOverlay = ({ isLogScale, OHLCData, margin, innerHeight }) => {
+const LivePriceOverlay = ({  OHLCData, scale }) => {
     const [width, setWidth] = useState(window.innerWidth * 0.96);
     const labelWidth = 55; // 8vw for label width
     const livePrice = usePriceStore((state) => state.trade);
     const lastPrice = useMemo(() => OHLCData[OHLCData.length - 1].close, [OHLCData])
     const color = livePrice >= lastPrice ? "#0cb085" : "#ef3f3f";
 
-    const yScale = useMemo(() => {
-        if (isLogScale) {
-            // Ensure the lower bound is > 0 for log scale.
-            const minClose = d3.min(OHLCData, d => d.close);
-            const maxClose = d3.max(OHLCData, d => d.close);
-            return d3.scaleLinear()
-                .domain([minClose, maxClose])  // Use min & max close price instead of 0
-                .range([innerHeight, margin.current.top])
-                .nice();
-        } else {
-            return d3.scaleLinear()
-                .domain([0, d3.max(OHLCData, d => d.close) * 1.05])
-                .range([innerHeight, margin.current.top])
-                .nice(12);
-        }
-    }, [OHLCData, innerHeight, isLogScale, margin]);
+    // const yScale = useMemo(() => {
+    //     if (isLogScale) {
+    //         // Ensure the lower bound is > 0 for log scale.
+    //         const minClose = d3.min(OHLCData, d => d.close);
+    //         const maxClose = d3.max(OHLCData, d => d.close);
+    //         return d3.scaleLinear()
+    //             .domain([minClose, maxClose])  // Use min & max close price instead of 0
+    //             .range([innerHeight, margin.current.top])
+    //             .nice();
+    //     } else {
+    //         return d3.scaleLinear()
+    //             .domain([0, d3.max(OHLCData, d => d.close) * 1.05])
+    //             .range([innerHeight, margin.current.top])
+    //             .nice(12);
+    //     }
+    // }, [OHLCData, innerHeight, isLogScale, margin]);
 
-    const updatedPrice = yScale(livePrice);
+    const updatedPrice = scale.y(livePrice); //yScale(livePrice);
     const priceY = isNaN(updatedPrice) ? 0 : updatedPrice;
 
     useEffect(() => {

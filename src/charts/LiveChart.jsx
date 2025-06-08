@@ -3,10 +3,11 @@ import * as d3 from "d3";
 import LivePriceOverlay from "./LivePriceOverlay";
 import { drawGrid, drawSubIndicatorGrid } from "./grid";
 import { drawAxesAndLabels } from "./axis";
-import { xyScaler } from "./xyScaler";
+import { xyScaler } from "./helper/xyScaler";
 import { IndicatorSelector } from "./indicators/IndicatorSelector";
 import { indicatorList, subIndicatorList } from "./indicators/indicatorList"
 import { drawVolumeBars } from "./charts/volume";
+import { getVisibleIndexRange } from "./helper/getVisibleIndices";
 
 const LiveChart = ({
     OHLCData,
@@ -21,8 +22,12 @@ const LiveChart = ({
     const ySvgRef = useRef(null);
     const tooltipRef = useRef(null);
     const subRef = useRef(null);
+    const scrollContainerRef = useRef(null); // for the scrollable div
 
-    const [subIndicators, setSubIndicators] = useState([]);
+    const [subIndicators, setSubIndicators] = useState([]); 
+
+    // Debounced scroll state for visibleOHLCData
+    const [scrollStopped, setScrollStopped] = useState(0);
 
     const margin = useRef({ top: 15, right: 5, bottom: 15, left: 5 })
     const height = window.innerHeight * 0.425;
@@ -36,11 +41,36 @@ const LiveChart = ({
         m: margin.current
     }), [innerWidth, subIndicatorHeight, margin]);
 
-
     const svg = d3.select(svgRef.current);
     const ySvg = d3.select(ySvgRef.current);
     const subSvg = d3.select(subRef.current);
-    const scale = useMemo(() => xyScaler(d3, OHLCData, "date", "close", isLogScale, innerWidth, innerHeight, margin.current), [OHLCData, innerHeight, innerWidth, isLogScale]);
+
+    // Chart X scroll stop listener
+    useEffect(() => {
+        const el = scrollContainerRef.current;
+        if (!el) return;
+        let timeout;
+        const onScroll = () => {
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                setScrollStopped(Date.now());
+            }, 500);
+        };
+        el.addEventListener("scroll", onScroll);
+        return () => {
+            el.removeEventListener("scroll", onScroll);
+            if (timeout) clearTimeout(timeout);
+        };
+    }, []);
+
+    const visibleOHLCData = useMemo(() => {
+        if (!OHLCData.length || !scrollContainerRef.current) return OHLCData;
+        const { iLeft, iRight } = getVisibleIndexRange(scrollContainerRef, OHLCData.length, 100);console.log("sliced");
+        return OHLCData.slice(iLeft, iRight);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [OHLCData, scrollStopped]);
+
+    const scale = useMemo(() => xyScaler(d3, OHLCData, "date", "close", isLogScale, innerWidth, innerHeight, margin.current, visibleOHLCData), [OHLCData, visibleOHLCData, innerHeight, innerWidth, isLogScale]);
 
     useEffect(() => {
         svg.selectAll(".main").remove();
@@ -69,7 +99,10 @@ const LiveChart = ({
     return (
         <div className="relative">
             <div className="flex gap-0 ">
-                <div className="w-full max-w-[92vw] overflow-x-auto whitespace-nowrap hide-scrollbar scroll-stick-left">
+                <div
+                    className="w-full max-w-[92vw] overflow-x-auto whitespace-nowrap hide-scrollbar scroll-stick-left"
+                    ref={scrollContainerRef}
+                >
                     <svg ref={svgRef} width={lengthPerItem * OHLCData.length + 100} height={height}>
                         <g className="y-axis" ></g>
                         {/* Scrollable Chart Content (Grid, X-Axis, Lines, etc.) */}
@@ -93,7 +126,7 @@ const LiveChart = ({
                 }}
             ></div>
 
-            <LivePriceOverlay isLogScale={isLogScale == "LOG"} OHLCData={OHLCData} margin={margin} innerHeight={innerHeight} />
+            <LivePriceOverlay OHLCData={OHLCData} scale={scale} />
 
             <div className="absolute left-0 top-0 max-w-[94vh] max-h-100 z-10">
                 <IndicatorSelector

@@ -1,15 +1,18 @@
-export function xyScaler(d3, OHLCData, xValue, yValue, isLogScale = "LOG", innerWidth, innerHeight, margin) {
+export function xyScaler(d3, OHLCData, xValue, yValue, isLogScale = "LOG", innerWidth, innerHeight, margin, visibleOHLCData) {
     let y;
+    const yData = visibleOHLCData ? visibleOHLCData : OHLCData;
+
     if (isLogScale == "LOG") {
-        const min = d3.min(OHLCData, d => d[yValue]);
-        const max = d3.max(OHLCData, d => d[yValue]);
+        const min = d3.min(yData, d => d[yValue]);
+        const max = d3.max(yData, d => d[yValue]);
+        console.log(min, max, OHLCData[OHLCData.length - 1]);
         y = d3.scaleLinear()
-            .domain([min, max])  
-            .range([innerHeight, margin.top])  
+            .domain([min, max])
+            .range([innerHeight, margin.top])
             .nice();
-    } else {
+    }  else {
         y = d3.scaleLinear()
-            .domain([0, d3.max(OHLCData, d => d[yValue]) * 1.05])
+            .domain([0, d3.max(yData, d => d[yValue]) * 1.05])
             .range([innerHeight, margin.top])
             .nice(12);
     }
@@ -21,7 +24,7 @@ export function xyScaler(d3, OHLCData, xValue, yValue, isLogScale = "LOG", inner
     return { x, y };
 }
 
-export function yIndicator(d3, indicatorData, innerIndicatorHeight, valueTarget){
+export function yIndicator(d3, indicatorData, innerIndicatorHeight, valueTarget) {
 
     // Separate Y scale for indicators (e.g., MACD)
     let yIndicator = d3.scaleLinear()
@@ -32,6 +35,6 @@ export function yIndicator(d3, indicatorData, innerIndicatorHeight, valueTarget)
         .range([innerIndicatorHeight, 0])
         .nice();
 
-        return yIndicator
+    return yIndicator
 
 }
