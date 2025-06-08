@@ -47,8 +47,11 @@ const LiveChart = ({
 
     // Chart X scroll stop listener
     useEffect(() => {
+        if (isLogScale != "LOG") return;
+
         const el = scrollContainerRef.current;
         if (!el) return;
+
         let timeout;
         const onScroll = () => {
             if (timeout) clearTimeout(timeout);
@@ -56,12 +59,14 @@ const LiveChart = ({
                 setScrollStopped(Date.now());
             }, 500);
         };
+
         el.addEventListener("scroll", onScroll);
+        
         return () => {
             el.removeEventListener("scroll", onScroll);
             if (timeout) clearTimeout(timeout);
         };
-    }, []);
+    }, [isLogScale]);
 
     const visibleOHLCData = useMemo(() => {
         if (!OHLCData.length || !scrollContainerRef.current) return OHLCData;
