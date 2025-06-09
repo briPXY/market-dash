@@ -5,7 +5,7 @@ export function xyScaler(d3, OHLCData, xValue, yValue, isLogScale = "LOG", inner
         const yData = visibleOHLCData ? visibleOHLCData : OHLCData;
         const min = d3.min(yData, d => d[yValue]);
         const max = d3.max(yData, d => d[yValue]);
-        console.log(min, max, OHLCData[OHLCData.length - 1]);
+        //console.log(min, max, OHLCData[OHLCData.length - 1]);
         y = d3.scaleLinear()
             .domain([min, max])
             .range([innerHeight, margin.top])

@@ -10,6 +10,9 @@ import path from 'node:path';
 
 import { fileURLToPath } from 'node:url';
 
+import reqOHLC from "./src/backend/historyIO.js";
+import constantsAPI from "./src/backend/constantsAPI.js";
+
 // Convert __dirname to work with ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,8 +25,8 @@ fastify.register(await import("@fastify/cors"), {
     origin: "*"
 });
 
-import reqOHLC from "./src/backend/historyIO.js";
 await fastify.register(reqOHLC);
+await fastify.register(constantsAPI);
 
 // eslint-disable-next-line no-undef
 const PORT = process.env.LOCAL_DEV ? 3000 : platformshConfig.config().port;

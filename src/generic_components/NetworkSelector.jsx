@@ -31,7 +31,7 @@ export const NetworkSelector = () => {
             <div className="flex flex-col p-4 gap-3 w-max">
                 {Object.keys(SourceConst).map((network) => (
                     <Flex key={network} onClick={() => setNetwork(network)} className="cursor-pointer gap-2 hover:brightness-125">
-                        <NetworkIcon id={SourceConst[network].network} size={24} variant="branded" />
+                        <NetworkIcon id={SourceConst[network]?.network} size={24} variant="branded" />
                         <div className="text-sm">{SourceConst[network].desc}</div>
                     </Flex>
                 ))}

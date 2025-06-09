@@ -57,14 +57,14 @@ const binance = async function (symbolIn, symbolOut, interval) {
 //     return pairs.length ? pairs[0].id : null;
 // }
 
-async function dex(symbolIn, symbolOut, interval) {
+async function UniswapV3(symbolIn, symbolOut, interval, pool = "UniswapV3") {
     const poolInterval = {
         "1h": "poolHourDatas",
         "1d": "poolDayDatas",
     }
 
     try {
-        if (!PoolAddress[symbolOut.toUpperCase()][symbolIn.toUpperCase()]) {
+        if (!PoolAddress[pool][symbolOut.toUpperCase()][symbolIn.toUpperCase()]) {
             throw new Error(`Pool address not found for ${symbolIn}`);
         }
         //const poolAddress = PoolAddress[symbolOut.toUpperCase()][symbolIn.toUpperCase()]
@@ -92,12 +92,15 @@ async function dex(symbolIn, symbolOut, interval) {
         const operator = sampleValue > 1 ? onlyReturn : divideByOne;
 
         const convertedData = data.data[poolInterval[interval]].map(entry => ({
+            close: Number(operator(entry.close).toFixed(2)),
             date: entry[timeProp[interval]] * multiplyUnixTime,
-            open: Number(operator(entry.open).toFixed(2)),
+            dateOpen: 0, // Dummy value
             high: Number(operator(entry.low).toFixed(2)), // Swap high/low
             low: Number(operator(entry.high).toFixed(2)),
-            close: Number(operator(entry.close).toFixed(2)),
-            volume: Number(parseFloat(entry.volumeUSD).toFixed(2))
+            open: Number(operator(entry.open).toFixed(2)),
+            quote: 0,    // Dummy value
+            trades: 0,   // Dummy value
+            volume: Number(parseFloat(entry.volumeUSD).toFixed(2)),
         }));
 
         if (data.data.swaps) {
@@ -148,7 +151,7 @@ async function dex(symbolIn, symbolOut, interval) {
 // }
 
 
-export { binance, dex }
+export { binance, UniswapV3 }
 
 
 /*

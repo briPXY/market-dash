@@ -70,7 +70,7 @@ const LiveChart = ({
 
     const visibleOHLCData = useMemo(() => {
         if (!OHLCData.length || !scrollContainerRef.current) return OHLCData;
-        const { iLeft, iRight } = getVisibleIndexRange(scrollContainerRef, OHLCData.length, 100);console.log("sliced");
+        const { iLeft, iRight } = getVisibleIndexRange(scrollContainerRef, OHLCData.length, 100);
         return OHLCData.slice(iLeft, iRight);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [OHLCData, scrollStopped]);

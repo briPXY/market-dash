@@ -2,14 +2,14 @@ import { ethers } from "ethers";
 import { PoolAddress, TokenDecimal } from "../constants/uniswapAddress";
 import { decimalTrimmer } from "../utils/decimalTrimmer"; 
 
-export const dexLivePrice = async (symbolIn, symbolOut) => {
+export const UniswapV3LivePrice = async (symbolIn, symbolOut) => {
     const provider = new ethers.JsonRpcProvider("https://eth.llamarpc.com");  // Public RPC
 
     const poolABI = [
         "function slot0() external view returns (uint160 sqrtPriceX96, int24 tick, uint16 observationIndex, uint16 observationCardinality, uint16 observationCardinalityNext, uint8 feeProtocol, bool unlocked)"
     ];
 
-    const poolAddress = PoolAddress[symbolOut.toUpperCase()][symbolIn.toUpperCase()]
+    const poolAddress = PoolAddress.UniswapV3[symbolOut.toUpperCase()][symbolIn.toUpperCase()]
 
     const poolContract = new ethers.Contract(poolAddress, poolABI, provider);
 

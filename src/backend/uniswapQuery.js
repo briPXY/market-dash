@@ -73,14 +73,14 @@ async function uniswapQuery(poolAddress, timeframe, count, pairString) {
 }
 
 // Initial data
-Object.keys(PoolAddress).forEach((symbol) => {
-    uniswapQuery(PoolAddress[symbol], "1d", 300, symbol);
-    uniswapQuery(PoolAddress[symbol], "1h", 300, symbol);
+Object.keys(PoolAddress.UniswapV3).forEach((symbol) => {
+    uniswapQuery(PoolAddress.UniswapV3[symbol], "1d", 300, symbol);
+    uniswapQuery(PoolAddress.UniswapV3[symbol], "1h", 300, symbol);
 });
 
 setInterval(() => {
-    Object.keys(PoolAddress).forEach((symbol) => {
-        uniswapQuery(PoolAddress[symbol], "1d", 300, symbol);
-        uniswapQuery(PoolAddress[symbol], "1h", 300, symbol);
+    Object.keys(PoolAddress.UniswapV3).forEach((symbol) => {
+        uniswapQuery(PoolAddress.UniswapV3[symbol], "1d", 300, symbol);
+        uniswapQuery(PoolAddress.UniswapV3[symbol], "1h", 300, symbol);
     });
 }, 3600000) // Both day and hour fetched each hour because it's unknown when TheGraph cycle it's indexing the uniswap.

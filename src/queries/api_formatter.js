@@ -14,7 +14,7 @@ export const symbolAdress = {
 }
 
 
-function dex(base="usdt", symbol = "eth") { // USE L2 Polygon, chain id=137
+function UniswapV3(base="usdt", symbol = "eth") { // USE L2 Polygon, chain id=137
     const result = {}; 
 
     result.historical = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3";
@@ -33,6 +33,6 @@ function dex(base="usdt", symbol = "eth") { // USE L2 Polygon, chain id=137
     return result;
 }
 
-export const formatAPI = {binance, dex};
+export const formatAPI = {binance, UniswapV3};
 
 export const API_DOMAIN =  import.meta.env.VITE_API_DOMAIN;

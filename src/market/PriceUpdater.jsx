@@ -36,7 +36,7 @@ const PriceUpdater = ({ type }) => {
         if (!symbolIn || !src) return;
 
         const fetchREST = async () => {
-            const latestPrice = await SourceConst.dex.livePrice(symbolIn, symbolOut)
+            const latestPrice = await SourceConst[src].livePrice(symbolIn, symbolOut)
             setPrice(latestPrice);
         }
 

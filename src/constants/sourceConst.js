@@ -1,53 +1,47 @@
-import { binanceTicker, dexLivePrice } from "../queries/livePrice";
+import { binanceTicker, UniswapV3LivePrice } from "../queries/livePrice";
 import { PoolAddress } from "./uniswapAddress";
 
-export const SourceConst = {}
+export const SourceConst = {};
 
-SourceConst.dex = {};
-SourceConst.binance = {};
+// uniswap v3
+SourceConst.UniswapV3 = {
+    desc: "Uniswap V3 Ethereum Mainnet",
+    network: "ethereum",
+    isDex: true,
+    intervals: ["1h", "1d"],
+    symbols: Object.entries(PoolAddress.UniswapV3).flatMap(([parent, children]) =>
+        Object.keys(children).map(child => [child, parent])
+    ),
+    symbolSet: () => {
+        return Object.entries(PoolAddress.UniswapV3).flatMap(([parent, children]) =>
+            Object.keys(children).map(child => [parent, child])
+        );
+    },
+    livePrice: UniswapV3LivePrice,
+};
 
-SourceConst.dex.desc = "Uniswap V3 Ethereum Mainnet";
-SourceConst.binance.desc = "Binance CEX";
-
-SourceConst.dex.network = "ethereum";
-SourceConst.binance.network = "binance-smart-chain";
-
-SourceConst.dex.isDex = true;
-SourceConst.binance.isDex = false;
-
-// intervals
-SourceConst.dex.intervals = ["1h", "1d"];
-SourceConst.binance.intervals = ["1m", "5m", "15m", "1h", "4h", "1d", "1w", "1M"];
-
-// [in, out]
-SourceConst.dex.symbols = Object.entries(PoolAddress).flatMap(([parent, children]) =>
-    Object.keys(children).map(child => [child, parent])
-);
-
-SourceConst.dex.symbolSet = () => {
-    return Object.entries(PoolAddress).flatMap(([parent, children]) =>
-        Object.keys(children).map(child => [parent, child])
-    );
-}
-
-SourceConst.binance.symbols = [
-    ["BTC", "USDT"],
-    ["ETH", "USDT"],
-    ["BNB", "USDT"],
-    ["XRP", "USDT"],
-    ["DOGE", "USDT"],
-    ["ADA", "USDT"],
-    ["SOL", "USDT"],
-    ["DOT", "USDT"],
-    ["MATIC", "USDT"],
-    ["LTC", "USDT"],
-    ["TRX", "USDT"],
-    ["SHIB", "USDT"],
-    ["AVAX", "USDT"],
-    ["LINK", "USDT"],
-    ["ATOM", "USDT"]
-];
-
-// single ticker
-SourceConst.dex.livePrice = dexLivePrice;
-SourceConst.binance.livePrice = binanceTicker;
+// Binance non L2 chain
+SourceConst.binance = {
+    desc: "Binance CEX",
+    network: "binance-smart-chain",
+    isDex: false,
+    intervals: ["1m", "5m", "15m", "1h", "4h", "1d", "1w", "1M"],
+    symbols: [
+        ["BTC", "USDT"],
+        ["ETH", "USDT"],
+        ["BNB", "USDT"],
+        ["XRP", "USDT"],
+        ["DOGE", "USDT"],
+        ["ADA", "USDT"],
+        ["SOL", "USDT"],
+        ["DOT", "USDT"],
+        ["MATIC", "USDT"],
+        ["LTC", "USDT"],
+        ["TRX", "USDT"],
+        ["SHIB", "USDT"],
+        ["AVAX", "USDT"],
+        ["LINK", "USDT"],
+        ["ATOM", "USDT"],
+    ],
+    livePrice: binanceTicker,
+};

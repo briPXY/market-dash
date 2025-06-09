@@ -1,5 +1,6 @@
+export const PoolAddress = {};
 
-export const PoolAddress = { // order = token1-token0 (symbolOut - In)
+PoolAddress.UniswapV3 = { // order = token1-token0 (symbolOut - In)
     "USDT-ETH": "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36",
     "USDT-WBTC": "0x9db9e0e53058c89e5b94e29621a205198648425b",
     "USDC-WBTC": "0x99ac8ca7087fa4a2a1fb6357269965a2014abc35",
@@ -10,3 +11,5 @@ export const PoolAddress = { // order = token1-token0 (symbolOut - In)
     "WETH-UNI": "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801",
     "WETH-MKR": "0xe8c6c9227491c0a8156a0106a0204d881bb7e531",
 };
+
+export default PoolAddress;

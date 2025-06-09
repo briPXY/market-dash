@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import * as fetch24Hour from "./fetch24hour.js" 
 
 export const use24HourQuery = ({ symbolIn, symbolOut, src }) => {
-
+   
     const queryKey = useMemo(() => ["24h", symbolIn, symbolOut, src], [symbolIn, symbolOut, src]);
 
     return useQuery({
