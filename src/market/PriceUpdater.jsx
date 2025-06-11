@@ -2,12 +2,6 @@ import { useEffect, useRef } from "react";
 import usePriceStore, { useSourceStore, useSymbolStore } from "../stores/stores";
 import { formatAPI } from "../queries/api_formatter";
 import { decimalTrimmer } from "../utils/decimalTrimmer";
-import { SourceConst } from "../constants/sourceConst";
-
-const supportWebSocket = {
-    binance: true,
-    dex: false,
-}
 
 const closeWebSocket = (ws) => {
     if (!ws.current) return;
@@ -33,48 +27,45 @@ const PriceUpdater = ({ type }) => {
 
     useEffect(() => {
 
-        if (!symbolIn || !src) return;
-
-        const fetchREST = async () => {
-            const latestPrice = await SourceConst[src].livePrice(symbolIn, symbolOut)
-            setPrice(latestPrice);
-        }
-
-        // Websockt for Binance
+        if (!symbolIn || !src) return; 
+ 
         const connectWebSocket = () => {
             if (ws.current !== null) {
-                closeWebSocket(ws);
+                closeWebSocket(ws); 
             }
 
-            const socket = new WebSocket(formatAPI[src](symbolOut, symbolIn)[type]);
+            if (!formatAPI[src](symbolOut, symbolIn)[type]) {
+                return;
+            }
+             
+            const socket = new WebSocket(formatAPI[src](symbolOut, symbolIn)[type]); 
             ws.current = socket;
 
             socket.onmessage = (event) => {
-                const message = JSON.parse(event.data);
-                const price = decimalTrimmer(Number(message.p));
-                setPrice(price);
+                const message = JSON.parse(event.data); 
+                const price = decimalTrimmer(Number(message.p)); 
+                setPrice(price);console.log(message);
             };
 
-            socket.onerror = handleReconnect;
+            socket.onerror = (err) => handleReconnect(err);
             socket.onclose = handleReconnect;
         };
 
-        const handleReconnect = () => {
+        const handleReconnect = (error) => { 
             if (ws.current) {
                 closeWebSocket(ws);
             }
+            if (error){
+                console.error(error)
+            }
+
             clearTimeout(reconnectTimer.current);
             reconnectTimer.current = setTimeout(connectWebSocket, 5000);
         };
 
         let updateTicker;
 
-        if (supportWebSocket[src]) {
-            connectWebSocket();
-        } else {
-            closeWebSocket(ws);
-            updateTicker = setInterval(() => fetchREST(), 5000);
-        }
+        connectWebSocket();
 
         return () => {
             if (ws.current) {

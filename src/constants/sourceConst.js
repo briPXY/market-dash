@@ -1,4 +1,4 @@
-import { binanceTicker, UniswapV3LivePrice } from "../queries/livePrice";
+import { binanceTicker, UniswapV3BulkPrice } from "../queries/livePrice";
 import { PoolAddress } from "./uniswapAddress";
 
 export const SourceConst = {};
@@ -17,7 +17,8 @@ SourceConst.UniswapV3 = {
             Object.keys(children).map(child => [parent, child])
         );
     },
-    livePrice: UniswapV3LivePrice,
+    bulkPrices: UniswapV3BulkPrice,
+    livePrice: UniswapV3BulkPrice,
 };
 
 // Binance non L2 chain

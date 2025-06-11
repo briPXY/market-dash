@@ -13,9 +13,14 @@ export default defineConfig(({ mode }) => {
     ? env.VITE_DOMAIN || 'http://localhost:3000'
     : env.VITE_DOMAIN || '';
 
+  const VITE_WSS_DOMAIN = mode === 'development'
+    ? env.VITE_DOMAIN || 'ws://localhost:3000'
+    : env.VITE_DOMAIN || '';
+
   return {
     define: {
       'import.meta.env.VITE_DOMAIN': JSON.stringify(VITE_DOMAIN),
+      'import.meta.env.VITE_WSS_DOMAIN': JSON.stringify(VITE_WSS_DOMAIN),
     },
     plugins: [react(), tailwindcss()],
     publicDir: 'public',

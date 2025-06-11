@@ -81,7 +81,13 @@ const NumberSign = ({ num = 0, baseNum = 0, unit = '', className = "" }) => {
     return <div className={`${textColor} ${className}`}>{`${num}${unit}`}</div>;
 };
 
-const PopoverButton = ({ children, className = '', showClass = "w-full h-full top-[100%] right-0 z-15", hideClass = "hidden" }) => {
+const PopoverButton = ({
+    children,
+    className = '',
+    showClass = "w-full h-full top-[100%] right-0 z-15",
+    hideClass = "hidden",
+    onPopover,
+}) => {
     const [isOpen, setIsOpen] = useState(false);
     const popoverRef = useRef(null);
 
@@ -95,22 +101,40 @@ const PopoverButton = ({ children, className = '', showClass = "w-full h-full to
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    const handleClick = async () => {
+        const nextState = !isOpen;
+
+        try {
+            // Wait for the promise (if it's a promise)
+            if (onPopover) {
+                await onPopover(nextState);
+            }
+            setIsOpen(nextState);
+        } catch (error) {
+            console.error("onPopover failed:", error);
+            // Optionally show feedback or ignore toggle
+        }
+    };
+
     return (
-        <div ref={popoverRef} style={{ position: "relative", display: "inline-block" }} className={className}>
-            {/* Button */}
-            <div onClick={() => setIsOpen(!isOpen)} >
+        <div
+            ref={popoverRef}
+            style={{ position: "relative", display: "inline-block" }}
+            className={className}
+        >
+            {/* Trigger Button */}
+            <div onClick={handleClick}>
                 {children[0]}
             </div>
 
             {/* Popover Content */}
-
             <div className={`absolute shadow-md ${isOpen ? showClass : hideClass}`}>
                 {children[1]}
             </div>
-
         </div>
     );
 };
+
 
 export const LoadingIcon = ({ className, style, fill = "#fff" }) => {
     return (

@@ -50,6 +50,12 @@ async function uniswapQuery(poolAddress, timeframe, count, pairString) {
                 transaction {
                 id
                 }
+                token0 {
+                    symbol
+                }
+                token1 {
+                    symbol
+                }
             }
     }`;
 

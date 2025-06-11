@@ -1,11 +1,11 @@
 export function xyScaler(d3, OHLCData, xValue, yValue, isLogScale = "LOG", innerWidth, innerHeight, margin, visibleOHLCData) {
     let y;
-
+    // console.log( OHLCData.length);
     if (isLogScale == "LOG") {
         const yData = visibleOHLCData ? visibleOHLCData : OHLCData;
         const min = d3.min(yData, d => d[yValue]);
         const max = d3.max(yData, d => d[yValue]);
-        //console.log(min, max, OHLCData[OHLCData.length - 1]);
+        
         y = d3.scaleLinear()
             .domain([min, max])
             .range([innerHeight, margin.top])
@@ -22,6 +22,14 @@ export function xyScaler(d3, OHLCData, xValue, yValue, isLogScale = "LOG", inner
     const x = d3.scaleTime()
         .domain([d3.min(OHLCData, d => d[xValue]), d3.max(OHLCData, d => d[xValue])])
         .range([margin.left, innerWidth]);
+
+    OHLCData.forEach((d, i) => {
+        const xVal = d.date;
+        const yVal = d[yValue];
+        if (xVal < x.domain()[0] || xVal > x.domain()[1] || yVal < y.domain()[0] || yVal > y.domain()[1]) {
+            console.warn(`Out-of-Bounds Data at Index ${i}:`, d);
+        }
+    });
 
     return { x, y };
 }

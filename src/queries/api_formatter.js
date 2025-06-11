@@ -1,3 +1,5 @@
+import { WSS_DOMAIN } from "../constants/uniswapAddress";
+
 function binance(base = "USDT", symbol = "ETH", range = "50"){
     const result = {}
     result.hour24 = `https://api.binance.com/api/v3/klines?symbol=${symbol.toUpperCase()}${base.toUpperCase()}&interval=5m&limit=288`
@@ -27,9 +29,9 @@ function UniswapV3(base="usdt", symbol = "eth") { // USE L2 Polygon, chain id=13
         gasPrice: "50000000000" // 50 Gwei (estimate)
     });
 
-    result.trade = `https://localhost:3001/uniswap/live/${base.toUpperCase()}/${symbol.toUpperCase()}`;
+    result.index = `${WSS_DOMAIN}/liveprice/UniswapV3/${base.toUpperCase()}-${symbol.toUpperCase()}`
+    // result.trade = `https://localhost:3001/uniswap/live/${base.toUpperCase()}/${symbol.toUpperCase()}`;
     result.mark = `${baseUrl}?${params.toString()}`;
-    result.index = `${baseUrl}?${params.toString()}`; 
     return result;
 }
 

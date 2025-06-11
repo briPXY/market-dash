@@ -1,10 +1,10 @@
-const baseUrl = import.meta.env.VITE_DOMAIN ?? "";
+export const DOMAIN = import.meta.env.VITE_DOMAIN ?? "";
+export const WSS_DOMAIN = import.meta.env.VITE_WSS_DOMAIN ?? "";
 
 export const PoolAddress = {};
 
 async function fetchAndFormatPoolAddresses(poolURL) {
   try {
-    console.log(poolURL);
     const response = await fetch(poolURL);
     const json = await response.json();
     const flatData = json.data;
@@ -29,7 +29,7 @@ async function fetchAndFormatPoolAddresses(poolURL) {
 fetchAndFormatPoolAddresses();
 
 
-PoolAddress.UniswapV3 = await fetchAndFormatPoolAddresses(`${baseUrl}/api/pooladdress/UniswapV3`);
+PoolAddress.UniswapV3 = await fetchAndFormatPoolAddresses(`${DOMAIN}/api/pooladdress/UniswapV3`);
 
 // Unused
 export const TokenAddress = {
