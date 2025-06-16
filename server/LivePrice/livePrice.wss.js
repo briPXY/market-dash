@@ -35,7 +35,7 @@ export default async function livePriceWebSocket(fastify) {
 
         // Clean up when client disconnects
         socket.on('close', () => {
-            LivePriceListener.off(topic, listener); console.log('WebSocket -------------- connection closed'); 
+            LivePriceListener.off(topic, listener); // console.log('WebSocket -------------- connection closed'); 
         });
         socket.on('error', (e) => {
             LivePriceListener.off(topic, listener);

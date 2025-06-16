@@ -45,7 +45,7 @@ const LivePriceOverlay = ({  OHLCData, scale }) => {
 
             {/* Live Price Text (Right Side) */}
             <text x={width - labelWidth - 5} y={priceY + 5} fill="black" fontSize="13px" fontWeight="bold">
-                {livePrice}
+                {parseFloat(livePrice).toFixed(2)}
             </text>
         </svg>
     );

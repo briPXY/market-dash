@@ -20,16 +20,14 @@ fastify.register(await import("@fastify/websocket"));
  
 // Source modules
 
+import "./server/LivePrice/uniswapv3.liveQuery.js";
 import reqOHLC from "./server/historyIO.js";
 import constantsAPI from "./server/constantsAPI.js";
-import "./server/LivePrice/uniswapv3.liveQuery.js";
 import livePriceWebSocket from "./server/LivePrice/livePrice.wss.js";
 
 await fastify.register(reqOHLC);
 await fastify.register(constantsAPI);
 await fastify.register(livePriceWebSocket);
- 
-const HOST = '0.0.0.0'; // Ensure external access
 
 fastify.get('/', function (req, reply) {
     reply.header('Cache-Control', 'public, max-age=300');
@@ -58,10 +56,10 @@ process.on("unhandledRejection", (reason) => {
 });
 
 // eslint-disable-next-line no-undef
-console.log('\x1b[36m%s\x1b[0m', `Starting server on ${HOST} (Local: ${!!process.env.LOCAL_DEV})`);
+console.log('\x1b[36m%s\x1b[0m', `Starting server (Is local?: ${!!process.env.LOCAL_DEV})`);
 
 // Start the proxy server
-fastify.listen({ port: 3000, host: HOST }, (err) => {
+fastify.listen({ port: 3000, host: '0.0.0.0' }, (err) => {
     if (err) {
         fastify.log.error(err);
     }

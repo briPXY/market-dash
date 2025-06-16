@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import usePriceStore, { useSourceStore, useSymbolStore } from "../stores/stores";
 import { formatAPI } from "../queries/api_formatter";
-import { decimalTrimmer } from "../utils/decimalTrimmer";
 
 const closeWebSocket = (ws) => {
     if (!ws.current) return;
@@ -43,8 +42,7 @@ const PriceUpdater = ({ type }) => {
 
             socket.onmessage = (event) => {
                 const message = JSON.parse(event.data); 
-                const price = decimalTrimmer(Number(message.p)); 
-                setPrice(price);console.log(message);
+                setPrice(parseFloat(message.p));
             };
 
             socket.onerror = (err) => handleReconnect(err);

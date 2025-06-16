@@ -55,7 +55,7 @@ const SymbolSelectorItem = ({ pair, setSymbol, src, preloadPrice }) => {
         }
 
         if (SourceConst[src].bulkPrices) { 
-            setPrice(preloadPrice);
+            setPrice(parseFloat(preloadPrice).toFixed(2));
             return;
         }
         else {

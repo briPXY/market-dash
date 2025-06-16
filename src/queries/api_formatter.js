@@ -29,8 +29,8 @@ function UniswapV3(base="usdt", symbol = "eth") { // USE L2 Polygon, chain id=13
         gasPrice: "50000000000" // 50 Gwei (estimate)
     });
 
-    result.index = `${WSS_DOMAIN}/liveprice/UniswapV3/${base.toUpperCase()}-${symbol.toUpperCase()}`
-    // result.trade = `https://localhost:3001/uniswap/live/${base.toUpperCase()}/${symbol.toUpperCase()}`;
+    // result.index = `${WSS_DOMAIN}/liveprice/UniswapV3/${base.toUpperCase()}-${symbol.toUpperCase()}`
+    result.trade = `${WSS_DOMAIN}/liveprice/UniswapV3/${base.toUpperCase()}-${symbol.toUpperCase()}`;
     result.mark = `${baseUrl}?${params.toString()}`;
     return result;
 }

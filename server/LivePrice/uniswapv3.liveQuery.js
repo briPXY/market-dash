@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-import { decimalTrimmer } from "../../src/utils/decimalTrimmer.js";
 import LivePrice, { LivePriceListener } from "./livePrice.js";
 import PoolAddress from "../poolAddress.js";
 
@@ -46,29 +45,33 @@ export const UniswapV3LivePrice = async (symbols, address) => {
         adjustedPrice = 1 / adjustedPrice;
     }
 
-    const price = decimalTrimmer(adjustedPrice);
-
-    LivePrice.UniswapV3[symbols] = parseFloat(price);
+    LivePrice.UniswapV3[symbols] = parseFloat(adjustedPrice);
 
     LivePriceListener.emit(`priceUpdate:UniswapV3:${symbols}`, {
         provider: 'UniswapV3',
         symbol: symbols,
-        p: parseFloat(price),
+        p: parseFloat(adjustedPrice),
         timestamp: new Date().toISOString()
     }); 
 
+} 
+ 
+function fetchDelay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function pollUniswapV3() {
-    try {
-        for (const [symbol, address] of Object.entries(PoolAddress.UniswapV3)) {
+    while (true) {
+        try {
+            for (const [symbol, address] of Object.entries(PoolAddress.UniswapV3)) {
             await UniswapV3LivePrice(symbol, address);
         }
-    } catch (err) {
-        console.error("Polling error:", err);
-    } finally {
-        // schedule the next run 5s after *this* run completes 
+        } catch (err) {
+            console.error("Polling error:", err);
+        }
+
+        await fetchDelay(5000); // Wait 5 seconds between cycles
     }
 }
- 
+
 pollUniswapV3();
