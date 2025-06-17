@@ -35,7 +35,7 @@ export function candlestick(d3, svg, scale, tooltipRef, historicalData, innerHei
         .attr("height", d => Math.abs(scale.y(d.open) - scale.y(d.close)))
         .attr("fill", d => d.close >= d.open ? bullishColor : bearishColor)
         .attr("stroke", d => d.close >= d.open ? bullishColor : bearishColor)
-        .on("mouseover", (event, d) => {
+        .on("mouseover", (event, d) => { 
             showToolTip(d3, event, tooltip, d);
         })
         .on("mouseout", () => {

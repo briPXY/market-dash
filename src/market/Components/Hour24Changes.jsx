@@ -13,8 +13,8 @@ export const Hour24Changes = ({ hour24data }) => {
                 <CardValueChange num={priceChanges.percent} baseNum={0} unit={'%'} text="changes" />
             </Flex>
             <Flex className="flex-col gap-2 md:gap-4">
-                <CardValueChange num={priceChanges.low} baseNum={priceChanges.low + 100} text={`lowest 24h`} />
-                <CardValueChange num={priceChanges.high} baseNum={0} text={`highest 24h`} />
+                <CardValueChange num={priceChanges.low.toFixed(2)} baseNum={priceChanges.low + 100} text={`lowest 24h`} />
+                <CardValueChange num={priceChanges.high.toFixed(2)} baseNum={0} text={`highest 24h`} />
             </Flex>
             <Flex className="flex-col gap-2 md:gap-4">
                 <CardValueChange num={priceChanges.volume.toFixed(0)} text={`24h volume`} />

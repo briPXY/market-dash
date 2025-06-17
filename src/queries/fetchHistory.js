@@ -76,31 +76,28 @@ async function UniswapV3(symbolIn, symbolOut, interval, pool = "UniswapV3") {
         }
 
         const server = import.meta.env.VITE_OLHC_URL || "/uniswap/ohlc/";
-
         const response = await fetch(`${server}${symbolIn}/${symbolOut}/${interval}`);
-
         const data = await response.json();
+
         if (!data) {
             throw new Error("Invalid data received");
         }
-
-        const onlyReturn = (num) => parseFloat(num);
-        const divideByOne = (num) => parseFloat(1 / num);
-
-        const multiplyUnixTime = timeProp[interval] == "periodStartUnix" ? 1000 : 1;
-        const sampleValue = data.data[poolInterval[interval]][0].close;
-        const operator = sampleValue > 1 ? onlyReturn : divideByOne;
+        
+        const reversedRate = data.data[poolInterval[interval]][0].close < 1; // Reversed against symbolIn/symbolOut logic
+        const operator = reversedRate ? (num) => parseFloat(1 / num) : (num) => num;
+        const multiplyUnixTime = timeProp[interval] == "periodStartUnix" ? 1000 : 1; 
+        data.data[poolInterval[interval]].reverse(); // Beucause it's desc in graphql query.
 
         const convertedData = data.data[poolInterval[interval]].map(entry => ({
-            close: Number(operator(entry.close).toFixed(2)),
+            close: Number(operator(entry.close)),
             date: entry[timeProp[interval]] * multiplyUnixTime,
             dateOpen: 0, // Dummy value
-            high: Number(operator(entry.low).toFixed(2)), // Swap high/low
-            low: Number(operator(entry.high).toFixed(2)),
-            open: Number(operator(entry.open).toFixed(2)),
+            high: Number(operator(entry.low)), // Swap high/low
+            low: Number(operator(entry.high)),
+            open: Number(operator(entry.open)),
             quote: 0,    // Dummy value
             trades: 0,   // Dummy value
-            volume: Number(parseFloat(entry.volumeUSD).toFixed(2)),
+            volume: Number(parseFloat(entry.volumeUSD)),
         }));
 
         if (data.data.swaps) {

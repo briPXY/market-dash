@@ -26,9 +26,6 @@ async function fetchAndFormatPoolAddresses(poolURL) {
   }
 }
 
-fetchAndFormatPoolAddresses();
-
-
 PoolAddress.UniswapV3 = await fetchAndFormatPoolAddresses(`${DOMAIN}/api/pooladdress/UniswapV3`);
 
 // Unused

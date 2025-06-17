@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import dotenv from "dotenv";
 
@@ -18,7 +17,6 @@ const timeframeMapping = {
 
 
 async function uniswapQuery(poolAddress, timeframe, count, pairString) {
-
     const { type, timeField } = timeframeMapping[timeframe];
 
     const query = `{
@@ -26,7 +24,9 @@ async function uniswapQuery(poolAddress, timeframe, count, pairString) {
                 first: ${count},
                 orderBy: ${timeField},
                 orderDirection: desc,
-                where: { pool: "${poolAddress}" }
+                where: { 
+                    pool: "${poolAddress}"
+                    }
             ) {
                 ${timeField}
                 open
@@ -62,7 +62,7 @@ async function uniswapQuery(poolAddress, timeframe, count, pairString) {
     try {
         const response = await axios.post(
             // eslint-disable-next-line no-undef
-            process.env.SUBGRAPH_URL, // ✅ Use Uniswap Subgraph URL from .env
+            process.env.SUBGRAPH_URL, // Use Uniswap Subgraph URL from .env
             { query },
             {
                 headers: {
