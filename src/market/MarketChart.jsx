@@ -16,14 +16,13 @@ function MarketChart({ OHLCData, isFetching, isError, setRange, range, network }
     const [chart, setChart] = useState({ n: "Candlestick", f: candlestick });
     const [lengthPerItem, setLengthPerItem] = useState(isAgentMobile ? 6 : 12);
     const [isLogScale, setYscale] = useState("LOG");
-    const width = network.isDex ? "80%" : "100%";
 
     if (!OHLCData.length) {
         return (<div>waiting for the network...</div>)
     }
 
     return (
-        <div className={`bg-primary p-2 md:p-4 h-full w-full md:w-[${width}]`}>
+        <div className={`bg-primary p-2 md:p-4 h-full w-full ${network.isDex ? 'md:w-[80%]' : 'md:w-[100%]'}`}>
             <Flex className="flex-col h-full">
                 <Flex className="pb-4 pt-4 items-center gap-2 justify-between">
                     <RangeSelector setRange={setRange} selected={range} />

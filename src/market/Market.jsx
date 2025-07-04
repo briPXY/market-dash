@@ -5,7 +5,6 @@ import MarketChart from "./MarketChart";
 import { useChartQuery } from "../queries/chartquery";
 import { LivePriceText } from "./Components/LivePriceText";
 import { useSourceStore, useSymbolStore } from "../stores/stores";
-import { use24HourQuery } from "../queries/24hourQuery";
 import { Hour24Changes } from "./Components/Hour24Changes";
 import { SymbolSelector } from "./Components/SymbolSelector";
 import { NetworkSelection } from "./Components/NetworkSelection";
@@ -27,18 +26,16 @@ function Market() {
         src: src,
     });
 
-    //console.log("query")
-    const { data: hour24data, isLoading: hour24Loading } = use24HourQuery({ symbolIn: symbolIn, symbolOut: symbolOut, src: src });
-
-    //console.log("24h")
     if (!src) {
-        //console.log("netselect")
         return (<NetworkSelection />);
     }
 
     if (src && !symbolIn) {
-        //console.log("loadsymb")
         return (<LoadSymbol src={src} />);
+    }
+
+    if (!data || isFetching) {
+        return <div>Loading historical data</div>
     }
 
     return (
@@ -50,7 +47,7 @@ function Market() {
                         <LivePriceText OHLCData={data.ohlc ? data.ohlc : data} />
                         <PoolAddressView src={src} symbolIn={symbolIn} symbolOut={symbolOut} />
                     </Flex>
-                    <Hour24Changes hour24Loading={hour24Loading} hour24data={hour24data} />
+                    <Hour24Changes symbolIn={symbolIn} symbolOut={symbolOut} src={src} />
                 </Flex>
                 <Flex className="flex flex-col md:flex-row gap-1">
                     <MarketChart
@@ -62,7 +59,7 @@ function Market() {
                         isError={isError}
                         network={SourceConst[src]}
                     />
-                    <TabPanelParent className="bg-primary mx-auto"><Swap symbolIn={symbolIn} symbolOut={symbolOut} label="Swap" /></TabPanelParent>
+                    {SourceConst[src].isDex && <TabPanelParent className="bg-primary mx-auto"><Swap symbolIn={symbolIn} symbolOut={symbolOut} label="Swap" /></TabPanelParent>}
                 </Flex>
 
                 <SwapHistory swaps={data.swaps ? data.swaps : null} />
