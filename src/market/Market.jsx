@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Flex } from "../Layout/Layout";
+import { Flex, TabPanelParent } from "../Layout/Layout";
 import MarketChart from "./MarketChart";
 
 import { useChartQuery } from "../queries/chartquery";
@@ -12,6 +12,8 @@ import { NetworkSelection } from "./Components/NetworkSelection";
 import { LoadSymbol } from "./Components/LoadSymbol";
 import { PoolAddressView } from "./Components/PoolAddressView";
 import { SwapHistory } from "./SwapHistory";
+import Swap from "../contracts/swap";
+import { SourceConst } from "../constants/sourceConst";
 
 function Market() {
     const [range, setRange] = useState("1h");
@@ -25,14 +27,18 @@ function Market() {
         src: src,
     });
 
+    //console.log("query")
     const { data: hour24data, isLoading: hour24Loading } = use24HourQuery({ symbolIn: symbolIn, symbolOut: symbolOut, src: src });
 
+    //console.log("24h")
     if (!src) {
+        //console.log("netselect")
         return (<NetworkSelection />);
     }
 
     if (src && !symbolIn) {
-        return (<LoadSymbol src={src} />)
+        //console.log("loadsymb")
+        return (<LoadSymbol src={src} />);
     }
 
     return (
@@ -46,14 +52,19 @@ function Market() {
                     </Flex>
                     <Hour24Changes hour24Loading={hour24Loading} hour24data={hour24data} />
                 </Flex>
-                <MarketChart
-                    symbol={symbolOut}
-                    setRange={setRange}
-                    range={range}
-                    OHLCData={data.ohlc ? data.ohlc : data}
-                    isFetching={isFetching}
-                    isError={isError}
-                />
+                <Flex className="flex flex-col md:flex-row gap-1">
+                    <MarketChart
+                        symbol={symbolOut}
+                        setRange={setRange}
+                        range={range}
+                        OHLCData={data.ohlc ? data.ohlc : data}
+                        isFetching={isFetching}
+                        isError={isError}
+                        network={SourceConst[src]}
+                    />
+                    <TabPanelParent className="bg-primary mx-auto"><Swap symbolIn={symbolIn} symbolOut={symbolOut} label="Swap" /></TabPanelParent>
+                </Flex>
+
                 <SwapHistory swaps={data.swaps ? data.swaps : null} />
             </Flex>
         </div>

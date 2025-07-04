@@ -1,7 +1,8 @@
 
- 
-import PropTypes from 'prop-types'; 
+
+import PropTypes from 'prop-types';
 import './layout.css';
+import React, { useState } from "react";
 
 const FlexHug = ({ column, wrap, style = {}, className = "", children, ...props }) => {
     return (
@@ -284,7 +285,33 @@ BulletText.propTypes = {
     children: PropTypes.node.isRequired,
     className: PropTypes.string,
     style: PropTypes.object,
-}; 
+};
+
+export function TabPanelParent({ children, className = "w-full bg-primary max-w-md mx-auto", tabClassName = "flex-1 py-2 text-sm font-medium ", activeTabClassName = "bg-secondary", inactiveTabClassName = "bg-secondary hover:bg-primary" }) {
+    const [activeTab, setActiveTab] = useState(0);
+
+    return (
+        <div className={className}>
+            <div className="flex space-x-2 mb-4">
+                {React.Children.map(children, (child, index) => (
+                    <button
+                        onClick={() => setActiveTab(index)}
+                        className={`${tabClassName} ${activeTab === index ? activeTabClassName : inactiveTabClassName}`}
+                    >
+                        {child.props.label || `Tab ${index + 1}`}
+                    </button>
+                ))}
+            </div>
+            <div>
+                {React.Children.map(children, (child, index) => (
+                    <div className={activeTab === index ? "block" : "hidden"}>
+                        {child}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
 
 export { Flex, Section, BoxStretch, Grid, Line, SectionFull, Textbox, Paragraph, FlexBC, FlexCC, FlexSC, Box, StackedImages, BulletText };
 export default FlexHug;

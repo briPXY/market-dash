@@ -19,8 +19,73 @@
   --panel-background: #0f0f14;
 
   --acc-01: #2fb59c;
+  --color-accent: #2fb59c;
+  --color-primary: #0f0f14;
+  --color-secondary: #1b1f27;
+  --color-washed: #ffffff54;
 }
-  
+
+@layer utilities {
+  .bg-primary {
+    background-color: #0f0f14;
+  }
+
+  .bg-secondary {
+    background-color: var(--color-secondary);
+  }
+
+  .bg-accent {
+    background-color: var(--color-accent);
+  }
+
+  .bg-negative-accent{
+    background-color: tomato;
+  }
+
+  .text-primary {
+    color: var(--color-primary);
+  }
+
+  .text-washed {
+    color: var(--color-washed);
+  }
+
+  .text-secondary {
+    color: var(--color-secondary)
+  }
+
+  .text-accent {
+    color: var(--color-accent);
+  }
+
+  .text-negative-accent {
+    color: tomato;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    /* IE/Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+
+  .border-secondary {
+    border: 1px solid var(--color-secondary);
+  }
+
+  .border-washed {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .border-active {
+    border: 1px solid var(--color-accent);
+  }
+}
+
 /**
   * Custom fonts
   * You can control variable axes as shown below:
@@ -43,7 +108,7 @@
 .flex-flex {
   display: flex;
   border-radius: var(--border-radius);
-  box-sizing: border-box; 
+  box-sizing: border-box;
   flex-wrap: nowrap,
 }
 
@@ -53,11 +118,11 @@
 
 .bullet-text {
   display: flex;
-  align-items: center;  
+  align-items: center;
 }
 
-.section-s {  
-  box-sizing: border-box; 
+.section-s {
+  box-sizing: border-box;
 }
 
 .stacked-images {
@@ -73,25 +138,25 @@
   line-height: 1;
 }
 
-.panel{
+.panel {
   padding: var(--padding);
-  background-color: var(--panel-background); 
+  background-color: var(--panel-background);
   border-radius: var(--border-radius);
 }
 
-.bordered{
+.bordered {
   border: var(--border);
 }
 
-.bordered-side{
+.bordered-side {
   border-right: var(--border);
   border-left: var(--border);
 }
 
-.display-text-normal{
+.display-text-normal {
   font-size: var(--display-size);
 }
 
-.display-text-small{
+.display-text-small {
   font-size: 56px !important;
 }

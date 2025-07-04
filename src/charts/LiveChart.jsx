@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
-import LivePriceOverlay from "./LivePriceOverlay";
 import { drawGrid, drawSubIndicatorGrid } from "./grid";
 import { drawAxesAndLabels } from "./axis";
 import { xyScaler } from "./helper/xyScaler";
@@ -8,6 +7,7 @@ import { IndicatorSelector } from "./indicators/IndicatorSelector";
 import { indicatorList, subIndicatorList } from "./indicators/indicatorList"
 import { drawVolumeBars } from "./charts/volume";
 import { getVisibleIndexRange } from "./helper/getVisibleIndices";
+import LivePriceLine from "./LivePriceLine";
 
 const LiveChart = ({
     OHLCData,
@@ -22,16 +22,16 @@ const LiveChart = ({
     const ySvgRef = useRef(null);
     const tooltipRef = useRef(null);
     const subRef = useRef(null);
-    const scrollContainerRef = useRef(null); // for the scrollable div
+    const scrollContainerRef = useRef(null); // For the scrollable div
 
-    const [subIndicators, setSubIndicators] = useState([]); 
+    const [subIndicators, setSubIndicators] = useState([]);
 
     // Debounced scroll state for visibleOHLCData
     const [scrollStopped, setScrollStopped] = useState(0);
 
     const margin = useRef({ top: 15, right: 5, bottom: 15, left: 5 })
     const height = window.innerHeight * 0.425;
-    const innerWidth = (lengthPerItem * OHLCData.length) - margin.current.left - margin.current.right;
+    const innerWidth = useMemo(() => (lengthPerItem * OHLCData.length) - margin.current.left - margin.current.right, [OHLCData.length, lengthPerItem])
     const innerHeight = height - margin.current.top - margin.current.bottom;
     const subIndicatorHeight = useMemo(() => innerHeight * 0.5 * subIndicators.length, [innerHeight, subIndicators])
 
@@ -61,7 +61,8 @@ const LiveChart = ({
         };
 
         el.addEventListener("scroll", onScroll);
-        
+        setScrollStopped(Date.now()); // Force Y adjustment at start
+
         return () => {
             el.removeEventListener("scroll", onScroll);
             if (timeout) clearTimeout(timeout);
@@ -99,13 +100,13 @@ const LiveChart = ({
     useEffect(() => {
         if (isFetching) return;
         drawSubIndicatorGrid(subSvg, innerWidth, OHLCData, subIndicatorHeight, margin.current, subIndicators.length);
-    }, [OHLCData, innerWidth, isFetching, scale, subIndicatorHeight, subIndicators, subSvg])
+    }, [OHLCData, innerWidth, isFetching, scale, subIndicatorHeight, subIndicators, subSvg]);
 
     return (
         <div className="relative">
-            <div className="flex gap-0 ">
+            <div className="flex gap-0">
                 <div
-                    className="w-full max-w-[92vw] overflow-x-auto whitespace-nowrap hide-scrollbar scroll-stick-left"
+                    className="overflow-x-auto whitespace-nowrap flex-1 hide-scrollbar scroll-stick-left"
                     ref={scrollContainerRef}
                 >
                     <svg ref={svgRef} width={lengthPerItem * OHLCData.length + 100} height={height}>
@@ -116,12 +117,13 @@ const LiveChart = ({
                     {/*sub indicator */}
                     <svg ref={subRef} width={lengthPerItem * OHLCData.length + 100} height={height * 0.5 * subIndicators.length}></svg>
                 </div>
-                <svg
-                    width={'3rem'}
-                    height={height}
-                    className="sticky right-0 z-10"
-                    ref={ySvgRef}
-                ></svg>
+                <div className="w-fit">
+                    <svg
+                        width={'3rem'}
+                        height={height}
+                        ref={ySvgRef}
+                    ></svg>
+                </div>
             </div>
             <div
                 ref={tooltipRef}
@@ -131,9 +133,9 @@ const LiveChart = ({
                 }}
             ></div>
 
-            <LivePriceOverlay OHLCData={OHLCData} scale={scale} />
-
-            <div className="absolute left-0 top-0 max-w-[94vh] max-h-100 z-10">
+            <LivePriceLine OHLCData={OHLCData} scale={scale} innerWidth={innerWidth} />
+            
+            <div className="absolute left-0 top-0 max-w-[94vw] max-h-100 z-10">
                 <IndicatorSelector
                     d3={d3}
                     svg={svg}
@@ -144,7 +146,7 @@ const LiveChart = ({
                     init={"SMA"}
                 />
             </div>
-            <div style={{ top: `${height}px` }} className="absolute left-0 max-w-[94vh] max-h-100 z-10">
+            <div style={{ top: `${height}px` }} className="absolute left-0 max-w-[94vw] max-h-100 z-10">
                 <IndicatorSelector
                     d3={d3}
                     svg={subSvg}
