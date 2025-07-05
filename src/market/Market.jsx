@@ -59,7 +59,10 @@ function Market() {
                         isError={isError}
                         network={SourceConst[src]}
                     />
-                    {SourceConst[src].isDex && <TabPanelParent className="bg-primary mx-auto"><Swap symbolIn={symbolIn} symbolOut={symbolOut} label="Swap" /></TabPanelParent>}
+                    {SourceConst[src].isDex &&
+                        <TabPanelParent className="bg-primary mx-auto">
+                            <Swap symbolIn={symbolIn} symbolOut={symbolOut} network={SourceConst[src]} label="Swap" />
+                        </TabPanelParent>}
                 </Flex>
 
                 <SwapHistory swaps={data.swaps ? data.swaps : null} />

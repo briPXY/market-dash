@@ -24,4 +24,17 @@ export const useSourceStore = create((set) => ({
 	},
 }));
 
+// User wallet login info
+export const useWalletStore = create((set) => ({
+	address: null,          // string | null
+	signature: null,        // string | null
+	message: null,          // string | null
+
+	setWalletInfo: ({ address, signature, message }) =>
+		set({ address, signature, message }),
+
+	clearWalletInfo: () =>
+		set({ address: null, signature: null, message: null }),
+}));
+
 export default usePriceStore;

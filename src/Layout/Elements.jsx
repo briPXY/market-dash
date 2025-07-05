@@ -183,6 +183,20 @@ export const LoadingIcon = ({ className, style, fill = "#fff" }) => {
     );
 };
 
+export const CustomModal = ({ title, message, onClose }) => {
+    return (
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white border border-gray-300 rounded-lg shadow-lg p-5 z-50 max-w-sm text-center font-inter">
+            <h3 className="mt-0 text-gray-800 text-xl font-semibold">{title}</h3>
+            <p className="text-gray-600 mt-2">{message}</p>
+            <button
+                onClick={onClose}
+                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md cursor-pointer mt-4 text-base transition-colors duration-300 ease-in-out"
+            >
+                OK
+            </button>
+        </div>
+    );
+};
 
 export { Link, DetectView, Text, NumberSign, PopoverButton, Button };
 export default Button;

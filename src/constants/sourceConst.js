@@ -5,9 +5,11 @@ export const SourceConst = {};
 
 // uniswap v3
 SourceConst.UniswapV3 = {
+    name: "UniswapV3",
     desc: "Uniswap V3 Ethereum Mainnet",
     network: "ethereum",
     isDex: true,
+    poolURL:"https://app.uniswap.org/explore/pools/ethereum/",
     intervals: ["1h", "1d"],
     symbols: Object.entries(PoolAddress.UniswapV3).flatMap(([parent, children]) =>
         Object.keys(children).map(child => [child, parent])
@@ -23,6 +25,7 @@ SourceConst.UniswapV3 = {
 
 // Binance non L2 chain
 SourceConst.binance = {
+    name: "binance",
     desc: "Binance CEX",
     network: "binance-smart-chain",
     isDex: false,
