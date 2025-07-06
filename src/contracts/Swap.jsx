@@ -3,7 +3,7 @@ import usePriceStore, { useWalletStore } from "../stores/stores";
 import { TokenIcon } from "@web3icons/react";
 import { PoolAddress } from "../constants/uniswapAddress";
 import { svg } from "../Layout/svg";
-import { Login } from "./Login";
+import { WalletLogin } from "./Login";
 
 function Swap({ symbolIn, symbolOut, network }) {
     const [sellAmount, setSellAmount] = useState(0);
@@ -83,7 +83,7 @@ function Swap({ symbolIn, symbolOut, network }) {
                 {/* <div className="text-sm text-gray-400">${(buyAmount).toFixed(2)}</div> */}
             </div>
 
-            {!address && <Login setLogState={setloginState} />}
+            {!address && <WalletLogin setLogState={setloginState} />}
             {address && <button className="bg-accent p-3 rounded-md text-primary font-semibold">Swap</button>}
 
             <button
