@@ -25,7 +25,7 @@ export async function walletLogin(setState = () => { null }) {
         // getSigner() now requires passing the account address
         const signer = await provider.getSigner(connectedAddress);
 
-        const messageToSign = `You're about to sign in on market-dash app.\n\nWARNING: This is a demo app, risk from inconsistent data might occurs. Check established dApp like Uniswap for accurate gas, rates and real time prices\n\nAddress: ${connectedAddress}\nTimestamp: ${Date.now()}`;
+        const messageToSign = `You're about to sign in on market-dash app.\n\nWARNING: This is a developer demo app, risk from inconsistent data might occurs. Check established dApp like Uniswap for accurate gas, rates and real time prices\n\nAddress: ${connectedAddress}\nTimestamp: ${Date.now()}`;
 
         let signature = null;
         try {

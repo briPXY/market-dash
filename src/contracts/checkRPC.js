@@ -43,6 +43,7 @@ RPC_URLS.UniswapV3 = [
     "https://rpc.ankr.com/eth",              // Very stable, widely used
     "https://ethereum.publicnode.com",       // Fast, reliable public RPC
     "https://eth.llamarpc.com",              // Solid fallback, community-backed
+    "https://cloudflare-eth.com",
 
     // 🧪 Less battle-tested or newer
     "https://rpc.payload.de/eth",            // Community maintained, Germany-based

@@ -4,9 +4,30 @@ import { TokenIcon } from "@web3icons/react";
 import { PoolAddress } from "../constants/uniswapAddress";
 import { svg } from "../Layout/svg";
 import { WalletLogin } from "./Login";
+import FiatValue from "./FiatValue";
+
+
+function removeNonNumeric(rawValue) {
+    let cleaned = rawValue
+        .replace(/[^0-9.]/g, '')          // allow only digits and dot
+        .replace(/^\.+/, '')              // remove leading dots
+        .replace(/\.{2,}/g, '.');         // replace multiple dots with single dot
+
+    // Ensure only one decimal separator
+    const parts = cleaned.split('.');
+    if (parts.length > 2) {
+        cleaned = parts[0] + '.' + parts.slice(1).join('');
+    }
+
+    // Remove leading zeros unless directly before decimal point
+    cleaned = cleaned.replace(/^0+(?=\d)/, '');
+
+    return cleaned;
+}
+
 
 function Swap({ symbolIn, symbolOut, network }) {
-    const [sellAmount, setSellAmount] = useState(0);
+    const [sellAmount, setSellAmount] = useState('');
     const [buyAmount, setBuyAmount] = useState(0);
     const [currentSymbolIn, setCurrentSymbolIn] = useState(symbolIn);
     const [currentSymbolOut, setCurrentSymbolOut] = useState(symbolOut);
@@ -24,18 +45,30 @@ function Swap({ symbolIn, symbolOut, network }) {
     };
 
     const handleSellChange = (value) => {
-        setSellAmount(value);
-        const amount = reversed ? value / currentRate : value * currentRate;
-        setBuyAmount(amount.toFixed(4));
+        let cleaned = removeNonNumeric(value);
+        const numeric = parseFloat(cleaned.replace(',', '.'));
+        setSellAmount(cleaned);
+        if (!isNaN(numeric)) {
+            const amount = reversed ? numeric / currentRate : numeric * currentRate;
+            setBuyAmount(amount.toFixed(4));
+        } else {
+            setBuyAmount(0); // fallback
+        }
     };
 
     const handleBuyChange = (value) => {
-        setBuyAmount(value);
-        const amount = reversed ? value * currentRate : value / currentRate;
-        setSellAmount(amount.toFixed(4));
+         let cleaned = removeNonNumeric(value);
+        const numeric = parseFloat(cleaned.replace(',', '.'));
+        setBuyAmount(cleaned);
+        if (!isNaN(numeric)) {
+            const amount = reversed ? numeric * currentRate : numeric / currentRate;
+            setSellAmount(amount.toFixed(4));
+        } else {
+            setSellAmount(0); // fallback
+        }
     };
 
-    useEffect(() => {
+    useEffect(() => { // Reset form when pool address changed
         setCurrentSymbolIn(symbolIn);
         setCurrentSymbolOut(symbolOut);
         setSellAmount(0);
@@ -45,19 +78,20 @@ function Swap({ symbolIn, symbolOut, network }) {
     return (
         <div className="flex flex-col gap-2 bg-primary p-4 rounded-md w-full h-full relative">
             <div className="flex flex-col items-start gap-2 rounded-lg p-4 border-washed hover:border-active">
-                <div className="text-washed">Sell</div>
+                <div>Sell</div>
                 <div className="flex items-center justify-between">
                     <input
-                        type="number"
+                        type="text"
+                        inputMode="decimal"
+                        pattern="[0-9]*[.,]?[0-9]*"
                         value={sellAmount}
-                        onChange={(e) => handleSellChange(parseFloat(e.target.value) || 0)}
-                        className="p-2 rounded-md text-white w-full text-2xl"
-                        placeholder="0"
+                        onChange={(e) => handleSellChange(e.target.value)}
+                        className="px-0 py-2 focus-within:outline-2 rounded-md text-white w-full text-2xl"
                     />
                     <TokenIcon symbol={currentSymbolIn.toLowerCase()} size={32} color="#fff" variant="branded" />
                     <span className="ml-2 text-white font-semibold">{currentSymbolIn}</span>
                 </div>
-                {/* <div className="text-sm text-gray-400">${(sellAmount * currentRate).toFixed(2)}</div> */}
+                <FiatValue symbol={currentSymbolIn} value={sellAmount} />
             </div>
 
             <button
@@ -68,19 +102,20 @@ function Swap({ symbolIn, symbolOut, network }) {
             </button>
 
             <div className="flex flex-col items-start gap-2 rounded-lg p-4 border-washed hover:border-active">
-                <div className="text-washed">Buy</div>
+                <div>Buy</div>
                 <div className="flex items-center justify-between">
                     <input
-                        type="number"
+                        type="text"
+                        inputMode="decimal"
+                        pattern="[0-9]*[.,]?[0-9]*"
                         value={buyAmount}
-                        onChange={(e) => handleBuyChange(parseFloat(e.target.value) || 0)}
-                        className="p-2 rounded-md text-white w-full text-2xl"
-                        placeholder="0"
+                        onChange={(e) => handleBuyChange((e.target.value))}
+                        className="px-0 py-2 focus-within:outline-2 rounded-md text-white w-full text-2xl"
                     />
                     <TokenIcon symbol={currentSymbolOut.toLowerCase()} size={32} color="#fff" variant="branded" />
                     <span className="ml-2 text-white font-semibold">{currentSymbolOut}</span>
                 </div>
-                {/* <div className="text-sm text-gray-400">${(buyAmount).toFixed(2)}</div> */}
+                <FiatValue symbol={currentSymbolOut} value={buyAmount} />
             </div>
 
             {!address && <WalletLogin setLogState={setloginState} />}

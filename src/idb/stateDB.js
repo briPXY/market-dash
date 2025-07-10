@@ -37,3 +37,38 @@ export async function isSavedStateExist(id) {
     const data = await db.get('stateStore', id);
     return data != undefined; // Returns `true` if the ID exist
 }
+
+// Timed DB 
+export async function saveStateTimed(id, state, ttlSeconds = 300) {
+    try {
+        const db = await dbPromise;
+        const expiresAt = Date.now() + ttlSeconds * 1000;
+        await db.put('stateStore', { 
+            id, 
+            value: JSON.stringify(state),
+            expiresAt 
+        });
+    } catch (error) {
+        console.error("Failed to save state:", error);
+    }
+}
+
+export async function loadStateTimed(id) {
+    try {
+        const db = await dbPromise;
+        const record = await db.get('stateStore', id);
+        if (!record) return null;
+
+        if (record.expiresAt && Date.now() > record.expiresAt) {
+            // Optionally delete the expired record
+            await db.delete('stateStore', id);
+            return null; // expired
+        }
+
+        return JSON.parse(record.value);
+    } catch (error) {
+        console.error("Failed to load state:", error);
+        return null;
+    }
+}
+
