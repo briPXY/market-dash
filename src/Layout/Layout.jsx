@@ -287,11 +287,11 @@ BulletText.propTypes = {
     style: PropTypes.object,
 };
 
-export function TabPanelParent({ children, className = "w-full bg-primary max-w-md mx-auto", tabClassName = "flex-1 py-2 text-sm font-medium ", activeTabClassName = "bg-secondary", inactiveTabClassName = "bg-secondary hover:bg-primary" }) {
+export function TabPanelParent({ children, className = "w-full bg-primary max-w-md mx-auto", tabClassName = "flex-1 py-2 text-sm font-medium ", activeTabClassName = "bg-secondary", inactiveTabClassName = "bg-secondary hover:bg-primary", style={}}) {
     const [activeTab, setActiveTab] = useState(0);
 
     return (
-        <div className={className}>
+        <div className={className} style={style}>
             <div className="flex space-x-2 mb-4">
                 {React.Children.map(children, (child, index) => (
                     <button

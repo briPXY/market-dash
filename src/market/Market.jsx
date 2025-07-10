@@ -11,7 +11,7 @@ import { NetworkSelection } from "./Components/NetworkSelection";
 import { LoadSymbol } from "./Components/LoadSymbol";
 import { PoolAddressView } from "./Components/PoolAddressView";
 import { SwapHistory } from "./SwapHistory";
-import Swap from "../contracts/swap";
+import Swap from "../contracts/Swap";
 import { SourceConst } from "../constants/sourceConst";
 
 function Market() {
@@ -59,10 +59,9 @@ function Market() {
                         isError={isError}
                         network={SourceConst[src]}
                     />
-                    {SourceConst[src].isDex &&
-                        <TabPanelParent className="bg-primary mx-auto">
-                            <Swap symbolIn={symbolIn} symbolOut={symbolOut} network={SourceConst[src]} label="Swap" />
-                        </TabPanelParent>}
+                    <TabPanelParent className="bg-primary mx-auto" style={{ display: SourceConst[src].isDex ? "block" : "none" }}>
+                        <Swap symbolIn={symbolIn} symbolOut={symbolOut} network={SourceConst[src]} label="Swap" />
+                    </TabPanelParent>
                 </Flex>
 
                 <SwapHistory swaps={data.swaps ? data.swaps : null} />

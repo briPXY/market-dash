@@ -17,7 +17,6 @@ function FiatValue({ symbol, value }) {
                     await saveStateTimed(`fiat_${symbol}`, newRate, 60);
                     setRate(newRate);
                 } else {
-                    console.log("has fiat state");
                     setRate(await loadStateTimed(`fiat_${symbol}`)); // Load saved state if exists
                 }
             } catch (error) {
