@@ -20,6 +20,11 @@ export function IndicatorList({ setIndicator }) {
 
 export function RangeSelector({ setRange, selected }) {
     const source = useSourceStore(state => state.src);
+    
+    if (!source){
+        return null;
+    }
+
     const timeframes = SourceConst[source].intervals;
  
     return (

@@ -4,6 +4,7 @@ import { Section } from './Layout/Layout'
 import { PriceUpdater } from './market/PriceUpdater';
 import Market from './market/Market';
 import { TopBar } from './generic_components/TopBar';
+import "./idb/init.js";
 
 function App() {
 

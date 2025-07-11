@@ -4,9 +4,9 @@ import Button from "../../Layout/Elements"
 import { Flex } from "../../Layout/Layout"
 
 export const PoolAddressView = ({ src, symbolOut, symbolIn }) => {
-    if (!SourceConst[src].isDex) return null;
+    if (!symbolOut || !src || !SourceConst[src].isDex) return null;
 
-    const address = PoolAddress[src][symbolOut.toUpperCase()][symbolIn.toUpperCase()];
+    const address = PoolAddress[src][symbolOut?.toUpperCase()][symbolIn?.toUpperCase()];
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(address);

@@ -1,26 +1,6 @@
-import { useEffect } from "react";
-import { isSavedStateExist, loadState } from "../../idb/stateDB";
-import { useSymbolStore } from "../../stores/stores";
 
-export const LoadSymbol = ({ src }) => {
-    const setAll = useSymbolStore(fn => fn.setAll);
 
-    const checkSavedState = async () => {
-        const exist = await isSavedStateExist(`savedTick-${src}`);
-
-        if (exist) {
-            const state = await loadState(`savedTick-${src}`);
-            setAll(state[0], state[1]);
-        }
-        else {
-            setAll("ETH", "USDT");
-        }
-    }
-
-    useEffect(() => {
-        checkSavedState(); 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+export const LoadSymbol = () => {
 
     return (
         <div className="w-full bg-primary h-screen">

@@ -88,7 +88,7 @@ function Swap({ symbolIn, symbolOut, network }) {
                         onChange={(e) => handleSellChange(e.target.value)}
                         className="px-0 py-2 focus-within:outline-2 rounded-md text-white w-full text-2xl"
                     />
-                    <TokenIcon symbol={currentSymbolIn.toLowerCase()} size={32} color="#fff" variant="branded" />
+                    <TokenIcon symbol={currentSymbolIn?.toLowerCase()} size={32} color="#fff" variant="branded" />
                     <span className="ml-2 text-white font-semibold">{currentSymbolIn}</span>
                 </div>
                 <FiatValue symbol={currentSymbolIn} value={sellAmount} />
@@ -112,7 +112,7 @@ function Swap({ symbolIn, symbolOut, network }) {
                         onChange={(e) => handleBuyChange((e.target.value))}
                         className="px-0 py-2 focus-within:outline-2 rounded-md text-white w-full text-2xl"
                     />
-                    <TokenIcon symbol={currentSymbolOut.toLowerCase()} size={32} color="#fff" variant="branded" />
+                    <TokenIcon symbol={currentSymbolOut?.toLowerCase()} size={32} color="#fff" variant="branded" />
                     <span className="ml-2 text-white font-semibold">{currentSymbolOut}</span>
                 </div>
                 <FiatValue symbol={currentSymbolOut} value={buyAmount} />

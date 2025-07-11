@@ -22,7 +22,7 @@ function MarketChart({ OHLCData, isFetching, isError, setRange, range, network }
     }
 
     return (
-        <div className={`bg-primary p-2 md:p-4 h-full w-full ${network.isDex ? 'md:w-[80%]' : 'md:w-[100%]'}`}>
+        <div className={`bg-primary p-2 md:p-4 h-full w-full ${network?.isDex ? 'md:w-[80%]' : 'md:w-[100%]'}`}>
             <Flex className="flex-col h-full">
                 <Flex className="pb-4 pt-4 items-center gap-2 justify-between">
                     <RangeSelector setRange={setRange} selected={range} />

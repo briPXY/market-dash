@@ -26,20 +26,10 @@ function Market() {
         src: src,
     });
 
-    if (!src) {
-        return (<NetworkSelection />);
-    }
-
-    if (src && !symbolIn) {
-        return (<LoadSymbol src={src} />);
-    }
-
-    if (!data || isFetching) {
-        return <div>Loading historical data</div>
-    }
-
     return (
         <div>
+            {!src && <NetworkSelection />}
+            {src && !symbolIn && <LoadSymbol src={src} />}
             <Flex className="flex-col gap-1">
                 <Flex className="justify-between gap-2 bg-primary p-2 py-4 md:p-4 ">
                     <Flex className="flex-col items-start text-sm md:text-lg font-semibold">
@@ -50,6 +40,7 @@ function Market() {
                     <Hour24Changes symbolIn={symbolIn} symbolOut={symbolOut} src={src} />
                 </Flex>
                 <Flex className="flex flex-col md:flex-row gap-1">
+                    {!data || isFetching && <div>Loading historical data</div>}
                     <MarketChart
                         symbol={symbolOut}
                         setRange={setRange}
@@ -59,7 +50,7 @@ function Market() {
                         isError={isError}
                         network={SourceConst[src]}
                     />
-                    <TabPanelParent className="bg-primary mx-auto" style={{ display: SourceConst[src].isDex ? "block" : "none" }}>
+                    <TabPanelParent className="bg-primary mx-auto" style={{ display: SourceConst[src]?.isDex ? "block" : "none" }}>
                         <Swap symbolIn={symbolIn} symbolOut={symbolOut} network={SourceConst[src]} label="Swap" />
                     </TabPanelParent>
                 </Flex>

@@ -1,4 +1,6 @@
 export async function getFiatRate(symbol) {
+	if (!symbol) return;
+	
 	symbol = symbol.toLowerCase();
 	const geckoSym = {
 		eth: 'ethereum',
