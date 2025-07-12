@@ -3,21 +3,20 @@ import { ActiveIndicatorButtons } from "./ActiveIndicatorButtons";
 import Button from "../../Layout/Elements";
 import { isSavedStateExist, loadState, saveState } from "../../idb/stateDB";
 
-export const IndicatorSelector = ({ d3, data, svg, scale, indicatorList, outDimension, setSubIndicators, dbId, init }) => {
+export const IndicatorSelector = ({ d3, data, svg, scale, bandXScale, indicatorList, outDimension, setSubIndicators, dbId, init }) => {
     const dropdownRef = useRef(null);
 
     const [showedIndicators, setShowedIndicators] = useState({});
     const [showSelector, setShowSelector] = useState(false);
 
-    // Draw an indicator (no shit Sherlock)
     const drawIndicator = useCallback(
         (funcName, fn, param, color = "white") => {
             svg.select(`#${funcName}`).remove();
             svg.selectAll(`.${funcName}`).remove();
             const indicatorData = fn(d3, data, ...Object.values(param));
-            fn.draw(d3, svg, indicatorData, scale, color, funcName, outDimension);
+            fn.draw(d3, svg, indicatorData, scale, bandXScale, color, funcName, outDimension);
         },
-        [svg, d3, data, scale, outDimension] // Dependencies (make sure these are stable)
+        [svg, d3, data, scale, bandXScale, outDimension] // Dependencies (make sure these are stable)
     );
 
     const addNewIndicator = useCallback((name, params) => {

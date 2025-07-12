@@ -14,77 +14,71 @@
 //     return { x: x, y: y };
 // } 
 
-export function drawMACD(d3, svg, data, scale, color, id, dim) {
-    // Calculate xScale dynamically
-    const xScale = d3.scaleTime()
-        .domain([d3.min(data, d => new Date(d.date)), d3.max(data, d => new Date(d.date))])
-        .range([dim.m.left, dim.w - dim.m.right]); // Respect margins
+export function drawMACD(d3, svg, data, scale, bandXScale, color, id, dim) {
+    const barWidth = bandXScale.bandwidth();
 
-    // Calculate yScale dynamically
-    // const yMin = Math.min(0, d3.min(data, d => Math.min(d.MACD, d.signal, d.histogram)));
-    // const yMax = Math.max(0, d3.max(data, d => Math.max(d.MACD, d.signal, d.histogram)));
-
-    const middle = d3.mean(data, d => (d.MACD + d.signal) / 2) || 0; // Fallback to 0 if undefined
+    const middle = d3.mean(data, d => (d.MACD + d.signal) / 2) || 0;
 
     const maxDistance = d3.max(data, d => Math.max(
         Math.abs(d.MACD - middle),
-        Math.abs(d.signal - middle),
-        Math.abs(d.histogram) // Ensure histograms fit too
+        Math.abs(d.signal - middle), // Still consider signal for Y scale if needed, or remove if you're truly only showing MACD line and histogram
+        Math.abs(d.histogram)
     ));
-    
-    const padding = maxDistance * 0.2; // 20% extra padding
-    
-    const yScale = d3.scaleLinear()
+
+    const padding = maxDistance * 0.2;
+
+    const macdYScale = d3.scaleLinear()
         .domain([middle - maxDistance - padding, middle + maxDistance + padding])
         .range([dim.h - dim.m.bottom, dim.m.top]);
 
-    // Prepare data with previous histogram values
     const processedData = data.map((d, i) => ({
         ...d,
         prevHistogram: i > 0 ? data[i - 1].histogram : 0
     }));
 
-    // Line generators
+    // Line generator for the MACD Line
     const macdLine = d3.line()
-        .x(d => xScale(new Date(d.date)))
-        .y(d => yScale(d.MACD));
+        .x(d => bandXScale(d.date) + barWidth / 2)
+        .y(d => macdYScale(d.MACD)); // This line will be the MACD line itself
 
-    // const signalLine = d3.line()
-    //     .x(d => xScale(new Date(d.date)))
-    //     .y(d => yScale(d.signal)); 
+    // Clear previous elements within this SVG
+    svg.selectAll(`.${id}-line`).remove();
+    svg.selectAll(`.${id}-histogram-bar`).remove();
+    svg.selectAll(`.${id}-zero-line`).remove();
 
-    // Draw MACD Line
+    // Draw MACD Line (only one line)
     svg.append("path")
         .datum(data)
-        .attr("class", `${id}`)
+        .attr("class", `${id}-line`)
         .attr("fill", "none")
-        .attr("stroke", "#00ff00")
+        .attr("stroke", "#dddddd") // This will be MACD line
         .attr("stroke-width", 1)
         .attr("d", macdLine);
 
-    // // Draw Signal Line
-    // svg.append("path")
-    //     .datum(data)
-    //     .attr("class", `${id}`)
-    //     .attr("fill", "none")
-    //     .attr("stroke", "#ff9900")
-    //     .attr("stroke-width", 1)
-    //     .attr("d", signalLine);
-
     // Draw Histogram Bars with Saturation Adjustment
-    svg.selectAll(`.${id}`)
+    svg.selectAll(`.${id}-histogram-bar`)
         .data(processedData)
         .enter().append("rect")
-        .attr("class", `${id}`)
-        .attr("x", d => xScale(new Date(d.date)) - 2)
-        .attr("y", d => yScale(Math.max(0, d.histogram)))
-        .attr("width", 6)
-        .attr("height", d => Math.abs(yScale(d.histogram) - yScale(0)))
+        .attr("class", `${id}-histogram-bar`)
+        .attr("x", d => bandXScale(d.date))
+        .attr("y", d => macdYScale(Math.max(0, d.histogram)))
+        .attr("width", barWidth)
+        .attr("height", d => Math.abs(macdYScale(d.histogram) - macdYScale(0)))
         .attr("fill", d => {
             if (d.histogram >= 0) {
-                return d.histogram >= d.prevHistogram ? "#208a76" : "#93b5ab"; // Bright green when rising, faded green when falling
+                return d.histogram >= d.prevHistogram ? "#208a76" : "#93b5ab";
             } else {
-                return d.histogram <= d.prevHistogram ? "#ff6347" : "#ff9999"; // Bright red when falling, faded red when rising
+                return d.histogram <= d.prevHistogram ? "#ff6347" : "#ff9999";
             }
         });
+
+    // Draw Zero Line
+    svg.append("line")
+        .attr("class", `${id}-zero-line`)
+        .attr("x1", dim.m.left)
+        .attr("x2", dim.w - dim.m.right)
+        .attr("y1", macdYScale(0))
+        .attr("y2", macdYScale(0))
+        .attr("stroke", "gray")
+        .attr("stroke-dasharray", "2,2");
 }

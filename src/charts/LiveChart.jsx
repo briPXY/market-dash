@@ -8,6 +8,7 @@ import { indicatorList, subIndicatorList } from "./indicators/indicatorList"
 import { drawVolumeBars } from "./charts/volume";
 import { getVisibleIndexRange } from "./helper/getVisibleIndices";
 import LivePriceLine from "./LivePriceLine";
+import { getBandXScale } from "./helper/getBandXScale";
 
 const LiveChart = ({
     OHLCData,
@@ -77,6 +78,7 @@ const LiveChart = ({
     }, [OHLCData, scrollStopped]);
 
     const scale = useMemo(() => xyScaler(d3, OHLCData, "date", "close", isLogScale, innerWidth, innerHeight, margin.current, visibleOHLCData), [OHLCData, visibleOHLCData, innerHeight, innerWidth, isLogScale]);
+    const bandXScale = useMemo(() => getBandXScale(d3, OHLCData, innerWidth),[OHLCData, innerWidth])
 
     useEffect(() => {
         svg.selectAll(".main").remove();
@@ -90,12 +92,12 @@ const LiveChart = ({
         drawGrid(svg, scale, innerWidth, innerHeight);
 
         // Draw volume bar overlay
-        drawVolumeBars(d3, svg, scale, OHLCData, innerHeight, innerWidth, tooltipRef);
+        drawVolumeBars(d3, svg, bandXScale, OHLCData, innerHeight, tooltipRef);
 
-        chart(d3, svg, scale, tooltipRef, OHLCData, innerHeight, innerWidth);
+        chart(d3, svg, scale, tooltipRef, OHLCData, bandXScale, innerHeight);
         //line(d3, svg, scale, tooltipRef, OHLCData, innerHeight);
 
-    }, [OHLCData, lengthPerItem, isLogScale, range, height, innerWidth, innerHeight, scale, svg, ySvg, isFetching, isError, chart]);
+    }, [OHLCData, lengthPerItem, isLogScale, range, height, innerWidth, innerHeight, scale, svg, ySvg, isFetching, isError, chart, bandXScale]);
 
     useEffect(() => {
         if (isFetching) return;
@@ -151,6 +153,7 @@ const LiveChart = ({
                     d3={d3}
                     svg={subSvg}
                     scale={scale}
+                    bandXScale={bandXScale}
                     data={OHLCData}
                     indicatorList={subIndicatorList}
                     outDimension={outDimension}

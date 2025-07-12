@@ -1,4 +1,4 @@
-export const singleLine = (d3, svg, data, scale, color = "white", id) => {
+export const singleLine = (d3, svg, data, scale, bandXScale, color = "white", id) => {
     try {
         const line = d3.line().x(d => scale.x(new Date(d.date))).y(d => scale.y(d.value));
 
