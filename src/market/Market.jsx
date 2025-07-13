@@ -13,13 +13,14 @@ import { PoolAddressView } from "./Components/PoolAddressView";
 import { SwapHistory } from "./SwapHistory";
 import Swap from "../contracts/Swap";
 import { SourceConst } from "../constants/sourceConst";
+import { initData } from "../constants/initData";
 
 function Market() {
     const [range, setRange] = useState("1h");
     const { symbolIn, symbolOut } = useSymbolStore();
     const src = useSourceStore(state => state.src);
 
-    const { data, isFetching, isError } = useChartQuery({
+    const { data = initData, isFetching, isError } = useChartQuery({
         symbolIn: symbolIn,
         symbolOut: symbolOut,
         interval: range,
@@ -29,12 +30,12 @@ function Market() {
     return (
         <div>
             <NetworkSelection networkStatus={!src}/>
-            <LoadSymbol symbolStatus={!symbolIn}/>
+            <LoadSymbol symbolStatus={src && !symbolIn}/>
             <Flex className="flex-col gap-1">
                 <Flex className="justify-between gap-2 bg-primary p-2 py-4 md:p-4 ">
                     <Flex className="flex-col items-start text-sm md:text-lg font-semibold">
                         <SymbolSelector symbolIn={symbolIn} symbolOut={symbolOut} />
-                        <LivePriceText OHLCData={data?.ohlc} />
+                        <LivePriceText OHLCData={data.ohlc} />
                         <PoolAddressView src={src} symbolIn={symbolIn} symbolOut={symbolOut} />
                     </Flex>
                     <Hour24Changes symbolIn={symbolIn} symbolOut={symbolOut} src={src} />
@@ -44,7 +45,7 @@ function Market() {
                         symbol={symbolOut}
                         setRange={setRange}
                         range={range}
-                        OHLCData={data?.ohlc}
+                        OHLCData={data.ohlc}
                         isFetching={isFetching}
                         isError={isError}
                         network={SourceConst[src]}
@@ -54,7 +55,7 @@ function Market() {
                     </TabPanelParent>
                 </Flex>
 
-                <SwapHistory swaps={data?.swaps} />
+                <SwapHistory swaps={data.swaps ? data.swaps : []} />
             </Flex>
         </div>
     );

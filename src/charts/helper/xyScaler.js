@@ -1,4 +1,8 @@
 export function xyScaler(d3, OHLCData, xValue, yValue, isLogScale = "LOG", innerWidth, innerHeight, margin, visibleOHLCData) {
+    if (!OHLCData || !visibleOHLCData){
+        return;
+    }
+
     let y;
     // console.log( OHLCData.length);
     if (isLogScale == "LOG") {

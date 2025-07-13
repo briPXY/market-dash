@@ -3,6 +3,7 @@ import axios from "axios";
 import { formatAPI } from "./api_formatter";
 import { PoolAddress } from "../constants/uniswapAddress";
 import { formatSwapData } from "../utils/formatSwapData";
+import { initData } from "../constants/initData";
 
 // BINANCE
 
@@ -13,7 +14,7 @@ const binance = async function (symbolIn, symbolOut, interval) {
         const response = await axios.get(dataUrl);
         const data = response.data; // Extracting data properly 
 
-        return data.map((candle) => ({
+        const array = data.map((candle) => ({
             date: +(candle[6]), // timestamp close
             open: +candle[1],
             high: +candle[2],
@@ -24,9 +25,12 @@ const binance = async function (symbolIn, symbolOut, interval) {
             quote: +candle[7], // quotes asset volume
             trades: +candle[8],
         }));
+
+        return { ohlc: array, swap: null };
+
     } catch (error) {
         console.error("Error fetching Binance data:", error);
-        return []; // Return an empty array if there is an error
+        return initData; // Return an empty array if there is an error
     }
 };
 
@@ -82,10 +86,10 @@ async function UniswapV3(symbolIn, symbolOut, interval, pool = "UniswapV3") {
         if (!data) {
             throw new Error("Invalid data received");
         }
-        
+
         const reversedRate = data.data[poolInterval[interval]][0].close < 1; // Reversed against symbolIn/symbolOut logic
         const operator = reversedRate ? (num) => parseFloat(1 / num) : (num) => num;
-        const multiplyUnixTime = timeProp[interval] == "periodStartUnix" ? 1000 : 1; 
+        const multiplyUnixTime = timeProp[interval] == "periodStartUnix" ? 1000 : 1;
         data.data[poolInterval[interval]].reverse(); // Beucause it's desc in graphql query.
 
         const convertedData = data.data[poolInterval[interval]].map(entry => ({
@@ -109,8 +113,8 @@ async function UniswapV3(symbolIn, symbolOut, interval, pool = "UniswapV3") {
         return convertedData;
 
     } catch (error) {
-        console.error("Error fetching Uniswap data:", error);
-        return [{ date: 0, open: 0, high: 0, low: 0, close: 0, volume: 0, error: true }];
+        console.error("Error fetching UniswapV3 data:", error);
+        return initData;
     }
 }
 

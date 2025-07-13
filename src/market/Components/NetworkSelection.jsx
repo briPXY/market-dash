@@ -19,6 +19,7 @@ export const NetworkSelection = ({ networkStatus }) => {
     const networkUndefinded = {
         true: {},
         false: { display: "none" },
+        null: { display: "none" },
     }
 
     return (

@@ -11,7 +11,7 @@ import LivePriceLine from "./LivePriceLine";
 import { getBandXScale } from "./helper/getBandXScale";
 
 const LiveChart = ({
-    OHLCData = [{ open: 0, high: 0, low: 0, close: 0, volume: 0, date: 16000 }],
+    OHLCData,
     range,
     isFetching,
     isError,
@@ -32,7 +32,7 @@ const LiveChart = ({
 
     const margin = useRef({ top: 15, right: 5, bottom: 15, left: 5 })
     const height = window.innerHeight * 0.425;
-    const innerWidth = useMemo(() => (lengthPerItem * OHLCData.length) - margin.current.left - margin.current.right, [OHLCData.length, lengthPerItem])
+    const innerWidth = useMemo(() => (lengthPerItem * OHLCData?.length) - margin.current.left - margin.current.right, [OHLCData, lengthPerItem])
     const innerHeight = height - margin.current.top - margin.current.bottom;
     const subIndicatorHeight = useMemo(() => innerHeight * 0.5 * subIndicators.length, [innerHeight, subIndicators])
 
@@ -78,7 +78,9 @@ const LiveChart = ({
     }, [OHLCData, scrollStopped]);
 
     const scale = useMemo(() => xyScaler(d3, OHLCData, "date", "close", isLogScale, innerWidth, innerHeight, margin.current, visibleOHLCData), [OHLCData, visibleOHLCData, innerHeight, innerWidth, isLogScale]);
-    const bandXScale = useMemo(() => getBandXScale(d3, OHLCData, innerWidth),[OHLCData, innerWidth])
+    const bandXScale = useMemo(() => {
+        return getBandXScale(d3, OHLCData, innerWidth)
+    },[OHLCData, innerWidth])
 
     useEffect(() => {
         svg.selectAll(".main").remove();
