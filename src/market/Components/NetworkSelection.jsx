@@ -6,7 +6,7 @@ import { useSourceStore } from "../../stores/stores";
 import { LoadingIcon } from "../../Layout/Elements";
 import { initSymbols } from "../../idb/init";
 
-export const NetworkSelection = () => {
+export const NetworkSelection = ({ networkStatus }) => {
     const setSrc = useSourceStore(state => state.setSrc);
     const networkSrc = useSourceStore.getState().src;
 
@@ -16,8 +16,13 @@ export const NetworkSelection = () => {
         initSymbols(network);
     }
 
+    const networkUndefinded = {
+        true: {},
+        false: { display: "none" },
+    }
+
     return (
-        <div className="w-full bg-primary h-screen floating-modal">
+        <div className="w-full bg-primary h-screen floating-modal" style={networkUndefinded[networkStatus]}>
             <div className="h-14"></div>
             <div className="flex flex-col gap-3 border-washed items-center rounded-lg mx-auto max-w-100 p-10">
 

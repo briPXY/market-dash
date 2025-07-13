@@ -28,8 +28,8 @@ function Market() {
 
     return (
         <div>
-            {!src && <NetworkSelection />}
-            {src && !symbolIn && <LoadSymbol src={src} />}
+            <NetworkSelection networkStatus={!src}/>
+            <LoadSymbol symbolStatus={!symbolIn}/>
             <Flex className="flex-col gap-1">
                 <Flex className="justify-between gap-2 bg-primary p-2 py-4 md:p-4 ">
                     <Flex className="flex-col items-start text-sm md:text-lg font-semibold">
@@ -40,7 +40,6 @@ function Market() {
                     <Hour24Changes symbolIn={symbolIn} symbolOut={symbolOut} src={src} />
                 </Flex>
                 <Flex className="flex flex-col md:flex-row gap-1">
-                    {!data || isFetching && <div>Loading historical data</div>}
                     <MarketChart
                         symbol={symbolOut}
                         setRange={setRange}
