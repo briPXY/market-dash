@@ -34,7 +34,7 @@ function Market() {
                 <Flex className="justify-between gap-2 bg-primary p-2 py-4 md:p-4 ">
                     <Flex className="flex-col items-start text-sm md:text-lg font-semibold">
                         <SymbolSelector symbolIn={symbolIn} symbolOut={symbolOut} />
-                        <LivePriceText OHLCData={data.ohlc ? data.ohlc : data} />
+                        <LivePriceText OHLCData={data?.ohlc} />
                         <PoolAddressView src={src} symbolIn={symbolIn} symbolOut={symbolOut} />
                     </Flex>
                     <Hour24Changes symbolIn={symbolIn} symbolOut={symbolOut} src={src} />
@@ -45,7 +45,7 @@ function Market() {
                         symbol={symbolOut}
                         setRange={setRange}
                         range={range}
-                        OHLCData={data.ohlc ? data.ohlc : data}
+                        OHLCData={data?.ohlc}
                         isFetching={isFetching}
                         isError={isError}
                         network={SourceConst[src]}
@@ -55,7 +55,7 @@ function Market() {
                     </TabPanelParent>
                 </Flex>
 
-                <SwapHistory swaps={data.swaps ? data.swaps : null} />
+                <SwapHistory swaps={data?.swaps} />
             </Flex>
         </div>
     );

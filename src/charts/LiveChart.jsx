@@ -11,7 +11,7 @@ import LivePriceLine from "./LivePriceLine";
 import { getBandXScale } from "./helper/getBandXScale";
 
 const LiveChart = ({
-    OHLCData,
+    OHLCData = [{ open: 0, high: 0, low: 0, close: 0, volume: 0, date: 16000 }],
     range,
     isFetching,
     isError,
@@ -71,7 +71,7 @@ const LiveChart = ({
     }, [isLogScale]);
 
     const visibleOHLCData = useMemo(() => {
-        if (!OHLCData.length || !scrollContainerRef.current) return OHLCData;
+        if (!OHLCData || !scrollContainerRef.current) return OHLCData;
         const { iLeft, iRight } = getVisibleIndexRange(scrollContainerRef, OHLCData.length, 100);
         return OHLCData.slice(iLeft, iRight);
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -84,7 +84,7 @@ const LiveChart = ({
         svg.selectAll(".main").remove();
         ySvg.selectAll('*').remove();
 
-        if (!OHLCData.length || isFetching || isError) return;
+        if (!OHLCData || isFetching || isError) return;
         // draw axis/label
         drawAxesAndLabels(svg, ySvg, scale, innerHeight, OHLCData.length, range);
 

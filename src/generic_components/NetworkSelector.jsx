@@ -4,6 +4,7 @@ import { useSourceStore } from "../stores/stores";
 import { PopoverButton } from "../Layout/Elements";
 import { Flex } from "../Layout/Layout";
 import { SourceConst } from "../constants/sourceConst";
+import { initSymbols } from "../idb/init";
 
 export const NetworkSelector = () => {
     const src = useSourceStore(state => state.src);
@@ -12,6 +13,7 @@ export const NetworkSelector = () => {
     const setNetwork = async (network) => {
         await saveState(`savedNetwork`, network)
         setSrc(network);
+        initSymbols(network);
     }
 
     if (!src){

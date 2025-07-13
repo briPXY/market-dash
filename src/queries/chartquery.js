@@ -11,7 +11,7 @@ import { useMemo } from "react";
 const useChartQuery = ({ symbolIn, symbolOut, interval, src }) => {
 
     const queryKey = useMemo(() => ["historical", symbolIn, symbolOut, interval, src], [symbolIn, symbolOut, interval, src]);
-    const initialData = useMemo(() => { return [{ open: 0, high: 0, low: 0, close: 0, volume: 0, date: 16000 }] }, [])
+    //const initialData = useMemo(() => { return [{ open: 0, high: 0, low: 0, close: 0, volume: 0, date: 16000 }] }, [])
 
     return useQuery({
         queryKey: queryKey,
@@ -23,7 +23,7 @@ const useChartQuery = ({ symbolIn, symbolOut, interval, src }) => {
         refetchInterval: timeFrameToMs[interval],
         staleTime: 0, 
         cacheTime: timeFrameToMs[interval],
-        initialData,
+        //initialData,
     });
 };
 

@@ -4,17 +4,20 @@ import { Flex } from "../../Layout/Layout";
 import { saveState } from "../../idb/stateDB";
 import { useSourceStore } from "../../stores/stores";
 import { LoadingIcon } from "../../Layout/Elements";
+import { initSymbols } from "../../idb/init";
 
 export const NetworkSelection = () => {
     const setSrc = useSourceStore(state => state.setSrc);
+    const networkSrc = useSourceStore.getState().src;
 
     const setNetwork = async (network) => {
-        await saveState(`savedNetwork`, network)
+        await saveState(`savedNetwork`, network);
         setSrc(network);
+        initSymbols(network);
     }
 
     return (
-        <div className="w-full bg-primary h-screen">
+        <div className="w-full bg-primary h-screen floating-modal">
             <div className="h-14"></div>
             <div className="flex flex-col gap-3 border-washed items-center rounded-lg mx-auto max-w-100 p-10">
 
@@ -22,10 +25,11 @@ export const NetworkSelection = () => {
                     <div className="font-bold">DEX Pool Graph Views</div>
                     <div className="text-sm mb-4 mt-4">Select Exchange Network:</div>
                 </div>
-                <div className="flex items-center">
+                {networkSrc && <div className="flex items-center">
                     <div>Loading network</div>
                     <LoadingIcon className="w-12 h-12" />
                 </div>
+                }
                 {Object.keys(SourceConst).map((network) => (
                     <Flex
                         key={network}
@@ -39,7 +43,7 @@ export const NetworkSelection = () => {
                 ))
                 }
 
-                <div className="text-washed text-xs mt-4">*This is work-in-progress demo project. Not recommended for trading or swapping tokens and cryptos here. Use real exchange or Uniswap for tokens swapping</div>
+                <div className="text-washed text-xs mt-4">*This is developer&apos;s demo project. Unexpected network and error might occur. Use the web3 transactions with caution.</div>
             </div>
         </div>
     )

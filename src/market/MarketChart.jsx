@@ -17,10 +17,6 @@ function MarketChart({ OHLCData, isFetching, isError, setRange, range, network }
     const [lengthPerItem, setLengthPerItem] = useState(isAgentMobile ? 6 : 9);
     const [isLogScale, setYscale] = useState("LOG");
 
-    if (!OHLCData.length) {
-        return (<div>waiting for the network...</div>)
-    }
-
     return (
         <div className={`bg-primary p-2 md:p-4 h-full w-full ${network?.isDex ? 'md:w-[80%]' : 'md:w-[100%]'}`}>
             <Flex className="flex-col h-full">

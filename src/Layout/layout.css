@@ -165,3 +165,15 @@
 .display-text-small {
   font-size: 56px !important;
 }
+
+.floating-modal {
+  position: fixed; /* Fixes the element in the viewport */
+  top: 50%; /* Aligns the top edge to the middle of the viewport */
+  left: 50%; /* Aligns the left edge to the middle of the viewport */
+  transform: translate(-50%, -50%); /* Centers the element precisely */
+  z-index: 1000; /* Ensures the modal is on top of other content */
+  padding: 20px; /* Adjust padding as needed */
+  border-radius: 8px; /* Slightly rounded corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Soft shadow */
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; /* Smooth transition for appearance */
+}
