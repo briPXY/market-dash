@@ -16,6 +16,11 @@ export function candlestick(d3, svg, scale, tooltipRef, historicalData, bandXSca
         // The d.date maps to the start of the band, so add half the bandwidth to center the g.
         .attr("transform", d => `translate(${bandXScale(d.date) + candleWidth / 2}, 0)`);
 
+    const colorMap = {
+        "-1": bearishColor,
+        "0": "#999999",
+        "1": bullishColor
+    };
 
     // Draw wicks
     candles.append("line")
@@ -23,7 +28,7 @@ export function candlestick(d3, svg, scale, tooltipRef, historicalData, bandXSca
         .attr("y2", d => scale.y(d.low)) // Use the external scale.y
         .attr("x1", 0) // Centered within the transformed 'g'
         .attr("x2", 0) // Centered within the transformed 'g'
-        .attr("stroke", d => d.close >= d.open ? bullishColor : bearishColor)
+        .attr("stroke", d => colorMap[(d.close > d.open) - (d.close < d.open)])
         .attr("stroke-width", 1.5);
 
     // Draw candle bodies
@@ -31,9 +36,20 @@ export function candlestick(d3, svg, scale, tooltipRef, historicalData, bandXSca
         .attr("x", -candleWidth / 2) // Position relative to the *centered* 'g'
         .attr("y", d => scale.y(Math.max(d.open, d.close))) // Use external scale.y
         .attr("width", candleWidth)
-        .attr("height", d => Math.abs(scale.y(d.open) - scale.y(d.close)))
-        .attr("fill", d => d.close >= d.open ? bullishColor : bearishColor)
-        .attr("stroke", d => d.close >= d.open ? bullishColor : bearishColor)
+        .attr("height", d => {
+            const h = Math.abs(scale.y(d.open) - scale.y(d.close));
+            return h < 1 ? 1 : h;
+        })
+        .attr("fill", d => colorMap[(d.close > d.open) - (d.close < d.open)])
+        .attr("stroke", d => colorMap[(d.close > d.open) - (d.close < d.open)])
+
+    // Transparent box for tooltip mouseover
+    candles.append("rect")
+        .attr("x", -candleWidth / 2) // Position relative to the *centered* 'g'
+        .attr("y", d => scale.y(Math.max(d.high, d.low))) // Use external scale.y
+        .attr("width", candleWidth)
+        .attr("height", d => Math.abs(scale.y(d.high) - scale.y(d.low)))
+        .attr("fill", "transparent")
         .on("mouseover", (event, d) => {
             showToolTip(d3, event, tooltip, d);
         })

@@ -131,7 +131,7 @@ const LiveChart = ({
             </div>
             <div
                 ref={tooltipRef}
-                className="tooltip absolute opacity-0 bg-black p-2 whitespace-nowrap"
+                className="tooltip absolute flex gap-2 right-0 top-0 opacity-0 bg-[#0f0f147e] p-2"
                 style={{
                     pointerEvents: "none",
                 }}

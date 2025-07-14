@@ -75,7 +75,7 @@ async function UniswapV3(symbolIn, symbolOut, interval, pool = "UniswapV3") {
             quote: 0,    // Dummy value
             trades: 0,   // Dummy value
             volume: Number(parseFloat(entry.volumeUSD)),
-        })); console.log(interval, convertedData)
+        }));
 
         if (data.data.swaps) {
             const swapHistory = formatSwapData(data.data.swaps);
