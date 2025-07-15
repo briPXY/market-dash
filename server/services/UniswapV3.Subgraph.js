@@ -1,11 +1,12 @@
 import axios from "axios";
 import dotenv from "dotenv";
 
-import { PoolAddress } from "./poolAddress.js";
+import { PoolAddress } from "../constants/poolAddress.js";
+import { historicalData } from "../memory/historicalData.js";
 
 dotenv.config(); // Load .env variables
 
-export const queryRespData = {
+historicalData.UniswapV3 = {
     "1h": {},
     "1d": {}
 };
@@ -71,7 +72,7 @@ async function uniswapQuery(poolAddress, timeframe, count, pairString) {
             }
         );
 
-        queryRespData[timeframe][pairString] = response.data.data;
+        historicalData.UniswapV3[timeframe][pairString] = response.data.data;
     } catch (error) {
         console.error("\x1b[31mUniswapQuery error:\x1b[0m", error);
         throw new Error(error);

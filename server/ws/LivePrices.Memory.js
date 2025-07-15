@@ -1,4 +1,4 @@
-import LivePrice, { LivePriceListener } from "./livePrice.js";
+import LivePrice, { LivePriceListener } from "../memory/livePrice.js";
 
 export default async function livePriceWebSocket(fastify) {
     // WebSocket endpoint

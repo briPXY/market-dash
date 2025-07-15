@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
-import LivePrice, { LivePriceListener } from "./livePrice.js";
-import PoolAddress from "../poolAddress.js";
+import LivePrice, { LivePriceListener } from "../memory/livePrice.js";
+import PoolAddress from "../constants/poolAddress.js";
 
 
 export const TokenDecimal = {

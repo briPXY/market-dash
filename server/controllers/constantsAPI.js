@@ -1,4 +1,4 @@
-import PoolAddress from './poolAddress.js';
+import PoolAddress from "../constants/poolAddress.js";
 
 export default async function constantsAPI(fastify) {
     fastify.get("/api/pooladdress/:pool", async (request, reply) => {
