@@ -10,7 +10,7 @@ import { ChartSelector } from "./Components/ChartSelector";
 import { candlestick } from "../charts/charts/candlestick";
 import { Yscale } from "./Components/Yscale";
 import { ZoomOverlay } from "../charts/ZoomOverlay";
-import { isAgentMobile } from "../constants/browser";
+import { isAgentMobile } from "../constants/environment";
 
 function MarketChart({ OHLCData, isFetching, isError, setRange, range, network }) {
     const [chart, setChart] = useState({ n: "Candlestick", f: candlestick });

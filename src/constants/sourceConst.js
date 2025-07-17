@@ -1,3 +1,4 @@
+import { binance, UniswapV3 } from "../queries/fetchHistory";
 import { binanceTicker, UniswapV3BulkPrice } from "../queries/livePrice";
 import { PoolAddress } from "./uniswapAddress";
 
@@ -21,6 +22,7 @@ SourceConst.UniswapV3 = {
     },
     bulkPrices: UniswapV3BulkPrice,
     livePrice: UniswapV3BulkPrice,
+    ohlcFetch: UniswapV3,
 };
 
 // Binance non L2 chain
@@ -48,4 +50,5 @@ SourceConst.binance = {
         ["ATOM", "USDT"],
     ],
     livePrice: binanceTicker,
+    ohlcFetch: binance,
 };

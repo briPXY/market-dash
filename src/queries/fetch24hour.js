@@ -25,6 +25,6 @@ export const binance = async function (symbolIn, symbolOut) {
 };
 
 export const UniswapV3 = async function(symbolIn, symbolOut) {
-    const result = await history.UniswapV3(symbolIn, symbolOut, "1h");
+    const result = await history.UniswapV3(symbolIn, symbolOut, "1h", "UniswapV3");
     return result.ohlc ? result.ohlc.slice(-24) : result;
 }

@@ -37,9 +37,8 @@ export default async function livePriceWebSocket(fastify) {
         socket.on('close', () => {
             LivePriceListener.off(topic, listener); // console.log('WebSocket -------------- connection closed'); 
         });
-        socket.on('error', (e) => {
+        socket.on('error', () => {
             LivePriceListener.off(topic, listener);
-            console.error('ws error ------ ', e);
         });
 
     });

@@ -19,12 +19,13 @@ fastify.register(await import("@fastify/cors"), {
 fastify.register(await import("@fastify/websocket"));
  
 // Source modules
-import "./server/services/Uniswapv3.LivePrices.js";
-import reqOHLC from "./server/controllers/historyIO.js";
+import "./server/services/Uniswap.LivePrices.js";
+import "./server/services/Uniswap.Subgraph.js";
+import ohlc from "./server/controllers/ohlc.js";
 import constantsAPI from "./server/controllers/constantsAPI.js";
 import livePriceWebSocket from "./server/ws/LivePrices.Memory.js";
 
-await fastify.register(reqOHLC);
+await fastify.register(ohlc);
 await fastify.register(constantsAPI);
 await fastify.register(livePriceWebSocket);
 

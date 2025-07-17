@@ -18,7 +18,9 @@ export const TokenDecimal = {
     HKDM: 6,
 }
 
-export const UniswapV3LivePrice = async (symbols, address) => {
+const networks = Object.keys(PoolAddress);
+
+export const fetchLivePrice = async (network, symbols, address) => {
     const currency = symbols.split("-");
     const token1 = currency[0], token2 = currency[1];
 
@@ -45,27 +47,27 @@ export const UniswapV3LivePrice = async (symbols, address) => {
         adjustedPrice = 1 / adjustedPrice;
     }
 
-    LivePrice.UniswapV3[symbols] = parseFloat(adjustedPrice);
+    LivePrice[network][symbols] = parseFloat(adjustedPrice);
 
     LivePriceListener.emit(`priceUpdate:UniswapV3:${symbols}`, {
         provider: 'UniswapV3',
         symbol: symbols,
         p: parseFloat(adjustedPrice),
         timestamp: new Date().toISOString()
-    }); 
+    });
 
-} 
- 
+}
+
 function fetchDelay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function pollUniswapV3() {
+async function loopFetch(network) {
     while (true) {
         try {
             for (const [symbol, address] of Object.entries(PoolAddress.UniswapV3)) {
-            await UniswapV3LivePrice(symbol, address);
-        }
+                await fetchLivePrice(network, symbol, address);
+            }
         } catch (err) {
             console.error("Polling error:", err);
         }
@@ -74,4 +76,7 @@ async function pollUniswapV3() {
     }
 }
 
-pollUniswapV3();
+for (const network of networks) {
+    LivePrice[network] = {};
+    loopFetch(network);
+}

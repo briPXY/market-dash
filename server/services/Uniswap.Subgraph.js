@@ -16,7 +16,6 @@ const timeframeMapping = {
     "1d": { type: "poolDayDatas", timeField: "date" }
 };
 
-
 async function uniswapQuery(poolAddress, timeframe, count, pairString) {
     const { type, timeField } = timeframeMapping[timeframe];
 
@@ -74,7 +73,7 @@ async function uniswapQuery(poolAddress, timeframe, count, pairString) {
 
         historicalData.UniswapV3[timeframe][pairString] = response.data.data;
     } catch (error) {
-        console.error("\x1b[31mUniswapQuery error:\x1b[0m", error);
+        console.error("\x1b[31m Subgraph historical graphQL querying error:\x1b[0m", error);
         throw new Error(error);
     }
 }

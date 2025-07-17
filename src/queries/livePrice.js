@@ -1,4 +1,4 @@
-import { DOMAIN } from "../constants/uniswapAddress";
+import { DOMAIN } from "../constants/environment";
 
 export const UniswapV3BulkPrice = async (provider) => {
     try {

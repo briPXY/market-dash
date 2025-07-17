@@ -18,27 +18,27 @@ import { initData } from "../constants/initData";
 function Market() {
     const [range, setRange] = useState("1h");
     const { symbolIn, symbolOut } = useSymbolStore();
-    const src = useSourceStore(state => state.src);
+    const network = useSourceStore(state => state.src);
 
     const { data = initData, isFetching, isError } = useChartQuery({
         symbolIn: symbolIn,
         symbolOut: symbolOut,
         interval: range,
-        src: src,
+        network: network,
     });
 
     return (
         <div>
-            <NetworkSelection networkStatus={!src}/>
-            <LoadSymbol symbolStatus={src && !symbolIn}/>
+            <NetworkSelection networkStatus={!network}/>
+            <LoadSymbol symbolStatus={network && !symbolIn}/>
             <Flex className="flex-col gap-1">
                 <Flex className="justify-between gap-2 bg-primary p-2 py-4 md:p-4 ">
                     <Flex className="flex-col items-start text-sm md:text-lg font-semibold">
                         <SymbolSelector symbolIn={symbolIn} symbolOut={symbolOut} />
                         <LivePriceText OHLCData={data.ohlc} />
-                        <PoolAddressView src={src} symbolIn={symbolIn} symbolOut={symbolOut} />
+                        <PoolAddressView src={network} symbolIn={symbolIn} symbolOut={symbolOut} />
                     </Flex>
-                    <Hour24Changes symbolIn={symbolIn} symbolOut={symbolOut} src={src} />
+                    <Hour24Changes symbolIn={symbolIn} symbolOut={symbolOut} src={network} />
                 </Flex>
                 <Flex className="flex flex-col md:flex-row gap-1">
                     <MarketChart
@@ -48,10 +48,10 @@ function Market() {
                         OHLCData={data.ohlc}
                         isFetching={isFetching}
                         isError={isError}
-                        network={SourceConst[src]}
+                        network={SourceConst[network]}
                     />
-                    <TabPanelParent className="bg-primary mx-auto" style={{ display: SourceConst[src]?.isDex ? "block" : "none" }}>
-                        <Swap symbolIn={symbolIn} symbolOut={symbolOut} network={SourceConst[src]} label="Swap" />
+                    <TabPanelParent className="bg-primary mx-auto" style={{ display: SourceConst[network]?.isDex ? "block" : "none" }}>
+                        <Swap symbolIn={symbolIn} symbolOut={symbolOut} network={SourceConst[network]} label="Swap" />
                     </TabPanelParent>
                 </Flex>
 

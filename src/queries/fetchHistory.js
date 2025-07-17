@@ -4,6 +4,7 @@ import { formatAPI } from "./api_formatter";
 import { PoolAddress } from "../constants/uniswapAddress";
 import { formatSwapData } from "../utils/formatSwapData";
 import { initData } from "../constants/initData";
+import { DOMAIN } from "../constants/environment";
 
 // BINANCE
 
@@ -34,14 +35,14 @@ const binance = async function (symbolIn, symbolOut, interval) {
     }
 };
 
-async function UniswapV3(symbolIn, symbolOut, interval, pool = "UniswapV3") {
+async function UniswapV3(symbolIn, symbolOut, interval, network = "UniswapV3") {
     const poolInterval = {
         "1h": "poolHourDatas",
         "1d": "poolDayDatas",
     }
 
     try {
-        if (!PoolAddress[pool][symbolOut.toUpperCase()][symbolIn.toUpperCase()]) {
+        if (!PoolAddress[network][symbolOut.toUpperCase()][symbolIn.toUpperCase()]) {
             throw new Error(`Pool address not found for ${symbolIn}`);
         }
         //const poolAddress = PoolAddress[symbolOut.toUpperCase()][symbolIn.toUpperCase()]
@@ -52,9 +53,8 @@ async function UniswapV3(symbolIn, symbolOut, interval, pool = "UniswapV3") {
         if (!timeframes[interval]) {
             interval = "1h";
         }
-
-        const server = import.meta.env.VITE_OLHC_URL || "/uniswap/ohlc/";
-        const response = await fetch(`${server}${symbolIn}/${symbolOut}/${interval}`);
+ 
+        const response = await fetch(`${DOMAIN}/historical/${network}/${symbolIn}/${symbolOut}/${interval}`);
         const data = await response.json();
 
         if (!data) {

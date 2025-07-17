@@ -1,4 +1,4 @@
-import { WSS_DOMAIN } from "../constants/uniswapAddress";
+import { WSS_DOMAIN } from "../constants/environment";
 
 function binance(base = "USDT", symbol = "ETH", range = "50"){
     const result = {}

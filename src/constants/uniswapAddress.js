@@ -1,5 +1,4 @@
-export const DOMAIN = import.meta.env.VITE_DOMAIN ?? "";
-export const WSS_DOMAIN = import.meta.env.VITE_WSS_DOMAIN ?? "";
+import { DOMAIN } from "./environment";
 
 export const PoolAddress = {};
 
@@ -8,7 +7,6 @@ async function fetchAndFormatPoolAddresses(poolURL) {
     const response = await fetch(poolURL);
     const json = await response.json();
     const flatData = json.data;
-
     const formatted = {};
 
     for (const key in flatData) {
