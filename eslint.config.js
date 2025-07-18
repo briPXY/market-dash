@@ -36,4 +36,21 @@ export default [
       ],
     },
   },
-]
+
+    // ✅ New Node.js-specific config for server files
+  {
+    files: ['server/**/*.{js,jsx}', 'api/**/*.{js,jsx}', '*.config.js'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.node,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+    },
+  },
+];
+

@@ -1,15 +1,15 @@
-import PoolAddress from "../constants/poolAddress.js";
+import Subgraphs from "../constants/subgraph.adapter.js";
 
 export default async function constantsAPI(fastify) {
-    fastify.get("/api/pooladdress/:pool", async (request, reply) => {
+    fastify.get("/api/pooladdress/:network", async (request, reply) => {
         try {
-            const { pool } = request.params; 
+            const { network } = request.params; 
 
             reply.header('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
 
             return reply.send({
                 success: true,
-                data: PoolAddress[pool],
+                data: Subgraphs[network].pools,
             });
 
         } catch (error) {

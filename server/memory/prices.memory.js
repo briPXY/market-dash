@@ -6,3 +6,5 @@ export const LivePriceListener = new EventEmitter();
 const LivePrice = {};
 
 export default LivePrice;
+
+export const historicalData = {};
