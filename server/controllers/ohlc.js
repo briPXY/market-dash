@@ -6,21 +6,14 @@ export default async function ohlc(fastify) {
 
             const { network, symbolIn, symbolOut, timeFrame } = request.params;
 
-            // Construct the key the same way it was stored
-            const pairString = `${symbolOut.toUpperCase()}-${symbolIn.toUpperCase()}`;
-
-            // Check if data exists
-            if (!historicalData[network][timeFrame][pairString]) {
-                return reply.status(404).send({
-                    success: false,
-                    message: "Data not found",
-                });
-            }
+            const dataPool = historicalData[network][timeFrame];
+            const pairString = `${symbolOut.toUpperCase()}-${symbolIn.toUpperCase()}` in dataPool ? `${symbolOut.toUpperCase()}-${symbolIn.toUpperCase()}` : `${symbolIn.toUpperCase()}-${symbolOut.toUpperCase()}`;
+ 
             reply.header('Cache-Control', 'public, max-age=900');
 
             return reply.send({
                 success: true,
-                data: historicalData[network][timeFrame][pairString],
+                data: dataPool[pairString],
             });
 
         }

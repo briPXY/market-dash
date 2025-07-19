@@ -25,6 +25,7 @@ async function fetchAndFormatPoolAddresses(poolURL) {
 }
 
 PoolAddress.UniswapV3 = await fetchAndFormatPoolAddresses(`${DOMAIN}/api/pooladdress/UniswapV3`);
+PoolAddress.UniswapV3Sepolia = await fetchAndFormatPoolAddresses(`${DOMAIN}/api/pooladdress/UniswapV3Sepolia`);
 
 // Unused
 export const TokenAddress = {

@@ -5,7 +5,7 @@ const Subgraphs = {}
 
 Subgraphs.UniswapV3 = {
     id: "5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV",
-    pools: { // order = token1-token0 (symbolOut - In)
+    pools: { // order in subgraph api json response = token1-token0 (symbolOut - In)
         "USDT-WETH": "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36",
         "USDT-WBTC": "0x9db9e0e53058c89e5b94e29621a205198648425b",
         "USDC-WBTC": "0x99ac8ca7087fa4a2a1fb6357269965a2014abc35",
@@ -20,7 +20,7 @@ Subgraphs.UniswapV3 = {
 }
 
 Subgraphs.UniswapV3Sepolia = {
-    id: "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+    id: "EDJCBpDBGBajTP1x3qLGLg3ZaVR5Q2TkNxyNHdCuryex",
     pools: {
         "WETH-YBTC": "0xc4545a0b4a87cbaff03a73f45c377c0b5f416e00",
         "YU-YBTC": "0xc0b6f0c5d4c33c59b4672000d490992b7097ba40",

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import usePriceStore, { useSourceStore, useSymbolStore } from "../stores/stores";
-import { formatAPI } from "../queries/api_formatter";
+import { SourceConst } from "../constants/sourceConst";
 
 const closeWebSocket = (ws) => {
     if (!ws.current) return;
@@ -31,13 +31,10 @@ const PriceUpdater = ({ type }) => {
         const connectWebSocket = () => {
             if (ws.current !== null) {
                 closeWebSocket(ws); 
-            }
-
-            if (!formatAPI[src](symbolOut, symbolIn)[type]) {
-                return;
-            }
+            } 
              
-            const socket = new WebSocket(formatAPI[src](symbolOut, symbolIn)[type]); 
+            const network = SourceConst[src];
+            const socket = new WebSocket(network.getPriceURL(symbolIn, symbolOut));
             ws.current = socket;
 
             socket.onmessage = (event) => {

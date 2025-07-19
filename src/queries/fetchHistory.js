@@ -43,6 +43,7 @@ async function UniswapV3(symbolIn, symbolOut, interval, network = "UniswapV3") {
 
     try {
         if (!PoolAddress[network][symbolOut.toUpperCase()][symbolIn.toUpperCase()]) {
+            console.log(PoolAddress);
             throw new Error(`Pool address not found for ${symbolIn}`);
         }
         //const poolAddress = PoolAddress[symbolOut.toUpperCase()][symbolIn.toUpperCase()]
