@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "fastify-server": "node fastify-server.js"
+    "fastify-server": "node fastify-server.js",
+    "build-poolsinfo": "node server/data/build-poolinfo.mjs"
   },
   "dependencies": {
     "@fastify/cors": "^11.0.0",
@@ -42,5 +43,12 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
     "vite": "^6.2.0"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "public/",
+      "src/**"
+    ],
+    "ext": "js,ts,json,graphql"
   }
 }

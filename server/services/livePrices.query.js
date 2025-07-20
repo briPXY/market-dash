@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import LivePrice, { LivePriceListener } from "../memory/prices.memory.js";
 import Subgraphs from "../constants/subgraph.adapter.js";
+import { getPriceFromSqrtPriceX96 } from "../utils/math.ether.js";
 
 export const TokenDecimal = {
     USDT: 6,
@@ -20,8 +21,8 @@ function delay(ms) {
 export const fetchLivePrice = async (network, symbols, address) => {
     try {
         await delay(Math.floor(Math.random() * (2000 - 100 + 1)) + 100)
-        const currency = symbols.split("-");
-        const token1 = currency[0], token2 = currency[1];
+        const pairs = symbols.split("-");
+        const token0 = pairs[0], token1 = pairs[1];
 
         const provider = new ethers.JsonRpcProvider(Subgraphs[network].RPC);  // Public RPC
 
@@ -30,28 +31,19 @@ export const fetchLivePrice = async (network, symbols, address) => {
         ];
 
         const poolContract = new ethers.Contract(address, poolABI, provider);
-
         const slot0 = await poolContract.slot0();
 
-        const sqrtPriceX96 = BigInt(slot0[0])
-        const numerator = sqrtPriceX96 * sqrtPriceX96;
-        const denominator = BigInt(2) ** BigInt(192);
-        const rawPrice = Number(numerator) / Number(denominator);
+        const decimals0 = TokenDecimal[token0] ?? 18;
+        const decimals1 = TokenDecimal[token1] ?? 18;
+ 
+        const price = getPriceFromSqrtPriceX96(slot0.sqrtPriceX96, decimals0, decimals1)
 
-        let decimalDiff = (TokenDecimal[token2] ?? 18) - (TokenDecimal[token1] ?? 18);
-        let adjustedPrice = rawPrice * 10 ** decimalDiff;
-
-        // 🔹 If price is too small (< 1), invert it
-        if (adjustedPrice < 1) {
-            adjustedPrice = 1 / adjustedPrice;
-        }
-
-        LivePrice[network][symbols] = parseFloat(adjustedPrice);
+        LivePrice[network][symbols] = price;
 
         LivePriceListener.emit(`priceUpdate:${network}:${symbols}`, {
             provider: network,
             symbol: symbols,
-            p: parseFloat(adjustedPrice),
+            p: price,
             timestamp: new Date().toISOString()
         });
     }
@@ -68,8 +60,8 @@ async function loopFetch(network) {
         for (const [symbol, address] of poolAddresses) {
             await fetchLivePrice(network, symbol, address);
         }
-
-        const seconds = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000;
+        console.log(network, LivePrice[network])
+        const seconds = Math.floor(Math.random() * (8000 - 6000 + 1)) + 6000;
         await delay(seconds); // Wait 5-7 seconds between cycles
     }
 }

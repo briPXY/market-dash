@@ -62,17 +62,17 @@ async function UniswapV3(symbolIn, symbolOut, interval, network = "UniswapV3") {
             throw new Error("Invalid data received");
         }
 
-        const reversedRate = data.data[poolInterval[interval]][0].close < 1; // Reversed against symbolIn/symbolOut logic
-        const operator = reversedRate ? (num) => parseFloat(1 / num) : (num) => num;
+        // const reversedRate = data.data[poolInterval[interval]][0].close < 1; // Reversed against symbolIn/symbolOut logic
+        // const operator = reversedRate ? (num) => parseFloat(1 / num) : (num) => num;
         data.data[poolInterval[interval]].reverse(); // Beucause it's desc in graphql query.
 
         const convertedData = data.data[poolInterval[interval]].map(entry => ({
-            close: Number(operator(entry.close)),
+            close: Number(entry.close),
             date: entry[timeProp[interval]] * multiplyUnixTime[interval],
             dateOpen: 0, // Dummy value
-            high: Number(operator(entry.low)), // Swap high/low
-            low: Number(operator(entry.high)),
-            open: Number(operator(entry.open)),
+            high: Number(entry.low), // Swap high/low
+            low: Number(entry.high),
+            open: Number(entry.open),
             quote: 0,    // Dummy value
             trades: 0,   // Dummy value
             volume: Number(parseFloat(entry.volumeUSD)),

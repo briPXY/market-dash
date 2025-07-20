@@ -3,10 +3,11 @@ dotenv.config();
 
 const Subgraphs = {}
 
+// Order: token0/token1
 Subgraphs.UniswapV3 = {
     id: "5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV",
-    pools: { // order in subgraph api json response = token1-token0 (symbolOut - In)
-        "USDT-WETH": "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36",
+    pools: {
+        "USDT-WETH": "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36", //revert
         "USDT-WBTC": "0x9db9e0e53058c89e5b94e29621a205198648425b",
         "USDC-WBTC": "0x99ac8ca7087fa4a2a1fb6357269965a2014abc35",
         "WETH-WBTC": "0x4585fe77225b41b697c938b018e2ac67ac5a20c0",
