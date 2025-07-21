@@ -2,11 +2,11 @@ import LivePrice, { LivePriceListener } from "../memory/prices.memory.js";
 
 export default async function livePriceWebSocket(fastify) {
     // WebSocket endpoint
-    fastify.get('/liveprice/:provider/:symbols', { websocket: true }, (socket, req) => {
+    fastify.get('/liveprice/:provider/:address', { websocket: true }, (socket, req) => {
 
-        const { provider, symbols } = req.params;
-        const topic = `priceUpdate:${provider}:${symbols}`;
-        const initialPrice = LivePrice[provider]?.[symbols];
+        const { provider, address } = req.params;
+        const topic = `priceUpdate:${provider}:${address}`;
+        const initialPrice = LivePrice[provider]?.[address];
 
         if (initialPrice === undefined) {
             socket.send(JSON.stringify({ error: 'Invalid provider or symbol' }));
@@ -26,7 +26,7 @@ export default async function livePriceWebSocket(fastify) {
         // Send the initial price immediately
         socket.send(JSON.stringify({
             provider,
-            symbol: symbols,
+            address: address,
             p: initialPrice,
             timestamp: new Date().toISOString()
         }));

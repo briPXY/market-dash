@@ -18,11 +18,9 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export const fetchLivePrice = async (network, symbols, address) => {
+export const fetchLivePrice = async (network, decimals0, decimals1, address) => {
     try {
-        await delay(Math.floor(Math.random() * (2000 - 100 + 1)) + 100)
-        const pairs = symbols.split("-");
-        const token0 = pairs[0], token1 = pairs[1];
+        await delay(Math.floor(Math.random() * (2000 - 100 + 1)) + 100) 
 
         const provider = new ethers.JsonRpcProvider(Subgraphs[network].RPC);  // Public RPC
 
@@ -31,18 +29,15 @@ export const fetchLivePrice = async (network, symbols, address) => {
         ];
 
         const poolContract = new ethers.Contract(address, poolABI, provider);
-        const slot0 = await poolContract.slot0();
-
-        const decimals0 = TokenDecimal[token0] ?? 18;
-        const decimals1 = TokenDecimal[token1] ?? 18;
+        const slot0 = await poolContract.slot0(); 
  
         const price = getPriceFromSqrtPriceX96(slot0.sqrtPriceX96, decimals0, decimals1)
 
-        LivePrice[network][symbols] = price;
+        LivePrice[network][address] = price;
 
-        LivePriceListener.emit(`priceUpdate:${network}:${symbols}`, {
+        LivePriceListener.emit(`priceUpdate:${network}:${address}`, {
             provider: network,
-            symbol: symbols,
+            address: address,
             p: price,
             timestamp: new Date().toISOString()
         });
@@ -55,12 +50,15 @@ export const fetchLivePrice = async (network, symbols, address) => {
 
 async function loopFetch(network) {
     while (true) {
-        const poolAddresses = Object.entries(Subgraphs[network].pools);
+        const poolAdresses = Subgraphs[network].info;
 
-        for (const [symbol, address] of poolAddresses) {
-            await fetchLivePrice(network, symbol, address);
+        for (const address in poolAdresses) {
+            const poolInfo = Subgraphs[network].info[address];
+            const decimals0 = Number(poolInfo.token0.decimals)
+            const decimals1 = Number(poolInfo.token1.decimals);
+            await fetchLivePrice(network, decimals0, decimals1, address);
         }
-        console.log(network, LivePrice[network])
+        //console.log(network, LivePrice[network])
         const seconds = Math.floor(Math.random() * (8000 - 6000 + 1)) + 6000;
         await delay(seconds); // Wait 5-7 seconds between cycles
     }

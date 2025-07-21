@@ -1,0 +1,216 @@
+{
+    "UniswapV3": {
+        "0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801": {
+            "token0": [
+                "UNI",
+                "Uniswap"
+            ],
+            "token1": [
+                "WETH",
+                "Wrapped Ether"
+            ]
+        },
+        "0x4585fe77225b41b697c938b018e2ac67ac5a20c0": {
+            "token0": [
+                "WBTC",
+                "Wrapped BTC"
+            ],
+            "token1": [
+                "WETH",
+                "Wrapped Ether"
+            ]
+        },
+        "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36": {
+            "token0": [
+                "WETH",
+                "Wrapped Ether"
+            ],
+            "token1": [
+                "USDT",
+                "Tether USD"
+            ]
+        },
+        "0x5796d7ad51583ae2c7297652edb7006bcd90519d": {
+            "token0": [
+                "HKDM",
+                "HKD Mapped Token"
+            ],
+            "token1": [
+                "USDM",
+                "USD Mapped Token"
+            ]
+        },
+        "0x6dcba3657ee750a51a13a235b4ed081317da3066": {
+            "token0": [
+                "beraSTONE",
+                "Berachain STONE"
+            ],
+            "token1": [
+                "WETH",
+                "Wrapped Ether"
+            ]
+        },
+        "0x99ac8ca7087fa4a2a1fb6357269965a2014abc35": {
+            "token0": [
+                "WBTC",
+                "Wrapped BTC"
+            ],
+            "token1": [
+                "USDC",
+                "USD Coin"
+            ]
+        },
+        "0x9db9e0e53058c89e5b94e29621a205198648425b": {
+            "token0": [
+                "WBTC",
+                "Wrapped BTC"
+            ],
+            "token1": [
+                "USDT",
+                "Tether USD"
+            ]
+        },
+        "0xa6cc3c2531fdaa6ae1a3ca84c2855806728693e8": {
+            "token0": [
+                "LINK",
+                "ChainLink Token"
+            ],
+            "token1": [
+                "WETH",
+                "Wrapped Ether"
+            ]
+        },
+        "0xe8c6c9227491c0a8156a0106a0204d881bb7e531": {
+            "token0": [
+                "MKR",
+                "Maker"
+            ],
+            "token1": [
+                "WETH",
+                "Wrapped Ether"
+            ]
+        }
+    },
+    "UniswapV3Sepolia": {
+        "0x0a6886558f9f39876e47ec6ee1a521236e757388": {
+            "token0": [
+                "DRAC",
+                "Vampire Lord"
+            ],
+            "token1": [
+                "WETH",
+                "Wrapped Ether"
+            ]
+        },
+        "0x287b0e934ed0439e2a7b1d5f0fc25ea2c24b64f7": {
+            "token0": [
+                "UNI",
+                "Uniswap"
+            ],
+            "token1": [
+                "WETH",
+                "Wrapped Ether"
+            ]
+        },
+        "0x3289680dd4d6c10bb19b899729cda5eef58aeff1": {
+            "token0": [
+                "USDC",
+                "USDC"
+            ],
+            "token1": [
+                "WETH",
+                "Wrapped Ether"
+            ]
+        },
+        "0x58d850667c47981a1b6e7ca0b8dc2eb937cd4119": {
+            "token0": [
+                "USDT",
+                "USDT"
+            ],
+            "token1": [
+                "WETH",
+                "Wrapped Ether"
+            ]
+        },
+        "0x634e1e35616f4b3ed8d3459e430900209ea7ca20": {
+            "token0": [
+                "FDT",
+                "faucet dao token"
+            ],
+            "token1": [
+                "WETH",
+                "Wrapped Ether"
+            ]
+        },
+        "0x91bee36974282b9335f694035ca047309ea0b026": {
+            "token0": [
+                "YU",
+                "Yala Stable Coin"
+            ],
+            "token1": [
+                "WETH",
+                "Wrapped Ether"
+            ]
+        },
+        "0xa1d509ef257220ce3bd5661d87849b83643dbea5": {
+            "token0": [
+                "ULTI",
+                "ULTI"
+            ],
+            "token1": [
+                "WETH",
+                "Wrapped Ether"
+            ]
+        },
+        "0xa9df6536d606241e2708b3b6da63dd7163fb734d": {
+            "token0": [
+                "METH",
+                "Mainnet ETH"
+            ],
+            "token1": [
+                "tBTC",
+                "tBTC v2"
+            ]
+        },
+        "0xc0b6f0c5d4c33c59b4672000d490992b7097ba40": {
+            "token0": [
+                "YBTC",
+                "Yala BTC"
+            ],
+            "token1": [
+                "YU",
+                "Yala Stable Coin"
+            ]
+        },
+        "0xc4545a0b4a87cbaff03a73f45c377c0b5f416e00": {
+            "token0": [
+                "YBTC",
+                "Yala BTC"
+            ],
+            "token1": [
+                "WETH",
+                "Wrapped Ether"
+            ]
+        },
+        "0xfac1138c5a426d26a6e350868eee6501788f1417": {
+            "token0": [
+                "MON",
+                "MON"
+            ],
+            "token1": [
+                "WETH",
+                "Wrapped Ether"
+            ]
+        },
+        "0xfc5fab0a82d2601fd4a1a5f11a8979c8fc95ab8a": {
+            "token0": [
+                "BYT",
+                "BOYMAT"
+            ],
+            "token1": [
+                "WETH",
+                "Wrapped Ether"
+            ]
+        }
+    }
+}

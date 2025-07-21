@@ -65,7 +65,8 @@ async function uniswapQuery(network, poolAddress, timeframe, count, pairString, 
             }
         );
 
-        historicalData[network][timeframe][pairString] = response.data.data;
+        historicalData[network][timeframe][poolAddress] = response.data.data;
+        historicalData[network][timeframe][pairString] = historicalData[network][timeframe][poolAddress];
     } catch (error) {
         console.error("\x1b[31m Subgraph historical graphQL querying error:\x1b[0m", error);
         throw new Error(error);
@@ -80,21 +81,23 @@ for (const network of networks) {
         "1d": {}
     };
 
-    const tokenPairsArray = Object.keys(Subgraphs[network].pools);
     const subgraphID = Subgraphs[network].id;
+    const poolAddresses = Object.keys(Subgraphs[network].info);
 
     // Initial data
-    tokenPairsArray.forEach((tokenPair) => {
-        const poolAdress = Subgraphs[network].pools[tokenPair];
-        uniswapQuery(network, poolAdress, "1d", 500, tokenPair, subgraphID);
-        uniswapQuery(network, poolAdress, "1h", 500, tokenPair, subgraphID);
+    poolAddresses.forEach((poolAdress) => {
+        const token0 = Subgraphs[network].info[poolAdress].token0.symbol;
+        const token1 = Subgraphs[network].info[poolAdress].token0.symbol;
+        uniswapQuery(network, poolAdress, "1d", 500, `${token0}-${token1}`, subgraphID);
+        uniswapQuery(network, poolAdress, "1h", 500, `${token0}-${token1}`, subgraphID);
     });
 
     setInterval(() => {
-        tokenPairsArray.forEach((tokenPair) => {
-            const poolAdress = Subgraphs[network].pools[tokenPair];
-            uniswapQuery(network, poolAdress, "1d", 500, tokenPair, subgraphID);
-            uniswapQuery(network, poolAdress, "1h", 500, tokenPair, subgraphID);
+        poolAddresses.forEach((poolAdress) => {
+            const token0 = Subgraphs[network].info[poolAdress].token0.symbol;
+            const token1 = Subgraphs[network].info[poolAdress].token0.symbol;
+            uniswapQuery(network, poolAdress, "1d", 500, `${token0}-${token1}`, subgraphID);
+            uniswapQuery(network, poolAdress, "1h", 500, `${token0}-${token1}`, subgraphID);
         });
     }, 3600000) // Both day and hour fetched each hour because it's unknown when TheGraph cycle it's indexing the uniswap.
 }
