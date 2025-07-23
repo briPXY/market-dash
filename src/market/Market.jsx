@@ -19,6 +19,7 @@ function Market() {
     const [range, setRange] = useState("1h");
     const { address } = usePoolStore();
     const network = useSourceStore(state => state.src);
+    const ready = network && address;
 
     const { data = initData, isFetching, isError } = useChartQuery({
         address: address,
@@ -26,7 +27,6 @@ function Market() {
         network: network,
     });
 
-    if (!network || !address) return null;
     return (
         <div>
             <NetworkSelection networkStatus={!network} />
@@ -51,11 +51,11 @@ function Market() {
                     />
                     <TabPanelParent className="bg-primary mx-auto" style={{ display: SourceConst[network]?.isDex ? "block" : "none" }}>
                         <Swap
-                            symbolIn={SourceConst[network].info[address].token0.symbol}
-                            symbolOut={SourceConst[network].info[address].token1.symbol}
+                            symbolIn={ready ? SourceConst[network].info[address].token0.symbol : ''}
+                            symbolOut={ready ? SourceConst[network].info[address].token1.symbol : ''}
                             poolAddress={address}
                             network={SourceConst[network]}
-                            isDEX={SourceConst[network].isDex}
+                            isDEX={SourceConst[network]?.isDex}
                             label="Swap"
                         />
                     </TabPanelParent>

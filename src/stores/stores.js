@@ -1,3 +1,4 @@
+import { initPoolsInfo } from "../idb/init";
 import { create } from "zustand";
 
 const usePriceStore = create((set) => ({
@@ -9,14 +10,15 @@ const usePriceStore = create((set) => ({
 
 export const usePoolStore = create((set) => ({
 	address: null,
-	setAddress: (address) => set({ address: address }), 
+	setAddress: (address) => set({ address: address }),
 }));
 
 export const useSourceStore = create((set) => ({
 	src: null,
-	setSrc: (value) => {
+	setSrc: async (value) => {
+		const address = await initPoolsInfo(value);
 		set({ src: value });
-		usePoolStore.getState().resetPoolAddress(); // Reset symbols when source changes
+		usePoolStore.setState({ address: address });
 	},
 }));
 

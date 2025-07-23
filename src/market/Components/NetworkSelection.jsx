@@ -4,7 +4,6 @@ import { Flex } from "../../Layout/Layout";
 import { saveState } from "../../idb/stateDB";
 import { useSourceStore } from "../../stores/stores";
 import { LoadingIcon } from "../../Layout/Elements";
-import { initPoolsInfo } from "../../idb/init";
 
 export const NetworkSelection = ({ networkStatus }) => {
     const setSrc = useSourceStore(state => state.setSrc);
@@ -13,7 +12,6 @@ export const NetworkSelection = ({ networkStatus }) => {
     const setNetwork = async (network) => {
         await saveState(`savedNetwork`, network);
         setSrc(network);
-        await initPoolsInfo(network);
     }
 
     const networkUndefinded = {

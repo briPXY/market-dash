@@ -35,8 +35,7 @@ export async function getFiatRate(symbol) {
 			price = await api();
 			if (price) break;
 		} catch (e) {
-			console.warn('fiat API failed:', e);
-			return null;
+			e;
 		}
 	}
 

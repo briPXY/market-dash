@@ -9,10 +9,9 @@ export const LoadSymbol = ({ symbolStatus }) => {
     } 
     
     return (
-        <div className="w-full bg-primary h-screen floating-modal" style={symbolUndefined[symbolStatus]}>
-            <div className="h-14"></div>
-            <div className="flex items-center rounded-lg mx-auto max-w-100 p-10">
-                <div className="text-sm">Loading pools information</div>
+        <div className="bg-secondary floating-modal" style={symbolUndefined[symbolStatus]}>
+            <div className="flex items-center rounded-lg pr-2 pl-8">
+                <div className="text-xs md:text-sm">Loading pools information</div>
                 <LoadingIcon className="w-12 h-12"/>
             </div>
         </div>

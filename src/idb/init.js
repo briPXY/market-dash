@@ -1,8 +1,6 @@
 import { DOMAIN } from "../constants/environment";
-import { SourceConst } from "../constants/sourceConst";
-import { useSourceStore, usePoolStore } from "../stores/stores";
+import { SourceConst } from "../constants/sourceConst"; 
 import { isSavedStateExist, loadState } from "./stateDB";
-const { setAddress } = usePoolStore.getState();
 
 export async function initPoolsInfo(network) {
     try {
@@ -12,33 +10,19 @@ export async function initPoolsInfo(network) {
             SourceConst[network].info = {};
             Object.assign(SourceConst[network].info, obj.data);
         }
-    }
-    catch (e) {
-        console.error("network error during init():", e);
-    }
-    finally {
+
         const savedTickExist = await isSavedStateExist(`savedTick-${network}`);
 
         if (savedTickExist) {
-            const state = await loadState(`savedTick-${network}`);
-            setAddress(state);
+            const savedAddress = await loadState(`savedTick-${network}`);
+            return savedAddress;
         }
         else {
-            const address = Object.keys(SourceConst[network].info)[0];
-            setAddress(address);
+            const newAddress = Object.keys(SourceConst[network].info)[0];
+            return newAddress;
         }
     }
-}
-
-(async () => {
-    const savedNetworkExist = await isSavedStateExist("savedNetwork");
-
-    if (savedNetworkExist) {
-        const savedNetwork = await loadState("savedNetwork");
-        useSourceStore.setState({ src: savedNetwork });
-
-        // Get saved symbol/token pair
-        const network = useSourceStore.getState().src;
-        await initPoolsInfo(network);
+    catch (e) {
+        console.error("network error @initPoolsInfo:", e);
     }
-})();
+}
