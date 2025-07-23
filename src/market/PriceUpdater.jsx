@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import usePriceStore, { useSourceStore, useSymbolStore } from "../stores/stores";
+import usePriceStore, { useSourceStore, usePoolStore } from "../stores/stores";
 import { SourceConst } from "../constants/sourceConst";
 
 const closeWebSocket = (ws) => {
@@ -18,15 +18,14 @@ const closeWebSocket = (ws) => {
 
 const PriceUpdater = ({ type }) => {
     const setPrice = usePriceStore((state) => type == "trade" ? state.setTradePrice : state.setIndexPrice);
-    const symbolIn = useSymbolStore(state => state.symbolIn);
-    const symbolOut = useSymbolStore(state => state.symbolOut);
+    const pool = usePoolStore(state => state.address); 
     const src = useSourceStore(state => state.src);
     const ws = useRef(null);
     let reconnectTimer = useRef(null);
 
     useEffect(() => {
 
-        if (!symbolIn || !src) return; 
+        if (!pool || !src) return; 
  
         const connectWebSocket = () => {
             if (ws.current !== null) {
@@ -34,7 +33,7 @@ const PriceUpdater = ({ type }) => {
             } 
              
             const network = SourceConst[src];
-            const socket = new WebSocket(network.getPriceURL(symbolIn, symbolOut));
+            const socket = new WebSocket(network.getPriceURL(pool));
             ws.current = socket;
 
             socket.onmessage = (event) => {
@@ -70,7 +69,7 @@ const PriceUpdater = ({ type }) => {
             if (updateTicker) clearInterval(updateTicker);
         };
 
-    }, [setPrice, src, symbolIn, symbolOut, type]);
+    }, [setPrice, src, pool, type]);
 
     return null; // ✅ No UI needed, only updates Zustand
 };

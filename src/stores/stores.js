@@ -7,20 +7,16 @@ const usePriceStore = create((set) => ({
 	setIndexPrice: (price) => set({ index: price }),
 }));
 
-export const useSymbolStore = create((set) => ({
-	symbolIn: null,
-	symbolOut: null,
-	setSymbolIn: (value) => set({ symbolIn: value }),
-	setSymbolOut: (value) => set({ symbolOut: value }),
-	setAll: (symbolIn, symbolOut) => set({ symbolIn: symbolIn, symbolOut: symbolOut }),
-	resetSymbols: () => set({ symbolIn: null, symbolOut: null }),
+export const usePoolStore = create((set) => ({
+	address: null,
+	setAddress: (address) => set({ address: address }), 
 }));
 
 export const useSourceStore = create((set) => ({
 	src: null,
 	setSrc: (value) => {
 		set({ src: value });
-		useSymbolStore.getState().resetSymbols(); // Reset symbols when source changes
+		usePoolStore.getState().resetPoolAddress(); // Reset symbols when source changes
 	},
 }));
 

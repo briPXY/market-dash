@@ -5,12 +5,11 @@ import { calculateHistoricalChange } from "../../utils/pricechanges";
 import { use24HourQuery } from "../../queries/24hourQuery";
 import { LoadingIcon } from "../../Layout/Elements"; 
 
-export const Hour24Changes = ({ symbolIn, symbolOut, src }) => {
+export const Hour24Changes = ({ address, src }) => {
 
     const { data: hour24data, isLoading: hour24Loading } = use24HourQuery({
-        symbolIn: symbolIn,
-        symbolOut: symbolOut,
-        src: src
+        poolAddress: address,
+        network: src
     });
 
     const priceChanges = useMemo(() => calculateHistoricalChange(hour24data), [hour24data]);

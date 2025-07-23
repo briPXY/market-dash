@@ -1,18 +1,32 @@
+import { DOMAIN } from "../constants/environment";
 import { SourceConst } from "../constants/sourceConst";
-import { useSourceStore, useSymbolStore } from "../stores/stores";
+import { useSourceStore, usePoolStore } from "../stores/stores";
 import { isSavedStateExist, loadState } from "./stateDB";
-const { setAll } = useSymbolStore.getState();
+const { setAddress } = usePoolStore.getState();
 
-export async function initSymbols(network) {
-    const savedTickExist = await isSavedStateExist(`savedTick-${network}`);
-
-    if (savedTickExist) {
-        const state = await loadState(`savedTick-${network}`);
-        setAll(state[0], state[1]);
+export async function initPoolsInfo(network) {
+    try {
+        if (!SourceConst[network].info) {
+            let res = await fetch(`${DOMAIN}/api/poolinfo/${network}`);
+            let obj = await res.json();
+            SourceConst[network].info = {};
+            Object.assign(SourceConst[network].info, obj.data);
+        }
     }
-    else {
-        const [symbolIn, symbolOut] = SourceConst[network].symbols[0];
-        setAll(symbolIn, symbolOut);
+    catch (e) {
+        console.error("network error during init():", e);
+    }
+    finally {
+        const savedTickExist = await isSavedStateExist(`savedTick-${network}`);
+
+        if (savedTickExist) {
+            const state = await loadState(`savedTick-${network}`);
+            setAddress(state);
+        }
+        else {
+            const address = Object.keys(SourceConst[network].info)[0];
+            setAddress(address);
+        }
     }
 }
 
@@ -25,6 +39,6 @@ export async function initSymbols(network) {
 
         // Get saved symbol/token pair
         const network = useSourceStore.getState().src;
-        initSymbols(network);
+        await initPoolsInfo(network);
     }
 })();

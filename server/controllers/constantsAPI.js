@@ -1,7 +1,7 @@
 import Subgraphs from "../constants/subgraph.adapter.js";
 
 export default async function constantsAPI(fastify) {
-    fastify.get("/api/pooladdress/:network", async (request, reply) => {
+    fastify.get("/api/poolinfo/:network", async (request, reply) => {
         try {
             const { network } = request.params; 
 
@@ -9,7 +9,7 @@ export default async function constantsAPI(fastify) {
 
             return reply.send({
                 success: true,
-                data: Subgraphs[network].pools,
+                data: Subgraphs[network].info,
             });
 
         } catch (error) {

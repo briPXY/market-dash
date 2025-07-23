@@ -1,0 +1,21 @@
+query {
+  pools(where: { id_in: [/* addressArray */] }) {
+    id
+    token0 {
+      id
+      symbol
+      name
+      decimals
+    }
+    token1 {
+      id
+      symbol
+      name
+      decimals
+    }
+    feeTier
+    txCount
+    totalValueLockedUSD
+    totalVolumeUSD
+  }
+}

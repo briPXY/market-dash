@@ -11,8 +11,8 @@ export const LoadSymbol = ({ symbolStatus }) => {
     return (
         <div className="w-full bg-primary h-screen floating-modal" style={symbolUndefined[symbolStatus]}>
             <div className="h-14"></div>
-            <div className="flex gap-3 items-center rounded-lg mx-auto max-w-100 p-10">
-                <div className="text-sm">Loading symbols...</div>
+            <div className="flex items-center rounded-lg mx-auto max-w-100 p-10">
+                <div className="text-sm">Loading pools information</div>
                 <LoadingIcon className="w-12 h-12"/>
             </div>
         </div>

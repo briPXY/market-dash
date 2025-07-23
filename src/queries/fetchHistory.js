@@ -1,15 +1,15 @@
 // Transforms API response to D3 compatible input
 import axios from "axios";
 import { formatAPI } from "./api_formatter";
-import { PoolAddress } from "../constants/uniswapAddress";
 import { formatSwapData } from "../utils/formatSwapData";
 import { initData } from "../constants/initData";
 import { DOMAIN } from "../constants/environment";
 
 // BINANCE
 
-const binance = async function (symbolIn, symbolOut, interval) {
+const binance = async function (address, interval) {
     try {
+        const [symbolIn, symbolOut] = address.split('-');
         const dataUrl = formatAPI.binance(symbolOut, symbolIn, interval).historical;
 
         const response = await axios.get(dataUrl);
@@ -35,18 +35,13 @@ const binance = async function (symbolIn, symbolOut, interval) {
     }
 };
 
-async function UniswapV3(symbolIn, symbolOut, interval, network = "UniswapV3") {
+async function UniswapV3(address, interval, network = "UniswapV3") {
     const poolInterval = {
         "1h": "poolHourDatas",
         "1d": "poolDayDatas",
     }
 
     try {
-        if (!PoolAddress[network][symbolOut.toUpperCase()][symbolIn.toUpperCase()]) {
-            console.log(PoolAddress);
-            throw new Error(`Pool address not found for ${symbolIn}`);
-        }
-        //const poolAddress = PoolAddress[symbolOut.toUpperCase()][symbolIn.toUpperCase()]
         const timeframes = { "1h": "1h", "1d": "1d" };
         const timeProp = { "1h": "periodStartUnix", "1d": "date" };
         const multiplyUnixTime = { "1h": 1, "1d": 1000 };
@@ -55,7 +50,7 @@ async function UniswapV3(symbolIn, symbolOut, interval, network = "UniswapV3") {
             interval = "1h";
         }
  
-        const response = await fetch(`${DOMAIN}/historical/${network}/${symbolIn}/${symbolOut}/${interval}`);
+        const response = await fetch(`${DOMAIN}/historical/${network}/${address}/${interval}`);
         const data = await response.json();
 
         if (!data) {

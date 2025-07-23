@@ -9,16 +9,16 @@ import { SourceConst } from "../constants/sourceConst.js";
  * @param {Function} transformFn - data transform function
  * @returns {Object} - Query result from React Query.
  */
-const useChartQuery = ({ symbolIn, symbolOut, interval, network }) => {
+const useChartQuery = ({ address, interval, network }) => {
 
-    const queryKey = useMemo(() => ["historical", symbolIn, symbolOut, interval, network], [symbolIn, symbolOut, interval, network]);
+    const queryKey = useMemo(() => ["historical", address, interval, network], [address, interval, network]);
     const initialData = useMemo(() => { return initData }, [])
 
     return useQuery({
         queryKey: queryKey,
-        enabled: !!(symbolIn && symbolOut), // Disable query if either symbol is missing
+        enabled: !!address && !!network, // Disable query if either symbol is missing
         queryFn: async () => {
-            const data = await SourceConst[network].ohlcFetch(symbolIn, symbolOut, interval, network);
+            const data = await SourceConst[network].ohlcFetch(address, interval, network);
             return data; // Apply transformation if provided
         },
         refetchInterval: timeFrameToMs[interval],

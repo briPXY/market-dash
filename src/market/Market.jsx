@@ -4,9 +4,9 @@ import MarketChart from "./MarketChart";
 
 import { useChartQuery } from "../queries/chartquery";
 import { LivePriceText } from "./Components/LivePriceText";
-import { useSourceStore, useSymbolStore } from "../stores/stores";
+import { useSourceStore, usePoolStore } from "../stores/stores";
 import { Hour24Changes } from "./Components/Hour24Changes";
-import { SymbolSelector } from "./Components/SymbolSelector";
+import { PoolSelector } from "./Components/PoolSelector";
 import { NetworkSelection } from "./Components/NetworkSelection";
 import { LoadSymbol } from "./Components/LoadSymbol";
 import { PoolAddressView } from "./Components/PoolAddressView";
@@ -17,32 +17,31 @@ import { initData } from "../constants/initData";
 
 function Market() {
     const [range, setRange] = useState("1h");
-    const { symbolIn, symbolOut } = useSymbolStore();
+    const { address } = usePoolStore();
     const network = useSourceStore(state => state.src);
 
     const { data = initData, isFetching, isError } = useChartQuery({
-        symbolIn: symbolIn,
-        symbolOut: symbolOut,
+        address: address,
         interval: range,
         network: network,
     });
 
+    if (!network || !address) return null;
     return (
         <div>
-            <NetworkSelection networkStatus={!network}/>
-            <LoadSymbol symbolStatus={network && !symbolIn}/>
+            <NetworkSelection networkStatus={!network} />
+            <LoadSymbol symbolStatus={network && !address} />
             <Flex className="flex-col gap-1">
                 <Flex className="justify-between gap-2 bg-primary p-2 py-4 md:p-4 ">
                     <Flex className="flex-col items-start text-sm md:text-lg font-semibold">
-                        <SymbolSelector symbolIn={symbolIn} symbolOut={symbolOut} />
+                        <PoolSelector address={address} />
                         <LivePriceText OHLCData={data.ohlc} />
-                        <PoolAddressView src={network} symbolIn={symbolIn} symbolOut={symbolOut} />
+                        <PoolAddressView src={network} address={address} />
                     </Flex>
-                    <Hour24Changes symbolIn={symbolIn} symbolOut={symbolOut} src={network} />
+                    <Hour24Changes address={address} src={network} />
                 </Flex>
                 <Flex className="flex flex-col md:flex-row gap-1">
                     <MarketChart
-                        symbol={symbolOut}
                         setRange={setRange}
                         range={range}
                         OHLCData={data.ohlc}
@@ -51,7 +50,14 @@ function Market() {
                         network={SourceConst[network]}
                     />
                     <TabPanelParent className="bg-primary mx-auto" style={{ display: SourceConst[network]?.isDex ? "block" : "none" }}>
-                        <Swap symbolIn={symbolIn} symbolOut={symbolOut} network={SourceConst[network]} label="Swap" />
+                        <Swap
+                            symbolIn={SourceConst[network].info[address].token0.symbol}
+                            symbolOut={SourceConst[network].info[address].token1.symbol}
+                            poolAddress={address}
+                            network={SourceConst[network]}
+                            isDEX={SourceConst[network].isDex}
+                            label="Swap"
+                        />
                     </TabPanelParent>
                 </Flex>
 
