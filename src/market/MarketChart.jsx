@@ -12,7 +12,7 @@ import { Yscale } from "./Components/Yscale";
 import { ZoomOverlay } from "../charts/ZoomOverlay";
 import { isAgentMobile } from "../constants/environment";
 
-function MarketChart({ OHLCData, isFetching, isError, setRange, range, network }) {
+function MarketChart({ OHLCData, isError, setRange, range, network }) {
     const [chart, setChart] = useState({ n: "Candlestick", f: candlestick });
     const [lengthPerItem, setLengthPerItem] = useState(isAgentMobile ? 6 : 9);
     const [isLogScale, setYscale] = useState("LOG");
@@ -22,10 +22,7 @@ function MarketChart({ OHLCData, isFetching, isError, setRange, range, network }
             <Flex className="flex-col h-full">
                 <Flex className="pb-4 pt-4 items-center gap-2 justify-between">
                     <RangeSelector setRange={setRange} selected={range} />
-
-                    <div>{isFetching ? "Loading data.." : ''}</div>
                     <div>{isError ? "Connection error" : ''}</div>
-
                     <Flex className="overflow-visible justify-end items-center gap-4 text-sm">
                         <PopoverButton showClass={"w-auto h-full top-[100%] right-0 z-15"}>
                             <Button>
@@ -43,7 +40,6 @@ function MarketChart({ OHLCData, isFetching, isError, setRange, range, network }
                 <LiveChart
                     OHLCData={OHLCData}
                     range={range}
-                    isFetching={isFetching}
                     isError={isError}
                     chart={chart.f}
                     isLogScale={isLogScale}

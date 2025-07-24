@@ -5,13 +5,12 @@ import { saveState } from "../../idb/stateDB";
 import { useSourceStore } from "../../stores/stores";
 import { LoadingIcon } from "../../Layout/Elements";
 
-export const NetworkSelection = ({ networkStatus }) => {
-    const setSrc = useSourceStore(state => state.setSrc);
+export const NetworkSelection = ({ networkStatus, handleNetworkChange }) => {
     const networkSrc = useSourceStore.getState().src;
 
     const setNetwork = async (network) => {
         await saveState(`savedNetwork`, network);
-        setSrc(network);
+        handleNetworkChange(network);
     }
 
     const networkUndefinded = {

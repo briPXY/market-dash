@@ -13,7 +13,6 @@ import { getBandXScale } from "./helper/getBandXScale";
 const LiveChart = ({
     OHLCData,
     range,
-    isFetching,
     isError,
     chart,
     lengthPerItem,
@@ -86,7 +85,7 @@ const LiveChart = ({
         svg.selectAll(".main").remove();
         ySvg.selectAll('*').remove();
 
-        if (!OHLCData || isFetching || isError) return;
+        if (!OHLCData || isError) return;
         // draw axis/label
         drawAxesAndLabels(svg, ySvg, scale, innerHeight, OHLCData.length, range);
 
@@ -99,12 +98,11 @@ const LiveChart = ({
         chart(d3, svg, scale, tooltipRef, OHLCData, bandXScale, innerHeight);
         //line(d3, svg, scale, tooltipRef, OHLCData, innerHeight);
 
-    }, [OHLCData, lengthPerItem, isLogScale, range, height, innerWidth, innerHeight, scale, svg, ySvg, isFetching, isError, chart, bandXScale]);
+    }, [OHLCData, lengthPerItem, isLogScale, range, height, innerWidth, innerHeight, scale, svg, ySvg, isError, chart, bandXScale]);
 
     useEffect(() => {
-        if (isFetching) return;
         drawSubIndicatorGrid(subSvg, innerWidth, OHLCData, subIndicatorHeight, margin.current, subIndicators.length);
-    }, [OHLCData, innerWidth, isFetching, scale, subIndicatorHeight, subIndicators, subSvg]);
+    }, [OHLCData, innerWidth, scale, subIndicatorHeight, subIndicators, subSvg]);
 
     return (
         <div className="relative">

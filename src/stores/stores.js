@@ -1,4 +1,3 @@
-import { initPoolsInfo } from "../idb/init";
 import { create } from "zustand";
 
 const usePriceStore = create((set) => ({
@@ -16,9 +15,7 @@ export const usePoolStore = create((set) => ({
 export const useSourceStore = create((set) => ({
 	src: null,
 	setSrc: async (value) => {
-		const address = await initPoolsInfo(value);
 		set({ src: value });
-		usePoolStore.setState({ address: address });
 	},
 }));
 

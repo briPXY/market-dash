@@ -5,13 +5,12 @@ import { PopoverButton } from "../Layout/Elements";
 import { Flex } from "../Layout/Layout";
 import { SourceConst } from "../constants/sourceConst";
 
-export const NetworkSelector = () => {
+export const NetworkSelector = ({handleNetworkChange}) => {
     const src = useSourceStore(state => state.src);
-    const setSrc = useSourceStore(state => state.setSrc)
 
     const setNetwork = async (network) => {
         await saveState(`savedNetwork`, network)
-        setSrc(network);
+        handleNetworkChange(network);
     }
 
     if (!src){

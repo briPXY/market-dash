@@ -15,13 +15,13 @@ import Swap from "../contracts/Swap";
 import { SourceConst } from "../constants/sourceConst";
 import { initData } from "../constants/initData";
 
-function Market() {
+function Market({ handleNetworkChange }) {
     const [range, setRange] = useState("1h");
     const { address } = usePoolStore();
-    const network = useSourceStore(state => state.src);
+    const { src: network } = useSourceStore();
     const ready = network && address;
 
-    const { data = initData, isFetching, isError } = useChartQuery({
+    const { data = initData, isError } = useChartQuery({
         address: address,
         interval: range,
         network: network,
@@ -29,7 +29,7 @@ function Market() {
 
     return (
         <div>
-            <NetworkSelection networkStatus={!network} />
+            <NetworkSelection networkStatus={!network} handleNetworkChange={handleNetworkChange} />
             <LoadSymbol symbolStatus={network && !address} />
             <Flex className="flex-col gap-1">
                 <Flex className="justify-between gap-2 bg-primary p-2 py-4 md:p-4 ">
@@ -45,7 +45,6 @@ function Market() {
                         setRange={setRange}
                         range={range}
                         OHLCData={data.ohlc}
-                        isFetching={isFetching}
                         isError={isError}
                         network={SourceConst[network]}
                     />

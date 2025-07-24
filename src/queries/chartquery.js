@@ -23,6 +23,7 @@ const useChartQuery = ({ address, interval, network }) => {
         },
         refetchInterval: timeFrameToMs[interval],
         staleTime: 0,
+        refetchOnWindowFocus: false,
         cacheTime: timeFrameToMs[interval],
         initialData,
     });

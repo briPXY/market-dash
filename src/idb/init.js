@@ -23,6 +23,7 @@ export async function initPoolsInfo(network) {
         }
     }
     catch (e) {
-        console.error("network error @initPoolsInfo:", e);
+        console.error("error @ initPoolsInfo:", e);
+        return null;
     }
 }
