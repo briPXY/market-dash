@@ -10,5 +10,10 @@ export const LivePriceText = ({ OHLCData }) => {
         return OHLCData[OHLCData.length - 1].close;
     }, [OHLCData]);
 
-    return (<NumberSign num={parseFloat(tradePrice).toFixed(2)} baseNum={lastClosePrice} >{tradePrice}</NumberSign>)
+    return (
+        <NumberSign
+            num={parseFloat(tradePrice).toFixed(4)}
+            baseNum={lastClosePrice} >{tradePrice}
+        </NumberSign>
+    );
 }

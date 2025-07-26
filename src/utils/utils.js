@@ -1,3 +1,5 @@
+import { SourceConst } from "../constants/sourceConst";
+
 export const formatSwapData = (swaps) => {
     // console.log("SWAPS", swaps);
     return swaps.map((trade) => {
@@ -6,7 +8,7 @@ export const formatSwapData = (swaps) => {
         const total = parseFloat(trade.amount0).toFixed(4);
         const amount = Math.abs(parseFloat(trade.amount1)).toFixed(2);
         const sender = trade.sender;
-        const recipient = trade.recipient; 
+        const recipient = trade.recipient;
 
         return {
             date,
@@ -14,7 +16,20 @@ export const formatSwapData = (swaps) => {
             total,
             amount,
             sender,
-            recipient, 
+            recipient,
         };
     });
 };
+
+export function isTickPriceReversed(network, pool) {
+    if (SourceConst[network].invertAll){
+        return true;
+    }
+
+    if (SourceConst[network].invertTick) {
+        return SourceConst[network].invertTick.includes(`${SourceConst[network].info[pool].token0.symbol}${SourceConst[network].info[pool].token1.symbol}`);
+    }
+    else {
+        return false;
+    }
+}

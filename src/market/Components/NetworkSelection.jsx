@@ -3,7 +3,7 @@ import { SourceConst } from "../../constants/sourceConst";
 import { Flex } from "../../Layout/Layout";
 import { saveState } from "../../idb/stateDB";
 import { useSourceStore } from "../../stores/stores";
-import { LoadingIcon } from "../../Layout/Elements";
+import { svg } from "../../Layout/svg";
 
 export const NetworkSelection = ({ networkStatus, handleNetworkChange }) => {
     const networkSrc = useSourceStore.getState().src;
@@ -30,7 +30,7 @@ export const NetworkSelection = ({ networkStatus, handleNetworkChange }) => {
                 </div>
                 {networkSrc && <div className="flex items-center">
                     <div>Loading network</div>
-                    <LoadingIcon className="w-12 h-12" />
+                    <svg.LoadingIcon className="w-12 h-12" />
                 </div>
                 }
                 {Object.keys(SourceConst).map((network) => (

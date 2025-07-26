@@ -21,6 +21,7 @@
     "@web3icons/react": "^4.0.10",
     "axios": "^1.8.4",
     "d3": "^7.9.0",
+    "decimal.js": "^10.6.0",
     "dotenv": "^16.4.7",
     "ethers": "^6.13.5",
     "fastify": "^5.2.1",
@@ -46,9 +47,8 @@
   },
   "nodemonConfig": {
     "ignore": [
-      "public/",
-      "src/**"
+      "**/*"
     ],
-    "ext": "js,ts,json,graphql"
+    "watch": []
   }
 }

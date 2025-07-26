@@ -1,4 +1,5 @@
-import { NumberSign } from "../Layout/Elements";
+import { usePoolStore, useSourceStore } from "../stores/stores";
+import { SourceConst } from "../constants/sourceConst";
 
 // Copy icon component
 const CopyIcon = ({ className = "w-3 h-3 inline ml-1" }) => (
@@ -9,8 +10,10 @@ const CopyIcon = ({ className = "w-3 h-3 inline ml-1" }) => (
 );
 
 export const SwapHistory = ({ swaps }) => {
+    const { address } = usePoolStore();
+    const { src } = useSourceStore();
 
-    if (!swaps) return;
+    if (!swaps || !src) return;
 
     const copy = (text) => {
         navigator.clipboard.writeText(text);
@@ -24,17 +27,17 @@ export const SwapHistory = ({ swaps }) => {
             <div className="flex justify-between px-3 py-2 bg-secondary text-washed rounded-t-md text-xs md:text-sm">
                 <span className="w-1/6 text-left">Date</span>
                 <span className="w-1/6 text-center">Price</span>
-                <span className="w-1/6 text-center">Total</span>
-                <span className="w-1/6 text-center">Amount</span> 
-                <span className="w-1/6 text-right">Wallet</span>
+                <span className="w-1/6 text-center">{SourceConst[src].info[address].token0.symbol}</span>
+                <span className="w-1/6 text-center">{SourceConst[src].info[address].token1.symbol}</span>
+                <span className="w-1/6 text-right">Address</span>
             </div>
 
             {/* Swap Data Rows */}
-            <div className="space-y-2 border-secondary text-[11px] md:text-sm max-h-60 md:max-h-160 overflow-auto"> 
+            <div className="space-y-2 border-secondary text-[11px] md:text-sm max-h-60 md:max-h-160 overflow-auto">
                 {swaps.map((trade, index) => (
                     <div key={index} className="flex justify-between p-3">
                         <span className="w-1/6 text-left">{trade.date}</span>
-                        
+
                         {/* Price: force wrap with CSS */}
                         <span className="w-1/6 text-center text-accent break-all" style={{ wordBreak: "break-all" }}>
                             ${typeof trade.price === "number" ? trade.price : Number(trade.price)}
@@ -42,7 +45,7 @@ export const SwapHistory = ({ swaps }) => {
 
                         {/* Total: force wrap with CSS */}
                         <span className="w-1/6 text-center break-all" style={{ wordBreak: "break-all" }}>
-                            <NumberSign num={typeof trade.total === "number" ? trade.total : Number(trade.total)} baseNum={0} />
+                            {typeof trade.total === "number" ? trade.total : Number(trade.total)}
                         </span>
 
                         <span className="w-1/6 text-center ">{trade.amount}</span>

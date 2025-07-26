@@ -1,3 +1,4 @@
+import { getPriceFromSqrtPriceX96 } from "../utils/price.math";
 import { binance_24h, UniswapV3_24h } from "../queries/fetch24hour";
 import { binance, UniswapV3 } from "../queries/fetchHistory";
 import { binanceTicker, UniswapV3BulkPrice } from "../queries/livePrice";
@@ -20,6 +21,9 @@ SourceConst.UniswapV3 = {
     ohlcFetch: UniswapV3,
     h24Query: UniswapV3_24h,
     getPriceURL: (poolAddress) => `${WSS_DOMAIN}/liveprice/UniswapV3/${poolAddress}`,
+    priceConverter: getPriceFromSqrtPriceX96,
+    invertAll: true,
+    invertTick: ['WETHUSDT','WBTCUSDC']
 };
 
 // uniswap Sepolia testnet
@@ -35,6 +39,7 @@ SourceConst.UniswapV3Sepolia = {
     livePrice: UniswapV3BulkPrice,
     ohlcFetch: UniswapV3,
     h24Query: UniswapV3_24h,
+    priceConverter: getPriceFromSqrtPriceX96,
     getPriceURL: (poolAddress) => `${WSS_DOMAIN}/liveprice/UniswapV3Sepolia/${poolAddress}`,
 };
 
@@ -53,4 +58,5 @@ SourceConst.binance = {
         const [token0, token1] = poolAddress.split('-');
         return `wss://stream.binance.com:9443/ws/${token0.toLowerCase()}${token1.toLowerCase()}@trade`
     },
+    priceConverter: (p) => p,
 };

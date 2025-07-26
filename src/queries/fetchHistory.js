@@ -1,7 +1,7 @@
 // Transforms API response to D3 compatible input
 import axios from "axios";
 import { formatAPI } from "./api_formatter";
-import { formatSwapData } from "../utils/formatSwapData";
+import { formatSwapData } from "../utils/utils";
 import { initData } from "../constants/initData";
 import { DOMAIN } from "../constants/environment";
 

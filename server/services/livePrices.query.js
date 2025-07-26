@@ -1,7 +1,6 @@
 import { ethers } from "ethers";
 import LivePrice, { LivePriceListener } from "../memory/prices.memory.js";
 import Subgraphs from "../constants/subgraph.adapter.js";
-import { getPriceFromSqrtPriceX96 } from "../utils/math.ether.js";
 
 export const TokenDecimal = {
     USDT: 6,
@@ -31,14 +30,14 @@ export const fetchLivePrice = async (network, decimals0, decimals1, address) => 
         const poolContract = new ethers.Contract(address, poolABI, provider);
         const slot0 = await poolContract.slot0(); 
  
-        const price = getPriceFromSqrtPriceX96(slot0.sqrtPriceX96, decimals0, decimals1)
+        const sqrtPriceX96 = slot0.sqrtPriceX96.toString();
 
-        LivePrice[network][address] = price;
+        LivePrice[network][address] = sqrtPriceX96;
 
         LivePriceListener.emit(`priceUpdate:${network}:${address}`, {
             provider: network,
             address: address,
-            p: price,
+            p: sqrtPriceX96,
             timestamp: new Date().toISOString()
         });
     }

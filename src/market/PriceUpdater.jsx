@@ -37,8 +37,9 @@ const PriceUpdater = ({ type }) => {
             ws.current = socket;
 
             socket.onmessage = (event) => {
-                const message = JSON.parse(event.data); 
-                setPrice(parseFloat(message.p));
+                const message = JSON.parse(event.data);
+                const converted = SourceConst[src].priceConverter(message.p, src, pool);
+                setPrice(converted);
             };
 
             socket.onerror = (err) => handleReconnect(err);

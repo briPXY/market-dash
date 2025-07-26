@@ -135,54 +135,6 @@ const PopoverButton = ({
     );
 };
 
-
-export const LoadingIcon = ({ className, style, fill = "#fff" }) => {
-    return (
-        <svg
-            className={className}
-            style={style}
-            version="1.1"
-            id="L9"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 10 100 100"
-        >
-            <rect x="20" y="50" width="2" height="14" fill={fill}>
-                <animateTransform
-                    attributeType="XML"
-                    attributeName="transform"
-                    type="translate"
-                    values="0 0; 0 10; 0 0"
-                    begin="0s"
-                    dur="1.6s"
-                    repeatCount="indefinite"
-                />
-            </rect>
-            <rect x="30" y="50" width="2" height="14" fill={fill}>
-                <animateTransform
-                    attributeType="XML"
-                    attributeName="transform"
-                    type="translate"
-                    values="0 0; 0 10; 0 0"
-                    begin="0.5s"
-                    dur="1.6s"
-                    repeatCount="indefinite"
-                />
-            </rect>
-            <rect x="40" y="50" width="2" height="14" fill={fill}>
-                <animateTransform
-                    attributeType="XML"
-                    attributeName="transform"
-                    type="translate"
-                    values="0 0; 0 10; 0 0"
-                    begin="1s"
-                    dur="1.6s"
-                    repeatCount="indefinite"
-                />
-            </rect>
-        </svg>
-    );
-};
-
 export const CustomModal = ({ title, message, onClose }) => {
     return (
         <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white border border-gray-300 rounded-lg shadow-lg p-5 z-50 max-w-sm text-center font-inter">

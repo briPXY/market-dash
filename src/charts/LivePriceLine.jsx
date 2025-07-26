@@ -20,7 +20,7 @@ const LivePriceLine = ({ OHLCData, scale }) => {
             <div
                 style={{ position: "absolute", top: priceY - 12, right: 0, pointerEvents: "none" }}
                 className={`${livePrice >= lastPrice ? "bg-accent" : "bg-negative-accent"} w-fit rounded-sm p-1 right-0 text-[12px] text-secondary font-bold`}>
-                {livePrice.toFixed(2)}
+                {Number(livePrice).toFixed(4)}
             </div>
         </>
     );

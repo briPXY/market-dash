@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { Flex } from "../../Layout/Layout"
 import { CardValueChange } from "./CardValueChange"
-import { calculateHistoricalChange } from "../../utils/pricechanges";
+import { calculateHistoricalChange } from "../../utils/price.math";
 import { use24HourQuery } from "../../queries/24hourQuery";
-import { LoadingIcon } from "../../Layout/Elements"; 
+import { svg } from "../../Layout/svg";
 
 export const Hour24Changes = ({ address, src }) => {
 
@@ -18,7 +18,7 @@ export const Hour24Changes = ({ address, src }) => {
         return (
             <Flex className="items-center justify-center">
                 <div>Loading 24 hours data</div>
-                <LoadingIcon className="w-12 h-12" />
+                <svg.LoadingIcon className="w-12 h-12" />
             </Flex>
         )
     }
