@@ -1,6 +1,7 @@
 
 import { useMemo, useRef } from "react";
 import usePriceStore from "../stores/stores";
+import { PriceText } from "../generic_components/PriceText";
 
 const LivePriceLine = ({ OHLCData, scale }) => {
     const ref = useRef(null);
@@ -17,11 +18,11 @@ const LivePriceLine = ({ OHLCData, scale }) => {
                 {/* Live Price Line */}
                 <line x1={0} x2={"100%"} y1={priceY} y2={priceY} stroke={color} strokeWidth={1} strokeDasharray="4,4" />
             </svg>
-            <div
+            <PriceText
                 style={{ position: "absolute", top: priceY - 12, right: 0, pointerEvents: "none" }}
-                className={`${livePrice >= lastPrice ? "bg-accent" : "bg-negative-accent"} w-fit rounded-sm p-1 right-0 text-[12px] text-secondary font-bold`}>
-                {Number(livePrice).toFixed(4)}
-            </div>
+                className={`${livePrice >= lastPrice ? "bg-accent" : "bg-negative-accent"} w-fit rounded-sm p-1 right-0 text-[12px] text-secondary font-bold`}
+                input={livePrice.toString()}
+            />
         </>
     );
 };

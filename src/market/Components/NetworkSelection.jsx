@@ -1,26 +1,24 @@
 import { NetworkIcon } from "@web3icons/react";
 import { SourceConst } from "../../constants/sourceConst";
-import { Flex } from "../../Layout/Layout";
-import { saveState } from "../../idb/stateDB";
+import { Flex } from "../../Layout/Layout"; 
 import { useSourceStore } from "../../stores/stores";
 import { svg } from "../../Layout/svg";
 
-export const NetworkSelection = ({ networkStatus, handleNetworkChange }) => {
-    const networkSrc = useSourceStore.getState().src;
+export const NetworkSelection = ({ handleNetworkChange }) => {
+    const { init, saved } = useSourceStore();
 
     const setNetwork = async (network) => {
-        await saveState(`savedNetwork`, network);
         handleNetworkChange(network);
     }
 
-    const networkUndefinded = {
+    const unselected = {
         true: {},
         false: { display: "none" },
         null: { display: "none" },
     }
 
     return (
-        <div className="w-full bg-primary h-screen floating-modal" style={networkUndefinded[networkStatus]}>
+        <div className="w-full bg-primary h-screen floating-modal" style={unselected[init]}>
             <div className="h-14"></div>
             <div className="flex flex-col gap-3 border-washed items-center rounded-lg mx-auto max-w-100 p-10">
 
@@ -28,12 +26,13 @@ export const NetworkSelection = ({ networkStatus, handleNetworkChange }) => {
                     <div className="font-bold">DEX Pool Graph Views</div>
                     <div className="text-sm mb-4 mt-4">Select Exchange Network:</div>
                 </div>
-                {networkSrc && <div className="flex items-center">
-                    <div>Loading network</div>
-                    <svg.LoadingIcon className="w-12 h-12" />
-                </div>
+                {
+                    saved && <div className="flex items-center">
+                        <div>Loading network</div>
+                        <svg.LoadingIcon className="w-12 h-12" />
+                    </div>
                 }
-                {Object.keys(SourceConst).map((network) => (
+                {!saved && Object.keys(SourceConst).slice(0, -1).map((network) => (
                     <Flex
                         key={network}
                         onClick={() => setNetwork(network)}

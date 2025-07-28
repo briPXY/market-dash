@@ -33,7 +33,7 @@ function Swap({ symbolIn, symbolOut, poolAddress, network, isDEX}) {
     const [reversed, setReversed] = useState(false);
     const [loginState, setloginState] = useState(null); // For displaying login process status text only
     const currentRate = usePriceStore((state) => state.trade);
-    const address = useWalletStore(state => state.address); // Real logged-in/off state
+    const accountAddress = useWalletStore(state => state.address); // Real logged-in/off state
 
     const handleChangeSymbols = (symIn, symOut, sell, buy, reverse = false) => {
         setCurrentSymbolIn(symIn);
@@ -119,8 +119,8 @@ function Swap({ symbolIn, symbolOut, poolAddress, network, isDEX}) {
                 <FiatValue symbol={currentSymbolOut} value={buyAmount} />
             </div>
 
-            {!address && <WalletLogin setLogState={setloginState} />}
-            {address && <button className="bg-accent p-3 rounded-md text-primary font-semibold">Swap</button>}
+            {!accountAddress && <WalletLogin setLogState={setloginState} />}
+            {accountAddress && <button className="bg-accent p-3 rounded-md text-primary font-semibold">Swap</button>}
 
             <button
                 onClick={() => window.open(`${network.poolURL}${poolAddress}`, "_blank")}

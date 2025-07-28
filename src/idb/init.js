@@ -1,10 +1,10 @@
 import { DOMAIN } from "../constants/environment";
-import { SourceConst } from "../constants/sourceConst"; 
+import { SourceConst } from "../constants/sourceConst";
 import { isSavedStateExist, loadState } from "./stateDB";
 
 export async function initPoolsInfo(network) {
     try {
-        if (!SourceConst[network].info) {
+        if (SourceConst[network].isDex) {
             let res = await fetch(`${DOMAIN}/api/poolinfo/${network}`);
             let obj = await res.json();
             SourceConst[network].info = {};

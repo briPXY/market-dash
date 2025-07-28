@@ -11,7 +11,7 @@ import { isSavedStateExist, loadState } from './idb/stateDB';
 import { initPoolsInfo } from './idb/init.js';
 
 function App() {
-	const { setSrc } = useSourceStore();
+	const { setSrc, setSaved } = useSourceStore();
 	const { setAddress } = usePoolStore();
 
 	async function handleNetworkChange(selectedNetwork) {
@@ -25,16 +25,19 @@ function App() {
 
 	useEffect(() => {
 		async function init() {
-			const savedNetworkExist = isSavedStateExist(`savedNetwork`);
+			const savedNetworkExist = await isSavedStateExist(`savedNetwork`);
 			if (savedNetworkExist) {
 				const savedNetwork = await loadState("savedNetwork");
 				const poolAddress = await initPoolsInfo(savedNetwork);
 				setSrc(savedNetwork);
 				setAddress(poolAddress);
 			}
+			else {
+				setSaved(false);
+			}
 		}
 		init();
-	}, [setAddress, setSrc])
+	}, [setAddress, setSaved, setSrc])
 
 	return (
 		<>

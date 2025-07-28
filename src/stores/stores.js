@@ -1,3 +1,4 @@
+import { saveState } from "../idb/stateDB";
 import { create } from "zustand";
 
 const usePriceStore = create((set) => ({
@@ -8,14 +9,19 @@ const usePriceStore = create((set) => ({
 }));
 
 export const usePoolStore = create((set) => ({
-	address: null,
-	setAddress: (address) => set({ address: address }),
+	address: "init",
+	init: true,
+	setAddress: (address) => set({ address: address, init: false }),
 }));
 
 export const useSourceStore = create((set) => ({
-	src: null,
+	src: "init",
+	init: true,
+	saved: true,
+	setSaved: (bool) => { set({ saved: bool }) },
 	setSrc: async (value) => {
-		set({ src: value });
+		set({ src: value, init: false, saved: true });
+		await saveState(`savedNetwork`, value);
 	},
 }));
 

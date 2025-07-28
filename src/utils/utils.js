@@ -22,7 +22,7 @@ export const formatSwapData = (swaps) => {
 };
 
 export function isTickPriceReversed(network, pool) {
-    if (SourceConst[network].invertAll){
+    if (SourceConst[network].invertAll) {
         return true;
     }
 
@@ -33,3 +33,24 @@ export function isTickPriceReversed(network, pool) {
         return false;
     }
 }
+
+export function formatPrice(str, isRaw = false) {;
+    const num = parseFloat(str);
+    
+    if (isRaw || isNaN(num)) return str; 
+
+    if (num < 1) {
+        const match = str.match(/^0\.(0*)(\d+)/);
+        if (!match) return str;
+        const [, zeroes, digits] = match;
+        // Keep up to 2 significant digits after leading zeros
+        return `0.${zeroes}${digits.slice(0, 2)}`;
+    }
+
+    if (num < 100) {
+        return Number(num).toFixed(3);
+    }
+
+    return Number(num).toFixed(2);
+}
+

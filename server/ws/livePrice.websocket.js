@@ -47,7 +47,7 @@ export default async function livePriceWebSocket(fastify) {
     fastify.get('/bulkprice/:provider', (req, reply) => {
         const { provider } = req.params;
 
-        reply.header('Cache-Control', 'public, max-age=5');
+        reply.header('Cache-Control', 'public, max-age=9');
 
         if (!LivePrice[provider]) {
             reply.status(404).send({ success: false, message: "provider not found", });

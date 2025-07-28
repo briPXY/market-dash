@@ -19,7 +19,6 @@ function Market({ handleNetworkChange }) {
     const [range, setRange] = useState("1h");
     const { address } = usePoolStore();
     const { src: network } = useSourceStore();
-    const ready = network && address;
 
     const { data = initData, isError } = useChartQuery({
         address: address,
@@ -29,8 +28,8 @@ function Market({ handleNetworkChange }) {
 
     return (
         <div>
-            <NetworkSelection networkStatus={!network} handleNetworkChange={handleNetworkChange} />
-            <LoadSymbol symbolStatus={network && !address} />
+            <NetworkSelection handleNetworkChange={handleNetworkChange} />
+            <LoadSymbol />
             <Flex className="flex-col gap-1">
                 <Flex className="justify-between gap-2 bg-primary p-2 py-4 md:p-4 ">
                     <Flex className="flex-col items-start text-sm md:text-lg font-semibold">
@@ -50,11 +49,11 @@ function Market({ handleNetworkChange }) {
                     />
                     <TabPanelParent className="bg-primary mx-auto" style={{ display: SourceConst[network]?.isDex ? "block" : "none" }}>
                         <Swap
-                            symbolIn={ready ? SourceConst[network].info[address].token0.symbol : ''}
-                            symbolOut={ready ? SourceConst[network].info[address].token1.symbol : ''}
+                            symbolIn={SourceConst[network].info[address].token0.symbol}
+                            symbolOut={SourceConst[network].info[address].token1.symbol}
                             poolAddress={address}
                             network={SourceConst[network]}
-                            isDEX={SourceConst[network]?.isDex}
+                            isDEX={SourceConst[network].isDex}
                             label="Swap"
                         />
                     </TabPanelParent>

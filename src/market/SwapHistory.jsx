@@ -1,5 +1,6 @@
 import { usePoolStore, useSourceStore } from "../stores/stores";
 import { SourceConst } from "../constants/sourceConst";
+import { PriceText } from "../generic_components/PriceText";
 
 // Copy icon component
 const CopyIcon = ({ className = "w-3 h-3 inline ml-1" }) => (
@@ -39,9 +40,9 @@ export const SwapHistory = ({ swaps }) => {
                         <span className="w-1/6 text-left">{trade.date}</span>
 
                         {/* Price: force wrap with CSS */}
-                        <span className="w-1/6 text-center text-accent break-all" style={{ wordBreak: "break-all" }}>
-                            ${typeof trade.price === "number" ? trade.price : Number(trade.price)}
-                        </span>
+                        <PriceText className="w-1/6 text-center text-accent break-all" style={{ wordBreak: "break-all" }}
+                            input={trade.price.toString()}
+                        />
 
                         {/* Total: force wrap with CSS */}
                         <span className="w-1/6 text-center break-all" style={{ wordBreak: "break-all" }}>

@@ -9,7 +9,7 @@ export const Hour24Changes = ({ address, src }) => {
 
     const { data: hour24data, isLoading: hour24Loading } = use24HourQuery({
         poolAddress: address,
-        network: src
+        network: src,
     });
 
     const priceChanges = useMemo(() => calculateHistoricalChange(hour24data), [hour24data]);

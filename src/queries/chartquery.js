@@ -16,7 +16,7 @@ const useChartQuery = ({ address, interval, network }) => {
 
     return useQuery({
         queryKey: queryKey,
-        enabled: !!address && !!network, // Disable query if either symbol is missing
+        //enabled: !address,
         queryFn: async () => {
             const data = await SourceConst[network].ohlcFetch(address, interval, network);
             return data; // Apply transformation if provided

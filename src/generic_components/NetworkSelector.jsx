@@ -1,5 +1,4 @@
-import { NetworkIcon } from "@web3icons/react"; 
-import { saveState } from "../idb/stateDB";
+import { NetworkIcon } from "@web3icons/react";
 import { useSourceStore } from "../stores/stores";
 import { PopoverButton } from "../Layout/Elements";
 import { Flex } from "../Layout/Layout";
@@ -9,7 +8,6 @@ export const NetworkSelector = ({handleNetworkChange}) => {
     const src = useSourceStore(state => state.src);
 
     const setNetwork = async (network) => {
-        await saveState(`savedNetwork`, network)
         handleNetworkChange(network);
     }
 
@@ -28,7 +26,7 @@ export const NetworkSelector = ({handleNetworkChange}) => {
                 </Flex>
             </div>
             <div className="flex flex-col p-4 gap-3 w-max">
-                {Object.keys(SourceConst).map((network) => (
+                {Object.keys(SourceConst).slice(0, -1).map((network) => (
                     <Flex key={network} onClick={() => setNetwork(network)} className="cursor-pointer gap-2 hover:brightness-125">
                         <NetworkIcon id={SourceConst[network]?.network} size={24} variant="branded" />
                         <div className="text-sm">{SourceConst[network].desc}</div>

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { NumberSign } from "../../Layout/Elements"
 import usePriceStore from "../../stores/stores";
+import { PriceText } from "../../generic_components/PriceText";
 
 export const LivePriceText = ({ OHLCData }) => {
     const tradePrice = usePriceStore((state) => state.trade);
@@ -10,10 +10,10 @@ export const LivePriceText = ({ OHLCData }) => {
         return OHLCData[OHLCData.length - 1].close;
     }, [OHLCData]);
 
+
+    const textColor = useMemo(() => Number(tradePrice) >= lastClosePrice ? "text-accent" : "text-negative-accent", [lastClosePrice, tradePrice]);
+
     return (
-        <NumberSign
-            num={parseFloat(tradePrice).toFixed(4)}
-            baseNum={lastClosePrice} >{tradePrice}
-        </NumberSign>
+        <PriceText input={tradePrice.toString()} className={textColor} />
     );
 }
