@@ -49,8 +49,8 @@ function Market({ handleNetworkChange }) {
                     />
                     <TabPanelParent className="bg-primary mx-auto" style={{ display: SourceConst[network]?.isDex ? "block" : "none" }}>
                         <Swap
-                            symbolIn={SourceConst[network].info[address].token0.symbol}
-                            symbolOut={SourceConst[network].info[address].token1.symbol}
+                            token0={SourceConst[network].info[address].token0}
+                            token1={SourceConst[network].info[address].token1}
                             poolAddress={address}
                             network={SourceConst[network]}
                             isDEX={SourceConst[network].isDex}

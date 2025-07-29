@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { timeFrameToMs } from "../constants/intervals.js";
+import { timeFrameToMs } from "../constants/constants.js";
 import { useMemo } from "react";
 import { initData } from "../constants/initData.js";
 import { SourceConst } from "../constants/sourceConst.js";

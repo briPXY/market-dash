@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { saveState } from "../../idb/stateDB";
 import { svg } from "../../Layout/svg";
 import { PriceText } from "../../generic_components/PriceText";
+import { stdSymbol } from "../../utils/utils";
 
 export const PoolSelector = ({ address }) => {
     const src = useSourceStore(state => state.src);
@@ -78,7 +79,7 @@ const SymbolSelectorItem = ({ poolAddress, setPool, network = SourceConst.Uniswa
     return (
         <Flex className="justify-between pr-3">
             <Button onClick={() => setPool(poolAddress)} className="w-fit p-0 text-sm gap-2">
-                <TokenIcon symbol={symbol0.toLowerCase()} variant="branded" size={22} />
+                <TokenIcon symbol={stdSymbol(symbol0).toLowerCase()} variant="branded" size={22} />
                 <div>{`${symbol1}/${symbol0}`}</div>
             </Button>
             <PriceText className="font-medium text-xs" input={price} />

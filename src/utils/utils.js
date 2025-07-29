@@ -1,3 +1,4 @@
+import { defaultDecimalRule, wrappedTokenMap } from "../constants/constants";
 import { SourceConst } from "../constants/sourceConst";
 
 export const formatSwapData = (swaps) => {
@@ -34,23 +35,26 @@ export function isTickPriceReversed(network, pool) {
     }
 }
 
-export function formatPrice(str, isRaw = false) {;
+export function formatPrice(str, isRaw = false, rule = defaultDecimalRule) {
     const num = parseFloat(str);
-    
-    if (isRaw || isNaN(num)) return str; 
+
+    if (isRaw || isNaN(num)) return str;
 
     if (num < 1) {
         const match = str.match(/^0\.(0*)(\d+)/);
         if (!match) return str;
         const [, zeroes, digits] = match;
         // Keep up to 2 significant digits after leading zeros
-        return `0.${zeroes}${digits.slice(0, 2)}`;
+        return `0.${zeroes}${digits.slice(0, rule[0])}`;
     }
 
     if (num < 100) {
-        return Number(num).toFixed(3);
+        return Number(num).toFixed(rule[99]);
     }
 
-    return Number(num).toFixed(2);
+    return Number(num).toFixed(rule.rest);
 }
 
+export function stdSymbol(symbol) {
+    return wrappedTokenMap[symbol] || symbol;
+}

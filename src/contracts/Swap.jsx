@@ -4,6 +4,9 @@ import { TokenIcon } from "@web3icons/react";
 import { svg } from "../Layout/svg";
 import { WalletLogin } from "./Login";
 import FiatValue from "./FiatValue";
+import { formatPrice, stdSymbol } from "../utils/utils";
+import { SwapTokenInfo } from "./components/SwapTokenInfo";
+import { swapDecimalRule } from "../constants/constants";
 
 
 function removeNonNumeric(rawValue) {
@@ -25,19 +28,19 @@ function removeNonNumeric(rawValue) {
 }
 
 
-function Swap({ symbolIn, symbolOut, poolAddress, network, isDEX}) {
+function Swap({ token0, token1, poolAddress, network, isDEX }) {
     const [sellAmount, setSellAmount] = useState('');
     const [buyAmount, setBuyAmount] = useState(0);
-    const [currentSymbolIn, setCurrentSymbolIn] = useState(symbolIn);
-    const [currentSymbolOut, setCurrentSymbolOut] = useState(symbolOut);
+    const [currentTokenIn, setcurrentTokenIn] = useState(token1);
+    const [currentTokenOut, setcurrentTokenOut] = useState(token0);
     const [reversed, setReversed] = useState(false);
     const [loginState, setloginState] = useState(null); // For displaying login process status text only
     const currentRate = usePriceStore((state) => state.trade);
     const accountAddress = useWalletStore(state => state.address); // Real logged-in/off state
 
-    const handleChangeSymbols = (symIn, symOut, sell, buy, reverse = false) => {
-        setCurrentSymbolIn(symIn);
-        setCurrentSymbolOut(symOut);
+    const handleChangeSymbols = (tokenIn, tokenOut, sell, buy, reverse = false) => {
+        setcurrentTokenIn(tokenIn);
+        setcurrentTokenOut(tokenOut);
         setSellAmount(sell);
         setBuyAmount(buy);
         reverse ? setReversed(!reversed) : null;
@@ -49,74 +52,79 @@ function Swap({ symbolIn, symbolOut, poolAddress, network, isDEX}) {
         setSellAmount(cleaned);
         if (!isNaN(numeric)) {
             const amount = reversed ? numeric / currentRate : numeric * currentRate;
-            setBuyAmount(amount.toFixed(4));
+            const formatted = formatPrice(amount.toFixed(24).toString(), false, swapDecimalRule);
+            setBuyAmount(formatted);
         } else {
             setBuyAmount(0); // fallback
         }
     };
 
     const handleBuyChange = (value) => {
-         let cleaned = removeNonNumeric(value);
+        let cleaned = removeNonNumeric(value);
         const numeric = parseFloat(cleaned.replace(',', '.'));
         setBuyAmount(cleaned);
         if (!isNaN(numeric)) {
             const amount = reversed ? numeric * currentRate : numeric / currentRate;
-            setSellAmount(amount.toFixed(4));
+            const formatted = formatPrice(amount.toFixed(24).toString(), false, swapDecimalRule);
+            setSellAmount(formatted);
         } else {
             setSellAmount(0); // fallback
         }
     };
 
     useEffect(() => { // Reset form when pool address changed
-        setCurrentSymbolIn(symbolIn);
-        setCurrentSymbolOut(symbolOut);
+        setcurrentTokenIn(token1);
+        setcurrentTokenOut(token0);
+        setReversed(false);
         setSellAmount(0);
         setBuyAmount(0);
-    }, [symbolIn, symbolOut])
+    }, [token0, token1, poolAddress]);
 
     if (!isDEX) return null;
 
     return (
         <div className="flex flex-col gap-2 bg-primary p-4 rounded-md w-full h-full relative">
-            <div className="flex flex-col items-start gap-2 rounded-lg p-4 border-washed hover:border-active">
-                <div>Sell</div>
-                <div className="flex items-center justify-between">
-                    <input
-                        type="text"
-                        inputMode="decimal"
-                        pattern="[0-9]*[.,]?[0-9]*"
-                        value={sellAmount}
-                        onChange={(e) => handleSellChange(e.target.value)}
-                        className="px-0 py-2 focus-within:outline-2 rounded-md text-white w-full text-2xl"
-                    />
-                    <TokenIcon symbol={currentSymbolIn?.toLowerCase()} size={32} color="#fff" variant="branded" />
-                    <span className="ml-2 text-white font-semibold">{currentSymbolIn}</span>
+            <div className="flex gap-0 flex-col items-center">
+                <div className="flex flex-col items-start gap-2 rounded-xl p-4 border-secondary hover:border-active">
+                    <SwapTokenInfo label={"SELL"} tokenName={currentTokenIn.name} />
+                    <div className="flex items-center justify-between">
+                        <input
+                            type="text"
+                            inputMode="decimal"
+                            pattern="[0-9]*[.,]?[0-9]*"
+                            value={sellAmount}
+                            onChange={(e) => handleSellChange(e.target.value)}
+                            className="px-0 py-2 focus-within:outline-1 text-white font-semibold w-full text-2xl"
+                        />
+                        <TokenIcon symbol={stdSymbol(currentTokenIn.symbol).toLowerCase()} size={36} color="#fff" variant="branded" />
+                        <span className="ml-1 text-white">{currentTokenIn.symbol}</span>
+                    </div>
+                    <FiatValue symbol={currentTokenIn.symbol} value={sellAmount} />
                 </div>
-                <FiatValue symbol={currentSymbolIn} value={sellAmount} />
-            </div>
 
-            <button
-                onClick={() => handleChangeSymbols(currentSymbolOut, currentSymbolIn, buyAmount, sellAmount, true)}
-                className="flex items-center justify-center bg-secondary p-2 rounded-md text-white"
-            >
-                <svg.Swap />
-            </button>
+                <button
+                    onClick={() => handleChangeSymbols(currentTokenOut, currentTokenIn, buyAmount, sellAmount, true)}
+                    className="flex items-center justify-center bg-secondary p-3 rounded-full w-fit text-white -my-4.5 z-10"
+                >
+                    <svg.Swap />
+                </button>
 
-            <div className="flex flex-col items-start gap-2 rounded-lg p-4 border-washed hover:border-active">
-                <div>Buy</div>
-                <div className="flex items-center justify-between">
-                    <input
-                        type="text"
-                        inputMode="decimal"
-                        pattern="[0-9]*[.,]?[0-9]*"
-                        value={buyAmount}
-                        onChange={(e) => handleBuyChange((e.target.value))}
-                        className="px-0 py-2 focus-within:outline-2 rounded-md text-white w-full text-2xl"
-                    />
-                    <TokenIcon symbol={currentSymbolOut?.toLowerCase()} size={32} color="#fff" variant="branded" />
-                    <span className="ml-2 text-white font-semibold">{currentSymbolOut}</span>
+                <div className="flex flex-col items-start gap-2 rounded-xl p-4 border-secondary hover:border-active">
+                    <SwapTokenInfo label={"BUY"} tokenName={currentTokenOut.name} />
+                    <div className="flex items-center justify-between">
+                        <input
+                            type="text"
+                            inputMode="decimal"
+                            pattern="[0-9]*[.,]?[0-9]*"
+                            value={buyAmount}
+                            onChange={(e) => handleBuyChange((e.target.value))}
+                            className="px-0 py-2 focus-within:outline-1 text-white font-semibold w-full text-2xl"
+                        />
+                        <TokenIcon symbol={stdSymbol(currentTokenOut.symbol).toLowerCase()} size={36} color="#fff" variant="branded" />
+                        <span className="ml-1 text-white">{currentTokenOut.symbol}</span>
+                    </div>
+                    <FiatValue symbol={currentTokenOut.symbol} value={buyAmount} />
                 </div>
-                <FiatValue symbol={currentSymbolOut} value={buyAmount} />
             </div>
 
             {!accountAddress && <WalletLogin setLogState={setloginState} />}
