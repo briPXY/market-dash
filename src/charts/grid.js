@@ -1,22 +1,30 @@
 import * as d3 from "d3";
+import { chartGridColor } from "../constants/constants";
 
-export function drawGrid(svg, scales, innerWidth, innerHeight) {
-    // X grid lines with darker grid color (#ffffff1a)
-
+export function drawGrid(svg, scales, innerWidth, innerHeight, bandX) {
+    // Remove previous grid lines
     svg.selectAll(".grid").remove();
 
-    svg.insert("g", ":first-child") // Inserts before all other elements
+    // X-axis grid using band scale
+    const xAxis = d3.axisBottom(bandX)
+        .tickSize(-innerHeight)
+        .tickFormat("")
+        .tickValues(bandX.domain().filter((d, i) => {
+            // Optional: reduce number of ticks for better spacing
+            const total = bandX.domain().length;
+            const step = Math.ceil(total / 10); // Max 10 grid lines
+            return i % step === 0;
+        }));
+
+    svg.insert("g", ":first-child")
         .attr("class", "grid")
         .attr("transform", `translate(0,${innerHeight})`)
-        .call(d3.axisBottom(scales.x)
-            .ticks(10)
-            .tickSize(-innerHeight)
-            .tickFormat("")
-        )
+        .call(xAxis)
         .selectAll("line")
-        .style("stroke", "rgb(255,255,255,0.2)")
+        .style("stroke", chartGridColor)
         .style("stroke-width", 0.5);
 
+    // Y-axis grid remains unchanged
     svg.append("g")
         .attr("class", "grid")
         .call(d3.axisLeft(scales.y)
@@ -24,9 +32,8 @@ export function drawGrid(svg, scales, innerWidth, innerHeight) {
             .tickFormat("")
         )
         .selectAll("line")
-        .style("stroke", "rgb(255,255,255,0.2)")
-        .style("stroke-width", 0.5)
-        .attr("class", "grid");
+        .style("stroke", chartGridColor)
+        .style("stroke-width", 0.5);
 }
 
 export function drawSubIndicatorGrid(svg, innerWidth, data, innerIndicatorHeight, margin, subIndicators) {
@@ -59,7 +66,7 @@ export function drawSubIndicatorGrid(svg, innerWidth, data, innerIndicatorHeight
             .tickFormat("")
         )
         .selectAll("line")
-        .style("stroke", "rgb(255,255,255,0.2)")
+        .style("stroke", chartGridColor)
         .style("stroke-width", 0.5)
         .attr("class", "subGrid");
 
@@ -72,7 +79,7 @@ export function drawSubIndicatorGrid(svg, innerWidth, data, innerIndicatorHeight
             .tickFormat("")
         )
         .selectAll("line")
-        .style("stroke", "rgb(255,255,255,0.2)")
+        .style("stroke", chartGridColor)
         .style("stroke-width", 0.5)
         .attr("class", "subGrid");
 

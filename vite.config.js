@@ -5,7 +5,6 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   // Load .env files based on mode (development, production)
-  // eslint-disable-next-line no-undef
   const env = loadEnv(mode, process.cwd(), '');
 
   // Fallback: use localhost in development, empty in production

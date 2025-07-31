@@ -27,13 +27,14 @@ const LiveChart = ({
     const [subIndicators, setSubIndicators] = useState([]);
 
     // Debounced scroll state for visibleOHLCData
-    const [scrollStopped, setScrollStopped] = useState(0);
+    const [scrollStopped, setScrollStopped] = useState(null);
 
-    const margin = useRef({ top: 15, right: 5, bottom: 15, left: 5 })
+    const margin = useRef({ top: 22, right: 5, bottom: 22, left: 5 })
     const height = window.innerHeight * 0.425;
-    const innerWidth = useMemo(() => (lengthPerItem * OHLCData?.length) - margin.current.left - margin.current.right, [OHLCData, lengthPerItem])
+    const innerWidth = useMemo(() => (lengthPerItem * OHLCData?.length) - margin.current.left - margin.current.right, [OHLCData, lengthPerItem]);
     const innerHeight = height - margin.current.top - margin.current.bottom;
-    const subIndicatorHeight = useMemo(() => innerHeight * 0.5 * subIndicators.length, [innerHeight, subIndicators])
+    const subIndicatorHeight = useMemo(() => innerHeight * 0.5 * subIndicators.length, [innerHeight, subIndicators]);
+    const yLabelWidth = useMemo(() => OHLCData[0].close.toString().length * 3.3, [OHLCData])
 
     const outDimension = useMemo(() => ({
         w: innerWidth,
@@ -45,12 +46,28 @@ const LiveChart = ({
     const ySvg = d3.select(ySvgRef.current);
     const subSvg = d3.select(subRef.current);
 
+    const visibleOHLCData = useMemo(() => {
+        if (scrollStopped) {
+            const { iLeft, iRight } = getVisibleIndexRange(scrollContainerRef, OHLCData.length);
+            return OHLCData.slice(iLeft, iRight);
+        }
+        else { // 1st render slicing
+            const sliceLeft = ((innerWidth - (window.innerWidth * 0.8)) / innerWidth) * OHLCData.length;
+            return OHLCData.slice(Math.round(sliceLeft), OHLCData.length - 1);
+        }
+    }, [OHLCData, innerWidth, scrollStopped]);
+
+    const scale = useMemo(() => xyScaler(d3, visibleOHLCData, "date", "close", isLogScale, innerWidth, innerHeight, margin.current), [visibleOHLCData, innerHeight, innerWidth, isLogScale]);
+
+    const bandXScale = useMemo(() => {
+        return getBandXScale(d3, OHLCData, innerWidth)
+    }, [OHLCData, innerWidth]);
+
     // Chart X scroll stop listener
     useEffect(() => {
         if (isLogScale != "LOG") return;
 
         const el = scrollContainerRef.current;
-        if (!el) return;
 
         let timeout;
         const onScroll = () => {
@@ -61,7 +78,6 @@ const LiveChart = ({
         };
 
         el.addEventListener("scroll", onScroll);
-        setScrollStopped(Date.now()); // Force Y adjustment at start
 
         return () => {
             el.removeEventListener("scroll", onScroll);
@@ -69,28 +85,16 @@ const LiveChart = ({
         };
     }, [isLogScale]);
 
-    const visibleOHLCData = useMemo(() => {
-        if (!OHLCData || !scrollContainerRef.current) return OHLCData;
-        const { iLeft, iRight } = getVisibleIndexRange(scrollContainerRef, OHLCData.length, 100);
-        return OHLCData.slice(iLeft, iRight);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [OHLCData, scrollStopped]);
-
-    const scale = useMemo(() => xyScaler(d3, OHLCData, "date", "close", isLogScale, innerWidth, innerHeight, margin.current, visibleOHLCData), [OHLCData, visibleOHLCData, innerHeight, innerWidth, isLogScale]);
-    const bandXScale = useMemo(() => {
-        return getBandXScale(d3, OHLCData, innerWidth)
-    },[OHLCData, innerWidth])
-
     useEffect(() => {
         svg.selectAll(".main").remove();
         ySvg.selectAll('*').remove();
 
-        if (!OHLCData || isError) return;
+        if (OHLCData?.length <= 1 || isError) return;
         // draw axis/label
-        drawAxesAndLabels(svg, ySvg, scale, innerHeight, OHLCData.length, range);
+        drawAxesAndLabels(svg, ySvg, scale, bandXScale, innerHeight, range);
 
         //draw grid
-        drawGrid(svg, scale, innerWidth, innerHeight);
+        drawGrid(svg, scale, innerWidth, innerHeight, bandXScale);
 
         // Draw volume bar overlay
         drawVolumeBars(d3, svg, bandXScale, OHLCData, innerHeight, tooltipRef);
@@ -102,7 +106,7 @@ const LiveChart = ({
 
     useEffect(() => {
         drawSubIndicatorGrid(subSvg, innerWidth, OHLCData, subIndicatorHeight, margin.current, subIndicators.length);
-    }, [OHLCData, innerWidth, scale, subIndicatorHeight, subIndicators, subSvg]);
+    }, [OHLCData, innerWidth, subIndicatorHeight, subIndicators, subSvg]);
 
     return (
         <div className="relative">
@@ -119,9 +123,10 @@ const LiveChart = ({
                     {/*sub indicator */}
                     <svg ref={subRef} width={lengthPerItem * OHLCData.length + 100} height={height * 0.5 * subIndicators.length}></svg>
                 </div>
+                {/*Y labels */}
                 <div className="w-fit">
                     <svg
-                        width={'3rem'}
+                        width={`${yLabelWidth}px`}
                         height={height}
                         ref={ySvgRef}
                     ></svg>
@@ -136,8 +141,8 @@ const LiveChart = ({
             ></div>
 
             <LivePriceLine OHLCData={OHLCData} scale={scale} innerWidth={innerWidth} />
-            
-            <div className="absolute left-0 top-0 max-w-[94vw] max-h-100 z-10">
+
+            <div className="absolute left-0 top-0 z-30">
                 <IndicatorSelector
                     d3={d3}
                     svg={svg}
@@ -146,9 +151,10 @@ const LiveChart = ({
                     indicatorList={indicatorList}
                     dbId={"main-indicator"}
                     init={"SMA"}
+                    bandXScale={bandXScale}
                 />
             </div>
-            <div style={{ top: `${height}px` }} className="absolute left-0 max-w-[94vw] max-h-100 z-10">
+            <div style={{ top: `${height}px` }} className="absolute left-0 z-30">
                 <IndicatorSelector
                     d3={d3}
                     svg={subSvg}

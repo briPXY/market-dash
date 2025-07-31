@@ -18,7 +18,7 @@ export const NetworkSelection = ({ handleNetworkChange }) => {
     }
 
     return (
-        <div className="w-full bg-primary h-screen floating-modal" style={unselected[init]}>
+        <div className="w-full bg-primary-900 h-screen floating-modal" style={unselected[init]}>
             <div className="h-14"></div>
             <div className="flex flex-col gap-3 border-washed items-center rounded-lg mx-auto max-w-100 p-10">
 
@@ -36,7 +36,7 @@ export const NetworkSelection = ({ handleNetworkChange }) => {
                     <Flex
                         key={network}
                         onClick={() => setNetwork(network)}
-                        className="p-4 w-full gap-3 bg-primary border-washed rounded-md cursor-pointer hover:brightness-125"
+                        className="p-4 w-full gap-3 bg-primary-900 border-washed rounded-md cursor-pointer hover:brightness-125"
                         style={{ display: "flex" }}
                     >
                         <NetworkIcon id={SourceConst[network].network} size={24} variant="branded" />

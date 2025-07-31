@@ -33,3 +33,5 @@ export const wrappedTokenMap = {
 
 export const defaultDecimalRule = { 0: 2, 99: 3, rest: 2 };
 export const swapDecimalRule = { 0: 4, 99: 3, rest: 2 };
+
+export const chartGridColor = "rgb(255,255,255,0.1)";

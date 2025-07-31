@@ -20,7 +20,7 @@ const LivePriceLine = ({ OHLCData, scale }) => {
             </svg>
             <PriceText
                 style={{ position: "absolute", top: priceY - 12, right: 0, pointerEvents: "none" }}
-                className={`${livePrice >= lastPrice ? "bg-accent" : "bg-negative-accent"} w-fit rounded-sm p-1 right-0 text-[12px] text-secondary font-bold`}
+                className={`${livePrice >= lastPrice ? "bg-accent" : "bg-negative-accent"} w-fit rounded-sm p-1 right-0 text-[12px] text-primary-500 font-bold`}
                 input={livePrice.toString()}
             />
         </>

@@ -287,7 +287,7 @@ BulletText.propTypes = {
     style: PropTypes.object,
 };
 
-export function TabPanelParent({ children, className = "w-full bg-primary max-w-md mx-auto", tabClassName = "flex-1 py-2 text-sm font-medium ", activeTabClassName = "bg-secondary", inactiveTabClassName = "bg-secondary hover:bg-primary", style={}}) {
+export function TabPanelParent({ children, className = "w-full bg-primary-900 max-w-md mx-auto", tabClassName = "flex-1 py-2 text-sm font-medium ", activeTabClassName = "bg-primary-500", inactiveTabClassName = "bg-primary-500 hover:bg-primary-900", style={}}) {
     const [activeTab, setActiveTab] = useState(0);
 
     return (

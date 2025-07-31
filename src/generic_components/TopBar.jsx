@@ -8,10 +8,10 @@ export const TopBar = ({ handleNetworkChange }) => {
     const address = useWalletStore(state => state.address);
 
     return (
-        <Flex className="justify-between items-center w-full max-h-21 bg-primary py-4 p-2 md:p-4">
+        <Flex className="justify-between items-center w-full max-h-21 bg-primary-900 py-4 p-2 md:p-4">
             <NetworkSelector handleNetworkChange={handleNetworkChange} />
             <Flex className="justify-end">
-                {!address && <WalletLogin className="text-xs p-2 bg-secondary rounded-sm text-white" text="Login" />}
+                {!address && <WalletLogin className="text-xs p-2 bg-primary-500 rounded-sm text-white" text="Login" />}
                 {address &&
                     <Button className="p-2 text-sm">
                         <div className="text-xs truncate max-w-20">{address}</div>

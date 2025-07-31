@@ -10,7 +10,7 @@ export const LoadSymbol = () => {
     }
 
     return (
-        <div className="bg-secondary floating-modal" style={symbolUndefined[init]}>
+        <div className="bg-primary-500 floating-modal" style={symbolUndefined[init]}>
             <div className="flex items-center rounded-lg pr-2 pl-8">
                 <div className="text-xs md:text-sm">Loading pools information</div>
                 <svg.LoadingIcon className="w-12 h-12" />

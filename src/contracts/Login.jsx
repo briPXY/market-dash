@@ -1,7 +1,7 @@
 import { useWalletStore } from "../stores/stores";
 import { walletLogin } from "./walletLogin";
 
-export const WalletLogin = ({ setLogState, className = "bg-secondary p-3 rounded-md text-accent font-semibold", text = "Connect Wallet" }) => {
+export const WalletLogin = ({ setLogState, className = "bg-primary-500 p-3 rounded-md text-accent font-semibold", text = "Connect Wallet" }) => {
     const handleLogin = async () => {
         const { address, signature } = await walletLogin(setLogState);
 

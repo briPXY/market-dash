@@ -31,7 +31,7 @@ function Market({ handleNetworkChange }) {
             <NetworkSelection handleNetworkChange={handleNetworkChange} />
             <LoadSymbol />
             <Flex className="flex-col gap-1">
-                <Flex className="justify-between gap-2 bg-primary p-2 py-4 md:p-4 ">
+                <Flex className="justify-between gap-2 bg-primary-900 p-2 py-4 md:p-4 ">
                     <Flex className="flex-col items-start text-sm md:text-lg font-semibold">
                         <PoolSelector address={address} />
                         <LivePriceText OHLCData={data.ohlc} />
@@ -47,7 +47,7 @@ function Market({ handleNetworkChange }) {
                         isError={isError}
                         network={SourceConst[network]}
                     />
-                    <TabPanelParent className="bg-primary mx-auto" style={{ display: SourceConst[network]?.isDex ? "block" : "none" }}>
+                    <TabPanelParent className="bg-primary-900 mx-auto" style={{ display: SourceConst[network]?.isDex ? "block" : "none" }}>
                         <Swap
                             token0={SourceConst[network].info[address].token0}
                             token1={SourceConst[network].info[address].token1}

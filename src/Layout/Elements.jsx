@@ -4,8 +4,32 @@ import './elements.css';
 
 const Button = ({ className = '', children, ...props }) => {
     return (
-        <button className={`flex items-center p-1 hover:brightness-125 justify-center bg-secondary rounded-sm ${className}`} {...props}>
+        <button className={`flex items-center p-1 hover:brightness-125 justify-center bg-primary-500 rounded-sm ${className}`} {...props}>
             {children}
+        </button>
+    );
+};
+
+const ToggleButton = ({ className = '', children, ...props }) => {
+    const childrenArray = React.Children.toArray(children);
+    const [index, setIndex] = useState(0);
+
+    const handleClick = (e) => {
+        // Call user's onClick if they provided one
+        props.onClick?.(e);
+
+        if (childrenArray.length > 1) {
+            setIndex((prev) => (prev + 1) % childrenArray.length);
+        }
+    };
+
+    return (
+        <button
+            className={`flex items-center p-1 hover:brightness-125 justify-center bg-primary-500 rounded-sm ${className}`}
+            {...props}
+            onClick={handleClick}
+        >
+            {childrenArray[index]}
         </button>
     );
 };
@@ -150,5 +174,5 @@ export const CustomModal = ({ title, message, onClose }) => {
     );
 };
 
-export { Link, DetectView, Text, NumberSign, PopoverButton, Button };
+export { Link, DetectView, Text, NumberSign, PopoverButton, Button, ToggleButton };
 export default Button;

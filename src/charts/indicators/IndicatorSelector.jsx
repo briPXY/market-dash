@@ -24,11 +24,11 @@ export const IndicatorSelector = ({ d3, data, svg, scale, bandXScale, indicatorL
             ...prev,
             [name]: params
         }));
-        
+
         if (setSubIndicators) {
             setSubIndicators(prev => [...prev, name]);
         }
-    }, [setSubIndicators]); 
+    }, [setSubIndicators]);
 
     // Update on data/state changes
     useEffect(() => {
@@ -90,12 +90,9 @@ export const IndicatorSelector = ({ d3, data, svg, scale, bandXScale, indicatorL
                 <ActiveIndicatorButtons svg={svg} showedIndicators={showedIndicators} setShowedIndicators={setShowedIndicators} setSubIndicators={setSubIndicators} dbId={dbId} />
             </div>
             <div
-                style={{
-                    width: showSelector ? "100%" : "0px",
-                    height: showSelector ? "100%" : "0px",
-                }}
                 ref={dropdownRef}
-                className="rounded-md flex items-start py-6 z-50 flex-col gap-2 bg-secondary overflow-y-scroll max-w-[94vw] max-h-[60vh]">
+                className={showSelector ? "floating-modal rounded-md flex items-start px-2 pb-6 z-50 flex-col gap-2 bg-primary-500 overflow-y-scroll max-h-[80vh] md:w-fit w-[95vw] border-primary-100" : "hidden"}>
+                <div className="text-center w-full px-2 py-2 md:px-4 md:py-3 md:mb-5">{`Select ${dbId}:`}</div>
                 {
                     Object.keys(indicatorList).map((name) => <IndicatorItem
                         key={name}
@@ -119,10 +116,12 @@ const IndicatorItem = ({ n, fn, drawIndicator, addNewIndicator }) => {
     };
 
     return (
-        <div key={n} className="flex text-xs justify-start max-w-full items-center min-h-12 mx-2 md:mx-4 border-washed rounded-md p-2">
-            <div className="w-14 md:w-28 overflow-hidden text-sm text-left">{n}</div>
-            <div className="text-xs mr-1 cursor-pointer font-semibold" onClick={() => addNewIndicator(n, { color: color, fn: fn, ...param })}>Add</div>
-            <input className="w-5 p-0 border-none" type="color" value={color} onChange={(e) => setColor(e.target.value)} name="colorPicker"></input>
+        <div key={n} className="flex text-xs border-primary-100 p-1 md:p-2 rounded-sm h-fit items-start md:items-center py-2">
+            <div className="flex gap-1">
+                <div className="w-20 md:w-36 overflow-hidden text-sm font-medium text-left">{n}</div>
+                <div className="text-xs cursor-pointer rounded-sm bg-primary-100 pt-0.5 px-1.5" onClick={() => addNewIndicator(n, { color: color, fn: fn, ...param })}>Insert</div>
+                <input className="w-5 p-0 border-none" type="color" value={color} onChange={(e) => setColor(e.target.value)} name="colorPicker"></input>
+            </div>
             <div className="md:w-8 w-4"></div>
             <ListOfInput fParam={param} func={fn} drawIndicator={drawIndicator} updateParam={updateParam} />
         </div>
@@ -131,11 +130,11 @@ const IndicatorItem = ({ n, fn, drawIndicator, addNewIndicator }) => {
 
 const ListOfInput = ({ fParam, updateParam }) => {
     return (
-        <div className="flex flex-wrap gap-1">
-            {Object.entries(fParam).map(([oaramName, value]) => (
-                <div className="flex flex-col items-start gap-0.5" key={oaramName}>
-                    <label className="text-washed text-xs" htmlFor="numInput">{oaramName}</label>
-                    <input className="bg-primary w-14 md:w-22 rounded-sm p-1" type="number" id="numInput" value={value} onChange={(e) => updateParam(oaramName, e.target.value)} />
+        <div className="flex flex-col md:flex-row flex-wrap md:gap-4 gap-1 md:max-w-150">
+            {Object.entries(fParam).map(([paramName, value]) => (
+                <div className="flex flex-row justify-between md:justify-start items-center md:w-28 w-full gap-2" key={paramName}>
+                    <label className="md:w-fit w-24 text-xs text-start" htmlFor="numInput">{`${paramName}:`}</label>
+                    <input className="w-full bg-primary-900 font-medium p-1 rounded-xs" type="number" id="numInput" value={value} onChange={(e) => updateParam(paramName, e.target.value)} />
                 </div>
             ))}
         </div>

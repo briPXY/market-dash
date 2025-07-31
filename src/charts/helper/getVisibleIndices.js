@@ -26,11 +26,7 @@ export function getVisibleIndices(scrollLeft, viewWidth, lengthPerItem, totalLen
  * @param {number} arrayLength - The total number of data items (OHLCData.length)
  * @returns {{left: number, right: number, scrollLeft: number, viewWidth: number, totalWidth: number}} - The left and right indices currently visible and scroll info
  */
-export function getVisibleIndexRange(elementRef, arrayLength, lengthPerItem, padding = 200) {
-    if (!elementRef?.current || arrayLength <= 0 || lengthPerItem <= 0) {
-        return { iLeft: 0, iRight: arrayLength - 1, scrollLeft: 0, chartWidth: 0, totalWidth: 0 };
-    }
-
+export function getVisibleIndexRange(elementRef, arrayLength, padding = 200) {
     const el = elementRef.current;
     const scrollLeft = el.scrollLeft + el.scrollWidth; // Add scrollwidth because scroll stick right at initial render
     const clientWidth = el.clientWidth + padding;
@@ -39,7 +35,7 @@ export function getVisibleIndexRange(elementRef, arrayLength, lengthPerItem, pad
 
     const iRight = Math.round((scrollLeft / scrollWidth) * arrayLength);
     let iLeft = iRight - visibleItems;
-    iLeft < 0 ? iLeft = 0 : iLeft; 
+    iLeft < 0 ? iLeft = 0 : iLeft;
     return { iLeft, iRight, scrollLeft, clientWidth, scrollWidth };
 }
 

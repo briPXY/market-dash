@@ -1,22 +1,21 @@
-export function xyScaler(d3, OHLCData, xValue, yValue, isLogScale = "LOG", innerWidth, innerHeight, margin, visibleOHLCData) {
-    if (!OHLCData || !visibleOHLCData){
+export function xyScaler(d3, data, xValue, yValue, isLogScale = "LOG", innerWidth, innerHeight, margin) {
+    if (!data){
         return;
     }
 
     let y;
     // console.log( OHLCData.length);
-    if (isLogScale == "LOG") {
-        const yData = visibleOHLCData ? visibleOHLCData : OHLCData;
-        const min = d3.min(yData, d => d[yValue]);
-        const max = d3.max(yData, d => d[yValue]);
+    if (isLogScale == "LOG") { 
+        const min = d3.min(data, d => d[yValue]);
+        const max = d3.max(data, d => d[yValue]);
         
         y = d3.scaleLinear()
             .domain([min, max])
             .range([innerHeight, margin.top])
             .nice();
     } else {
-        const min = d3.min(OHLCData, d => d[yValue]);
-        const max = d3.max(OHLCData, d => d[yValue]);
+        const min = d3.min(data, d => d[yValue]);
+        const max = d3.max(data, d => d[yValue]);
         y = d3.scaleLinear()
             .domain([min, max])
             .range([innerHeight, margin.top])
@@ -24,7 +23,7 @@ export function xyScaler(d3, OHLCData, xValue, yValue, isLogScale = "LOG", inner
     }
 
     const x = d3.scaleTime()
-        .domain([d3.min(OHLCData, d => d[xValue]), d3.max(OHLCData, d => d[xValue])])
+        .domain([d3.min(data, d => d[xValue]), d3.max(data, d => d[xValue])])
         .range([margin.left, innerWidth]);
 
     return { x, y };

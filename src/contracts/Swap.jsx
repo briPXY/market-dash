@@ -83,9 +83,9 @@ function Swap({ token0, token1, poolAddress, network, isDEX }) {
     if (!isDEX) return null;
 
     return (
-        <div className="flex flex-col gap-2 bg-primary p-4 rounded-md w-full h-full relative">
+        <div className="flex flex-col gap-2 bg-primary-900 p-4 rounded-md w-full h-full relative">
             <div className="flex gap-0 flex-col items-center">
-                <div className="flex flex-col items-start gap-2 rounded-xl p-4 border-secondary hover:border-active">
+                <div className="flex flex-col items-start gap-2 rounded-xl p-4 bg-primary-500 hover:border-active">
                     <SwapTokenInfo label={"SELL"} tokenName={currentTokenIn.name} />
                     <div className="flex items-center justify-between">
                         <input
@@ -104,12 +104,12 @@ function Swap({ token0, token1, poolAddress, network, isDEX }) {
 
                 <button
                     onClick={() => handleChangeSymbols(currentTokenOut, currentTokenIn, buyAmount, sellAmount, true)}
-                    className="flex items-center justify-center bg-secondary p-3 rounded-full w-fit text-white -my-4.5 z-10"
+                    className="flex items-center justify-center bg-primary-100 p-3 rounded-full w-fit text-white -my-4.5 z-10"
                 >
                     <svg.Swap />
                 </button>
 
-                <div className="flex flex-col items-start gap-2 rounded-xl p-4 border-secondary hover:border-active">
+                <div className="flex flex-col items-start gap-2 rounded-xl p-4 bg-primary-500 hover:border-active">
                     <SwapTokenInfo label={"BUY"} tokenName={currentTokenOut.name} />
                     <div className="flex items-center justify-between">
                         <input
@@ -128,7 +128,7 @@ function Swap({ token0, token1, poolAddress, network, isDEX }) {
             </div>
 
             {!accountAddress && <WalletLogin setLogState={setloginState} />}
-            {accountAddress && <button className="bg-accent p-3 rounded-md text-primary font-semibold">Swap</button>}
+            {accountAddress && <button className="bg-accent p-3 rounded-md text-primary-900 font-semibold">Swap</button>}
 
             <button
                 onClick={() => window.open(`${network.poolURL}${poolAddress}`, "_blank")}
@@ -138,7 +138,7 @@ function Swap({ token0, token1, poolAddress, network, isDEX }) {
 
             {loginState &&
                 <div className="h-full w-full bg-transparent-blur absolute left-0 top-0">
-                    <div className="mx-auto max-w-[80%] p-4 bg-primary rounded-md border-washed text-sm">{loginState}</div>
+                    <div className="mx-auto max-w-[80%] p-4 bg-primary-900 rounded-md border-washed text-sm">{loginState}</div>
                 </div>
             }
         </div>

@@ -16,11 +16,11 @@ export const NetworkSelector = ({handleNetworkChange}) => {
     }
 
     return (
-        <PopoverButton showClass={"w-min h-fit top-[100%] z-65 rounded-md bg-secondary"}>
+        <PopoverButton showClass={"w-min h-fit top-[100%] z-65 rounded-md bg-primary-500"}>
             <div className="flex flex-col cursor-pointer items-start gap-1 hover:brightness-125">
                 <div className="text-xs text-washed md:visible hidden">Network</div>
                 <Flex className="items-center gap-2">
-                    <NetworkIcon id={SourceConst[src].network} size={32} variant="branded" className="p-0.5 bg-secondary rounded-md" />
+                    <NetworkIcon id={SourceConst[src].network} size={32} variant="branded" className="p-0.5 bg-primary-500 rounded-md" />
                     <div className="text-sm text-left">{SourceConst[src].desc}</div>
                     <div className="text-xs text-washed">▼</div>
                 </Flex>
