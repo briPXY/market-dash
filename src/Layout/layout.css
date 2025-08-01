@@ -26,46 +26,23 @@
   --color-washed: #aec2ff75;
 }
 
+
 @layer utilities {
-  .bg-primary-900 {
-    background-color: #0f0f14;
-  }
-
-  .bg-primary-500 {
-    background-color: var(--bg-mid);
-  }
-
-  .bg-primary-100{
-    background-color: var(--bg-light);
-  }
-
   .bg-accent {
     background-color: var(--color-accent);
   }
 
-  .bg-negative-accent{
+  .bg-negative-accent {
     background-color: tomato;
   }
 
-  .bg-transparent-blur{
+  .bg-transparent-blur {
     background-color: #0f0f147e;
     backdrop-filter: blur(5px);
   }
 
-  .text-primary-900 {
-    color: var(--bg-primary-900);
-  }
-
   .text-washed {
     color: var(--color-washed);
-  }
-
-  .text-primary-100{
-    color: var(--bg-light)
-  }
-
-  .text-primary-500{
-    color: var(--bg-mid)
   }
 
   .text-accent {
@@ -87,18 +64,6 @@
     /* Firefox */
   }
 
-  .border-primary-900 {
-    border: 1px solid var(--bg-primary-900);
-  } 
-
-  .border-primary-100{
-    border: 1px solid var(--bg-light);
-  }
-
-  .border-primary-500{
-    border: 1px solid var(--bg-mid);
-  }
-
   .border-secondary {
     border: 1px solid var(--bg-mid);
   }
@@ -112,22 +77,31 @@
   }
 }
 
-/**
-  * Custom fonts
-  * You can control variable axes as shown below:
-  * font-variation-settings: wght 700.0;
-  *
-  * available axes:
-  'wght' (range from 200.0 to 700.0
-  */
+
 @font-face {
-  font-family: 'Chillax-Variable';
-  src: url('../assets/fonts/Chillax-Variable.woff2') format('woff2'),
-    url('../assets/fonts/Chillax-Variable.woff') format('woff'),
-    url('../assets/fonts/Chillax-Variable.ttf') format('truetype');
-  font-weight: 200 700;
-  font-display: swap;
+  font-family: 'Manrope';
+  src: url('../assets/fonts/Manrope-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 700;
   font-style: normal;
+  font-display: swap;
+}
+
+/* IBM Plex Mono Regular */
+@font-face {
+  font-family: 'IBMPlexMono';
+  src: url('../assets/fonts/IBMPlexMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* IBM Plex Mono Medium */
+@font-face {
+  font-family: 'IBMPlexMono';
+  src: url('../assets/fonts/IBMPlexMono-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
 }
 
 
@@ -188,11 +162,18 @@
 }
 
 .floating-modal {
-  position: fixed; /* Fixes the element in the viewport */
-  top: 50%; /* Aligns the top edge to the middle of the viewport */
-  left: 50%; /* Aligns the left edge to the middle of the viewport */
-  transform: translate(-50%, -50%); /* Centers the element precisely */
-  z-index: 1000; /* Ensures the modal is on top of other content */
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.19); /* Soft shadow */
-  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; /* Smooth transition for appearance */
+  position: fixed;
+  /* Fixes the element in the viewport */
+  top: 50%;
+  /* Aligns the top edge to the middle of the viewport */
+  left: 50%;
+  /* Aligns the left edge to the middle of the viewport */
+  transform: translate(-50%, -50%);
+  /* Centers the element precisely */
+  z-index: 1000;
+  /* Ensures the modal is on top of other content */
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.19);
+  /* Soft shadow */
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  /* Smooth transition for appearance */
 }

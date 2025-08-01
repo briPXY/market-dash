@@ -1,4 +1,12 @@
 @import "tailwindcss";
+ 
+/* stylelint-disable at-rule-no-unknown */
+@theme {
+  --font-mono: "IBMPlexMono", monospace;
+  --color-primary-100: #2a324b;
+  --color-primary-500: #151821;
+  --color-primary-900: #0e0e14;
+}
 
 #root {
     height: 100%;
@@ -14,15 +22,14 @@
 
 html {
     scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
 }
 
 body {
-    margin: 0; 
+    margin: 0;
     place-items: center;
     min-width: 320px;
     min-height: 100vh;
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
     line-height: normal;
     width: 100%;
     background: #000000;
@@ -30,20 +37,25 @@ body {
 
 /* For WebKit-based browsers (Chrome, Edge, Safari) */
 ::-webkit-scrollbar {
-    width: 8px; /* Adjust width as needed */
+    width: 8px;
+    /* Adjust width as needed */
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent; /* Makes the track (bar background) transparent */
+    background: transparent;
+    /* Makes the track (bar background) transparent */
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2); /* White color with 20% opacity */
-    border-radius: 4px; /* Rounded corners */
+    background: rgba(255, 255, 255, 0.2);
+    /* White color with 20% opacity */
+    border-radius: 4px;
+    /* Rounded corners */
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3); /* Slightly more visible on hover */
+    background: rgba(255, 255, 255, 0.3);
+    /* Slightly more visible on hover */
 }
 
 .domain {
@@ -53,10 +65,13 @@ body {
 .scroll-stick-left {
     overflow-x: auto;
     white-space: nowrap;
-    direction: rtl; /* Makes default scroll at right */
+    direction: rtl;
+    /* Makes default scroll at right */
 }
-.scroll-stick-left > * {
-    direction: ltr; /* Prevents content mirroring */
+
+.scroll-stick-left>* {
+    direction: ltr;
+    /* Prevents content mirroring */
 }
 
 .coolnum::after {
