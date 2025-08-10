@@ -6,6 +6,7 @@ export function line(d3, svg, scale, tooltipRef, historicalData, bandXScale, inn
     // IMPORTANT: Clearing logic relies on the ".main" class, as per your request.
     // Ensure all elements intended for this chart are given the ".main" class.
     svg.selectAll(".main").remove(); // Clears all elements with class "main" from previous charts/renderings
+    svg.selectAll(".line-chart-path-specific").remove();
 
     const lineGenerator = d3.line()
         .x(d => bandXScale(d.date) + barWidth / 2) // Center the line on the band

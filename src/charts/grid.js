@@ -1,55 +1,61 @@
 import * as d3 from "d3";
-import { chartGridColor } from "../constants/constants";
+import { chartGridColor, chartGridThickness, d3TimeFormats } from "../constants/constants";
+import { formatXAxis } from "./axis";
 
 export function drawGrid(svg, scales, innerWidth, innerHeight, bandX) {
     // Remove previous grid lines
-    svg.selectAll(".grid").remove();
+    svg.selectAll(".chart-grid").remove();
 
     // X-axis grid using band scale
     const xAxis = d3.axisBottom(bandX)
         .tickSize(-innerHeight)
         .tickFormat("")
         .tickValues(bandX.domain().filter((d, i) => {
-            // Optional: reduce number of ticks for better spacing
             const total = bandX.domain().length;
-            const step = Math.ceil(total / 10); // Max 10 grid lines
+            const step = Math.ceil(total / 10);
             return i % step === 0;
-        }));
+        }))
+        .tickFormat("") // no label for grid
+        .tickSize(-innerHeight)
 
     svg.insert("g", ":first-child")
-        .attr("class", "grid")
+        .attr("class", "chart-grid")
         .attr("transform", `translate(0,${innerHeight})`)
         .call(xAxis)
+        .call(g => g.selectAll(".tick")
+            .attr("transform", d => `translate(${bandX(d) + bandX.bandwidth() / 2},0)`))
         .selectAll("line")
-        .style("stroke", chartGridColor)
-        .style("stroke-width", 0.5);
+        .attr("stroke", chartGridColor)
+        .attr("stroke-width", chartGridThickness);
 
     // Y-axis grid remains unchanged
     svg.append("g")
-        .attr("class", "grid")
+        .attr("class", "chart-grid")
         .call(d3.axisLeft(scales.y)
             .tickSize(-innerWidth - 110)
             .tickFormat("")
         )
         .selectAll("line")
         .style("stroke", chartGridColor)
-        .style("stroke-width", 0.5);
+        .style("stroke-width", chartGridThickness); console.log("grid")
 }
 
-export function drawSubIndicatorGrid(svg, innerWidth, data, innerIndicatorHeight, margin, subIndicators) {
+export function drawSubIndicatorGrid(svg, innerWidth, xScaleBand, innerIndicatorHeight, margin, subIndicators,) {
     if (subIndicators === 0) {
         svg.selectAll(".subGrid").remove();
+        svg.selectAll(".subxaxis").remove();
+        svg.selectAll(".x-tick-line").remove();
         return;
     }
-    const xScale = d3.scaleTime()
-        .domain(d3.extent(data, d => d.date)) // Auto-adjust based on data
-        .range([0, innerWidth]);
 
     const yIndicator = d3.scaleLinear()
         .domain([0, 100]) // <== Set fixed range here
         .range([innerIndicatorHeight, 0])
         .nice();
 
+
+    svg.selectAll(".x-tick-line").remove();
+    svg.selectAll(".subxaxis").remove();
     svg.selectAll(".subGrid").remove();
 
     // Get the Y-axis domain for indicators (e.g., MACD)
@@ -67,22 +73,34 @@ export function drawSubIndicatorGrid(svg, innerWidth, data, innerIndicatorHeight
         )
         .selectAll("line")
         .style("stroke", chartGridColor)
-        .style("stroke-width", 0.5)
+        .style("stroke-width", chartGridThickness)
         .attr("class", "subGrid");
 
-    svg.append("g")
-        .attr("class", "subGrid")
+    const xAxis = formatXAxis(xScaleBand, 12, d3.timeFormat(d3TimeFormats["1h"]));
+
+    const xAxisGroup = svg.append("g")
+        .attr("class", "subxaxis")
         .attr("transform", `translate(0,${innerIndicatorHeight})`)
-        .call(d3.axisBottom(xScale)
-            .ticks(10) // **Double tick count**
-            .tickSize(-innerIndicatorHeight)
-            .tickFormat("")
-        )
-        .selectAll("line")
-        .style("stroke", chartGridColor)
-        .style("stroke-width", 0.5)
-        .attr("class", "subGrid");
+        .call(xAxis);
 
+    // Apply same class to both tick line & tick text
+   xAxisGroup.selectAll(".tick")
+    .each(function () {
+        d3.select(this).select("line").classed("tick-labeled", true);
+        d3.select(this).select("text").classed("tick-labeled", true);
+    });
+
+    // Add custom long grid lines only for labeled ticks
+    xAxisGroup.selectAll(".tick")
+        .filter(d => xAxis._showLabel.has(d))
+        .append("line")
+        .attr("class", "x-tick-line")
+        .attr("x1", 0)
+        .attr("x2", 0)
+        .attr("y1", 0)
+        .attr("y2", -innerIndicatorHeight)
+        .attr("stroke", chartGridColor)
+        .attr("stroke-width", chartGridThickness);
     // Middle line in the sub-indicator panel
     // svg.append("line")
     // .attr("class", "subGrid")

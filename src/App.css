@@ -93,3 +93,6 @@ body {
     font-weight: 500;
     margin-right: 8px;
 }
+
+.tick-unlabeled { display: none; }
+.tick-labeled { display: none; }

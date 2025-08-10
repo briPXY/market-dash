@@ -1,21 +1,21 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
-import { drawGrid, drawSubIndicatorGrid } from "./grid";
-import { drawAxesAndLabels } from "./axis";
+import { drawSubIndicatorGrid } from "./grid";
+import { drawXAxis, drawYAxis } from "./axis";
 import { xyScaler } from "./helper/xyScaler";
 import { IndicatorSelector } from "./indicators/IndicatorSelector";
 import { indicatorList, subIndicatorList } from "./indicators/indicatorList"
 import { drawVolumeBars } from "./charts/volume";
 import { getVisibleIndexRange } from "./helper/getVisibleIndices";
 import LivePriceLine from "./LivePriceLine";
-import { getBandXScale } from "./helper/getBandXScale"; 
+import { getBandXScale } from "./helper/getBandXScale";
 
 const chartDim = {
     margin: { top: 22, right: 5, bottom: 22, left: 5 },
     height: window.innerHeight * 0.425,
 };
 
-chartDim.innerHeight =  chartDim.height - chartDim.margin.top - chartDim.margin.bottom;
+chartDim.innerHeight = chartDim.height - chartDim.margin.top - chartDim.margin.bottom;
 
 const LiveChart = ({
     OHLCData,
@@ -46,7 +46,7 @@ const LiveChart = ({
     }), [innerWidth, subIndicatorHeight]);
 
     const mainSvg = d3.select(svgRef.current);
-    const ySvg =  d3.select(ySvgRef.current);
+    const ySvg = d3.select(ySvgRef.current);
     const subSvg = d3.select(subRef.current);
 
     const visibleOHLCData = useMemo(() => {
@@ -88,33 +88,36 @@ const LiveChart = ({
         };
     }, [isLogScale]);
 
+    // Y Dynamic SVGs
     useEffect(() => {
-        mainSvg.selectAll(".main").remove();
         ySvg.selectAll('*').remove();
 
         if (OHLCData?.length <= 1 || isError) return;
-        // draw axis/label
-        drawAxesAndLabels(mainSvg, ySvg, scale, bandXScale, chartDim.innerHeight, range);
 
-        //draw grid
-        drawGrid(mainSvg, scale, innerWidth, chartDim.innerHeight, bandXScale);
-
-        // Draw volume bar overlay
-        drawVolumeBars(d3, mainSvg, bandXScale, OHLCData, chartDim.innerHeight, tooltipRef);
-
+        drawYAxis(ySvg, scale, mainSvg); 
+        //drawGrid(mainSvg, scale, innerWidth, chartDim.innerHeight, bandXScale);
         chart(d3, mainSvg, scale, tooltipRef, OHLCData, bandXScale, chartDim.innerHeight);
 
-    }, [OHLCData, lengthPerItem, isLogScale, range, innerWidth, scale, isError, chart, bandXScale, mainSvg, ySvg]);
+    }, [OHLCData, innerWidth, scale, isError, chart, bandXScale, mainSvg, ySvg]);
+
+    // Y Static SVGs
+    useEffect(() => {
+        if (OHLCData.length < 1) return;
+        // draw axis/label
+        drawXAxis(mainSvg, bandXScale, chartDim.innerHeight, range);
+        // Draw volume bar overlay
+        drawVolumeBars(d3, mainSvg, bandXScale, OHLCData, chartDim.innerHeight, tooltipRef);
+    }, [OHLCData, bandXScale, innerWidth, mainSvg, range])
 
     useEffect(() => {
-        drawSubIndicatorGrid(subSvg, innerWidth, OHLCData, subIndicatorHeight, chartDim.margin, subIndicators.length);
-    }, [OHLCData, innerWidth, subIndicatorHeight, subIndicators, subSvg]);
+        drawSubIndicatorGrid(subSvg, innerWidth, bandXScale, subIndicatorHeight, chartDim.margin, subIndicators.length);
+    }, [OHLCData, bandXScale, innerWidth, subIndicatorHeight, subIndicators, subSvg]);
 
     return (
         <div className="relative">
             <div className="flex gap-0">
                 <div
-                    className="overflow-x-auto whitespace-nowrap flex-1 hide-scrollbar scroll-stick-left"
+                    className={`overflow-x-auto whitespace-nowrap flex-1 hide-scrollbar scroll-stick-left`}
                     ref={scrollContainerRef}
                 >
                     <svg ref={svgRef} width={lengthPerItem * OHLCData.length + 100} height={chartDim.height}>
