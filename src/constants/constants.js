@@ -39,13 +39,13 @@ export const chartGridColor = "rgb(110 146 255)";
 export const chartGridThickness = 0.1;
 
 export const d3TimeFormats = {
-    "1m": "%H:%M",      // 12:30
+    "1m": "%H:%M",
     "5m": "%H:%M",
     "15m": "%H:%M",
     "30m": "%H:%M",
-    "1h": "%b-%d %H:%M",  // Mar 07 12:00 (Shows Date + Time)
-    "4h": "%b-%d %H:%M",  // Mar 07 12:00 (Shows Date + Time)
-    "1d": "%b %d",      // Mar 07
-    "1w": "%b %Y",      // Mar 2025
-    "1M": "%b %Y",      // Mar 2025
+    "1h": "%b-%d %H:%M",
+    "4h": "%b-%d %H:%M",
+    "1d": "%b %d",
+    "1w": "%b %Y",
+    "1M": "%b %Y",
 };

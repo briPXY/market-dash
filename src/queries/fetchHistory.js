@@ -44,7 +44,6 @@ async function UniswapV3(address, interval, network = "UniswapV3") {
     try {
         const timeframes = { "1h": "1h", "1d": "1d" };
         const timeProp = { "1h": "periodStartUnix", "1d": "date" };
-        const multiplyUnixTime = { "1h": 1, "1d": 1000 };
 
         if (!timeframes[interval]) {
             interval = "1h";
@@ -63,7 +62,7 @@ async function UniswapV3(address, interval, network = "UniswapV3") {
 
         const convertedData = data.data[poolInterval[interval]].map(entry => ({
             close: Number(entry.close),
-            date: entry[timeProp[interval]] * multiplyUnixTime[interval],
+            date: entry[timeProp[interval]] * 1000,
             dateOpen: 0, // Dummy value
             high: Number(entry.low), // Swap high/low
             low: Number(entry.high),

@@ -17,7 +17,7 @@ export function formatXAxis(
 
     const axis = d3.axisBottom(bandXScale)
         .tickValues(domain) // always pass full domain
-        .tickFormat(d => showLabel.has(d) ? dateFormat(d) : "");
+        .tickFormat(d => showLabel.has(d) ? dateFormat(new Date(d)) : "");
 
     axis._showLabel = showLabel;
     return axis;
@@ -30,7 +30,7 @@ export function drawXAxis(svg, bandXScale, innerHeight, range) {
     // Clean previous axes and lines
     svg.selectAll(".xaxis").remove();
     svg.selectAll(".x-tick-line").remove(); // Clear previous vertical lines
-    svg.selectAll("text").remove();
+    svg.selectAll(".text").remove();
     svg.selectAll(".tick").remove();
 
     // Draw X Axis
@@ -39,7 +39,7 @@ export function drawXAxis(svg, bandXScale, innerHeight, range) {
         .attr("transform", `translate(0,${innerHeight})`)
         .call(xAxis);
 
-    // Delete tick lines
+    // Classing tick lines (for display none)
     xAxisGroup.selectAll(".tick")
         .each(function () {
             d3.select(this).select("line").classed("tick-labeled", true);
@@ -47,11 +47,10 @@ export function drawXAxis(svg, bandXScale, innerHeight, range) {
 
     // Style the tick labels
     xAxisGroup.selectAll("text")
-        .style("text-anchor", "end")
-        .attr("dx", "2em")
-        .attr("dy", "0.8em")
-        .style("font-size", "13px")
-        .style("fill", "rgb(255,255,255,0.4)");
+        .style("text-anchor", "center")
+        .style("font-size", "1.3em")
+        .attr("dy", "1.3em")
+        .style("fill", "rgb(255,255,255,0.3)");
 
     // Style the axis domain
     d3.selectAll(".domain").each(function () {
