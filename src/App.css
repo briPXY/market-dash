@@ -1,11 +1,13 @@
 @import "tailwindcss";
- 
+
 /* stylelint-disable at-rule-no-unknown */
 @theme {
-  --font-mono: "IBMPlexMono", monospace;
-  --color-primary-100: #2a324b;
-  --color-primary-500: #151821;
-  --color-primary-900: #0e0e14;
+    --font-mono: "IBMPlexMono", monospace;
+    --color-primary-100: #2a324b;
+    --color-primary-500: #151821;
+    --color-primary-900: #0e0e14;
+    --color-accent: #2fb59c;
+    --color-washed: #aec2ff75;
 }
 
 #root {
@@ -94,5 +96,10 @@ body {
     margin-right: 8px;
 }
 
-.tick-unlabeled { display: none; }
-.tick-labeled { display: none; }
+.tick-unlabeled {
+    display: none;
+}
+
+.tick-labeled {
+    display: none;
+}

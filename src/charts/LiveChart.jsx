@@ -9,13 +9,7 @@ import { drawVolumeBars } from "./charts/volume";
 import { getVisibleIndexRange } from "./helper/getVisibleIndices";
 import LivePriceLine from "./LivePriceLine";
 import { getBandXScale } from "./helper/getBandXScale";
-
-const chartDim = {
-    margin: { top: 22, right: 5, bottom: 22, left: 5 },
-    height: window.innerHeight * 0.42,
-};
-
-chartDim.innerHeight = chartDim.height - chartDim.margin.top - chartDim.margin.bottom;
+import { chartDim } from "./config";
 
 const LiveChart = ({
     OHLCData,

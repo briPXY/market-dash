@@ -1,4 +1,5 @@
 
+import { timeFrameText } from "../../constants/constants";
 import { SourceConst } from "../../constants/sourceConst";
 import { Box, BulletText, Flex } from "../../Layout/Layout"; 
 import { useSourceStore } from "../../stores/stores";
@@ -33,14 +34,14 @@ export function RangeSelector({ setRange, selected }) {
                 <button
                     key={tf}
                     onClick={() => setRange(tf)}
-                    className={`px-2 py-1 rounded-md text-xs font-medium transition-all
+                    className={`px-2 py-1 rounded-sm bg-primary-500 text-xs transition-all
                         ${
                             selected === tf
-                                ? "text-[var(--acc-01)]" // Increase brightness when selected
-                                : "hover:brightness-110"
+                                ? "text-accent" // Increase brightness when selected
+                                : "hover:brightness-120"
                         }`}
                 >
-                    {tf.toUpperCase()}
+                    {timeFrameText[tf]}
                 </button>
             ))}
         </div>
