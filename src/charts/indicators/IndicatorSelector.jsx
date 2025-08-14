@@ -26,7 +26,13 @@ export const IndicatorSelector = ({ d3, data, svg, scale, bandXScale, indicatorL
         }));
 
         if (setSubIndicators) {
-            setSubIndicators(prev => [...prev, name]);
+            setSubIndicators(prev => { 
+                // No duplication
+                if (prev.includes(name)) { 
+                    return prev;
+                } 
+                return [...prev, name];
+            });
         }
     }, [setSubIndicators]);
 
@@ -116,10 +122,10 @@ const IndicatorItem = ({ n, fn, drawIndicator, addNewIndicator }) => {
     };
 
     return (
-        <div key={n} className="flex text-xs border-primary-100 p-1 md:p-2 rounded-sm h-fit items-start md:items-center py-2">
-            <div className="flex gap-1">
+        <div key={n} className="flex text-xs border-washed border-solid p-1 md:p-2 rounded-sm h-fit items-start md:items-center py-2">
+            <div className="flex gap-1 items-center">
                 <div className="w-20 md:w-36 overflow-hidden text-sm font-medium text-left">{n}</div>
-                <div className="text-xs cursor-pointer rounded-sm bg-primary-100 pt-0.5 px-1.5" onClick={() => addNewIndicator(n, { color: color, fn: fn, ...param })}>Insert</div>
+                <div className="text-xs cursor-pointer rounded-sm bg-primary-100 h-fit pb-1 pt-0.5 px-1.5" onClick={() => addNewIndicator(n, { color: color, fn: fn, ...param })}>Insert</div>
                 <input className="w-5 p-0 border-none" type="color" value={color} onChange={(e) => setColor(e.target.value)} name="colorPicker"></input>
             </div>
             <div className="md:w-8 w-4"></div>
