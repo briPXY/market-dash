@@ -1,17 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
-import { drawSubIndicatorGrid } from "./grid";
 import { drawXAxis, drawYAxis } from "./axis";
 import { xyScaler } from "./helper/xyScaler";
 import { IndicatorSelector } from "./indicators/IndicatorSelector";
-import { indicatorList, subIndicatorList } from "./indicators/indicatorList"
+import { indicatorList } from "./indicators/indicatorList"
 import { drawVolumeBars } from "./charts/volume";
 import { getVisibleIndexRange } from "./helper/getVisibleIndices";
 import LivePriceLine from "./LivePriceLine";
 import { getBandXScale } from "./helper/getBandXScale";
 import { chartDim } from "./config";
+import SubIndicatorsSvgs from "./SubIndicatorsSvgs";
+import { ChartSVG } from "./ChartSVG";
 
-const LiveChart = ({
+const SVGContainer = ({
     OHLCData,
     range,
     isError,
@@ -22,26 +23,16 @@ const LiveChart = ({
     const svgRef = useRef(null);
     const ySvgRef = useRef(null);
     const tooltipRef = useRef(null);
-    const subRef = useRef(null);
     const scrollContainerRef = useRef(null); // For the scrollable div
 
-    const [subIndicators, setSubIndicators] = useState([]);
     // Debounced scroll state for visibleOHLCData
     const [scrollStopped, setScrollStopped] = useState(null);
 
     const innerWidth = useMemo(() => (lengthPerItem * OHLCData?.length) - chartDim.margin.left - chartDim.margin.right, [OHLCData, lengthPerItem]);
-    const subIndicatorHeight = useMemo(() => chartDim.innerHeight * 0.5 * subIndicators.length, [subIndicators]);
     const yLabelWidth = useMemo(() => OHLCData[0].close.toString().length * 3.3, [OHLCData])
-
-    const outDimension = useMemo(() => ({
-        w: innerWidth,
-        h: subIndicatorHeight,
-        m: chartDim.margin
-    }), [innerWidth, subIndicatorHeight]);
 
     const mainSvg = d3.select(svgRef.current);
     const ySvg = d3.select(ySvgRef.current);
-    const subSvg = d3.select(subRef.current);
 
     const visibleOHLCData = useMemo(() => {
         if (scrollStopped) {
@@ -88,7 +79,7 @@ const LiveChart = ({
 
         if (OHLCData?.length <= 1 || isError) return;
 
-        drawYAxis(ySvg, scale, mainSvg); 
+        drawYAxis(ySvg, scale, mainSvg);
         //drawGrid(mainSvg, scale, innerWidth, chartDim.innerHeight, bandXScale);
         chart(d3, mainSvg, scale, tooltipRef, OHLCData, bandXScale, chartDim.innerHeight);
 
@@ -103,9 +94,6 @@ const LiveChart = ({
         drawVolumeBars(d3, mainSvg, bandXScale, OHLCData, chartDim.innerHeight, tooltipRef);
     }, [OHLCData, bandXScale, innerWidth, mainSvg, range])
 
-    useEffect(() => {
-        drawSubIndicatorGrid(subSvg, innerWidth, bandXScale, subIndicatorHeight, chartDim.margin, subIndicators.length);
-    }, [OHLCData, bandXScale, innerWidth, subIndicatorHeight, subIndicators, subSvg]);
 
     return (
         <div className="relative">
@@ -114,13 +102,14 @@ const LiveChart = ({
                     className={`overflow-x-auto whitespace-nowrap flex-1 hide-scrollbar scroll-stick-left`}
                     ref={scrollContainerRef}
                 >
-                    <svg ref={svgRef} width={lengthPerItem * OHLCData.length + 100} height={chartDim.height}>
-                        <g className="y-axis" ></g>
-                        {/* Scrollable Chart Content (Grid, X-Axis, Lines, etc.) */}
-                        <g className="chart-content" ></g>
-                    </svg>
-                    {/*sub indicator */}
-                    <svg ref={subRef} width={lengthPerItem * OHLCData.length + 100} height={chartDim.height * 0.5 * subIndicators.length}></svg>
+                    <ChartSVG svgRef={svgRef} width={lengthPerItem * OHLCData.length + 100} height={chartDim.height} />
+                    <SubIndicatorsSvgs
+                        width={lengthPerItem * OHLCData.length + 100}
+                        OHLCData={OHLCData}
+                        chartDim={chartDim}
+                        bandXScale={bandXScale}
+                        scale={scale}
+                    />
                 </div>
                 {/*Y labels */}
                 <div className="w-fit">
@@ -153,22 +142,8 @@ const LiveChart = ({
                     bandXScale={bandXScale}
                 />
             </div>
-            <div style={{ top: `${chartDim.height}px` }} className="absolute left-0 z-30">
-                <IndicatorSelector
-                    d3={d3}
-                    svg={subSvg}
-                    scale={scale}
-                    bandXScale={bandXScale}
-                    data={OHLCData}
-                    indicatorList={subIndicatorList}
-                    outDimension={outDimension}
-                    setSubIndicators={setSubIndicators}
-                    dbId={"sub-indicator"}
-                    init={"MACD"}
-                />
-            </div>
         </div>
     )
 };
 
-export default LiveChart;
+export default SVGContainer;

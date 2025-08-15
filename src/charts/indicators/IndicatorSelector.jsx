@@ -2,8 +2,9 @@ import { useEffect, useRef, useState, useCallback } from "react"
 import { ActiveIndicatorButtons } from "./ActiveIndicatorButtons";
 import Button from "../../Layout/Elements";
 import { isSavedStateExist, loadState, saveState } from "../../idb/stateDB";
+import * as d3 from "d3";
 
-export const IndicatorSelector = ({ d3, data, svg, scale, bandXScale, indicatorList, outDimension, setSubIndicators, dbId, init }) => {
+export const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList, outDimension, setSubIndicators, dbId, init }) => {
     const dropdownRef = useRef(null);
 
     const [showedIndicators, setShowedIndicators] = useState({});
@@ -16,7 +17,7 @@ export const IndicatorSelector = ({ d3, data, svg, scale, bandXScale, indicatorL
             const indicatorData = fn(d3, data, ...Object.values(param));
             fn.draw(d3, svg, indicatorData, scale, bandXScale, color, funcName, outDimension);
         },
-        [svg, d3, data, scale, bandXScale, outDimension] // Dependencies (make sure these are stable)
+        [svg, data, scale, bandXScale, outDimension] // Dependencies (make sure these are stable)
     );
 
     const addNewIndicator = useCallback((name, params) => {

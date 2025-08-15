@@ -2,7 +2,7 @@
 
 
 import { useState } from "react";
-import LiveChart from "../charts/LiveChart";
+import SVGContainer from "../charts/SVGContainer";
 import Button, { PopoverButton } from "../Layout/Elements";
 import { Flex } from "../Layout/Layout";
 import { RangeSelector } from "./Components/ChartBarMenu";
@@ -37,7 +37,7 @@ function MarketChart({ OHLCData, isError, setRange, range}) {
                         <ZoomOverlay setLengthPerItem={setLengthPerItem} />
                     </Flex>
                 </Flex>
-                <LiveChart
+                <SVGContainer
                     OHLCData={OHLCData}
                     range={range}
                     isError={isError}
