@@ -37,7 +37,7 @@ export const SwapHistory = ({ swaps }) => {
 
     return (
         <div className="w-full bg-primary-900 p-4">
-            <div className="mb-3 mt-4 text-xs md:text-sm">Transactions</div>
+            <div className="mb-3 mt-4 text-xs md:text-base">Transactions</div>
 
             {/* Column Labels */}
             <div className="flex justify-between px-2 py-1 md:px-4 md:py-3 bg-primary-500 text-washed rounded-t-lg text-xs md:text-sm">

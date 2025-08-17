@@ -1,6 +1,7 @@
 import * as d3 from "d3";
-import { chartGridColor, chartGridThickness, d3TimeFormats } from "../constants/constants";
+import { d3TimeFormats } from "../constants/constants";
 import { formatXAxis } from "./axis";
+import { Grid } from "./config";
 
 export function drawGrid(svg, scales, innerWidth, innerHeight, bandX) {
     // Remove previous grid lines
@@ -25,8 +26,8 @@ export function drawGrid(svg, scales, innerWidth, innerHeight, bandX) {
         .call(g => g.selectAll(".tick")
             .attr("transform", d => `translate(${bandX(d) + bandX.bandwidth() / 2},0)`))
         .selectAll("line")
-        .attr("stroke", chartGridColor)
-        .attr("stroke-width", chartGridThickness);
+        .attr("stroke", Grid.color)
+        .attr("stroke-width", Grid.thickness);
 
     // Y-axis grid remains unchanged
     svg.append("g")
@@ -36,8 +37,8 @@ export function drawGrid(svg, scales, innerWidth, innerHeight, bandX) {
             .tickFormat("")
         )
         .selectAll("line")
-        .style("stroke", chartGridColor)
-        .style("stroke-width", chartGridThickness); console.log("grid")
+        .style("stroke", Grid.color)
+        .style("stroke-width", Grid.thickness); console.log("grid")
 }
 
 export function drawSubIndicatorGrid(svg, innerWidth, xScaleBand, innerIndicatorHeight, margin, subIndicators,) {
@@ -72,8 +73,8 @@ export function drawSubIndicatorGrid(svg, innerWidth, xScaleBand, innerIndicator
             .tickFormat("")
         )
         .selectAll("line")
-        .style("stroke", chartGridColor)
-        .style("stroke-width", chartGridThickness)
+        .style("stroke", Grid.color)
+        .style("stroke-width", Grid.thickness)
         .attr("class", "subGrid");
 
     const xAxis = formatXAxis(xScaleBand, 12, d3.timeFormat(d3TimeFormats["1h"]));
@@ -99,8 +100,9 @@ export function drawSubIndicatorGrid(svg, innerWidth, xScaleBand, innerIndicator
         .attr("x2", 0)
         .attr("y1", 0)
         .attr("y2", -innerIndicatorHeight)
-        .attr("stroke", chartGridColor)
-        .attr("stroke-width", chartGridThickness);
+        .attr("stroke", Grid.color)
+        .attr("stroke-width", Grid.thickness)
+        .attr("stroke-dasharray", Grid.dashes);
     // Middle line in the sub-indicator panel
     // svg.append("line")
     // .attr("class", "subGrid")

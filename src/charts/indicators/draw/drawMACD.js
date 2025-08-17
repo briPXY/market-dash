@@ -16,20 +16,19 @@
 
 export function drawMACD(d3, svg, data, scale, bandXScale, color, id, dim) {
     const barWidth = bandXScale.bandwidth();
-
     const middle = d3.mean(data, d => (d.MACD + d.signal) / 2) || 0;
-
     const maxDistance = d3.max(data, d => Math.max(
         Math.abs(d.MACD - middle),
-        Math.abs(d.signal - middle), // Still consider signal for Y scale if needed, or remove if you're truly only showing MACD line and histogram
+        Math.abs(d.signal - middle),
         Math.abs(d.histogram)
     ));
-
     const padding = maxDistance * 0.2;
-
+    
+    // Use actual svg element height if available
+    const svgHeight = +svg.attr("height") || dim.h;
     const macdYScale = d3.scaleLinear()
         .domain([middle - maxDistance - padding, middle + maxDistance + padding])
-        .range([dim.h - dim.m.bottom, dim.m.top]);
+        .range([svgHeight - dim.m.bottom, dim.m.top]);
 
     const processedData = data.map((d, i) => ({
         ...d,

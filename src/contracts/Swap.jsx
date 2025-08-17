@@ -85,9 +85,9 @@ function Swap({ token0, token1, poolAddress, network, isDEX }) {
     return (
         <div className="flex flex-col gap-2 bg-primary-900 p-4 rounded-md w-full h-full relative">
             <div className="flex gap-0 flex-col items-center">
-                <div className="flex flex-col items-start gap-2 rounded-xl p-4 bg-primary-500 hover:border-active">
+                <div className="flex flex-col items-start gap-2 rounded-xl p-4 bg-primary-500 hover:border-active w-full">
                     <SwapTokenInfo label={"SELL"} tokenName={currentTokenIn.name} />
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center w-full justify-between">
                         <input
                             type="text"
                             inputMode="decimal"
@@ -109,9 +109,9 @@ function Swap({ token0, token1, poolAddress, network, isDEX }) {
                     <svg.Swap />
                 </button>
 
-                <div className="flex flex-col items-start gap-2 rounded-xl p-4 bg-primary-500 hover:border-active">
+                <div className="flex flex-col items-start gap-2 rounded-xl p-4 bg-primary-500 hover:border-active w-full">
                     <SwapTokenInfo label={"BUY"} tokenName={currentTokenOut.name} />
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center w-full justify-between">
                         <input
                             type="text"
                             inputMode="decimal"

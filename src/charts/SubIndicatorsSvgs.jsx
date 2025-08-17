@@ -7,10 +7,8 @@ import { subIndicatorList } from "./indicators/indicatorList";
 const SubIndicatorsSvgs = ({ width, chartDim, bandXScale, OHLCData, scale }) => {
     const [subIndicators, setSubIndicators] = useState([]);
     const subIndicatorHeight = useMemo(() => chartDim.innerHeight * 0.5 * subIndicators.length, [chartDim.innerHeight, subIndicators.length]);
-
     const subRef = useRef(null);
     const subSvg = d3.select(subRef.current);
-
     const outDimension = useMemo(() => ({
         w: innerWidth,
         h: subIndicatorHeight,
@@ -36,7 +34,7 @@ const SubIndicatorsSvgs = ({ width, chartDim, bandXScale, OHLCData, scale }) => 
                     init={"MACD"}
                 />
             </div>
-            <svg className="border-y-1 border-y-washed/20 p-0" ref={subRef} width={width} height={chartDim.height * 0.5 * subIndicators.length}></svg>
+            <svg className="border-y-1 border-y-washed/20 p-0" ref={subRef} width={width} height={subIndicatorHeight}></svg>
         </>
     );
 };

@@ -1,7 +1,8 @@
 // drawAxesAndLabels.js
 import * as d3 from "d3";
 import { timeFormat } from "d3-time-format";
-import { chartGridColor, chartGridThickness, d3TimeFormats } from "../constants/constants";
+import { d3TimeFormats } from "../constants/constants";
+import { Grid } from "./config";
 
 export function formatXAxis(
     bandXScale,
@@ -66,8 +67,9 @@ export function drawXAxis(svg, bandXScale, innerHeight, range) {
         .attr("x2", 0)
         .attr("y1", 0)
         .attr("y2", -innerHeight) // Full height upward
-        .attr("stroke", chartGridColor)
-        .attr("stroke-width", chartGridThickness);
+        .attr("stroke", Grid.color)
+        .attr("stroke-width", Grid.thickness)
+        .attr("stroke-dasharray", Grid.dashes);
 }
 
 export function drawYAxis(ySvg, scales, mainSvg) {
@@ -105,8 +107,9 @@ export function drawYAxis(ySvg, scales, mainSvg) {
         .attr("x2", svgWidth) // Full width of mainSvg
         .attr("y1", d => scales.y(d))
         .attr("y2", d => scales.y(d))
-        .attr("stroke", chartGridColor)
-        .attr("stroke-width", chartGridThickness);
+        .attr("stroke", Grid.color)
+        .attr("stroke-width", Grid.thickness)
+        .attr("stroke-dasharray", Grid.dashes);
 
     // Add top line for border
     mainSvg.append("line")
@@ -115,6 +118,6 @@ export function drawYAxis(ySvg, scales, mainSvg) {
         .attr("x2", parseFloat(mainSvg.attr("width")))
         .attr("y1", 0)
         .attr("y2", 0)
-        .attr("stroke", chartGridColor)
-        .attr("stroke-width", chartGridThickness);
+        .attr("stroke", Grid.color)
+        .attr("stroke-width", Grid.thickness);
 }

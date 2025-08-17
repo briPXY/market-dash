@@ -1,6 +1,6 @@
 import React from "react";
 
-export const ChartSVG = React.memo(({ svgRef, width, height }) => {
+export const ChartSvg = React.memo(({ svgRef, width, height }) => {
     return (
         <svg ref={svgRef} width={width} height={height}>
             <g className="y-axis" ></g>
@@ -10,4 +10,4 @@ export const ChartSVG = React.memo(({ svgRef, width, height }) => {
     );
 });
 
-ChartSVG.displayName = 'ChartSVG';
+ChartSvg.displayName = 'ChartSvg';

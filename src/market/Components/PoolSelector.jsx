@@ -29,7 +29,7 @@ export const PoolSelector = ({ address }) => {
     
     return (
         <PopoverButton onPopover={handlePopOver} showClass={"bg-primary-500 w-[65vw] md:w-80 h-fit top-[100%] p-2 left-0 z-65 rounded-md"}>
-            <div className="flex cursor-pointer font-medium items-center gap-1 justify-start hover:brightness-125 rounded-md">
+            <div className="flex cursor-pointer font-medium items-center gap-0.5 justify-start hover:brightness-125 rounded-md">
                 <div className="text-base md:text-lg">{`${SourceConst[src].info[address].token1.symbol}/${SourceConst[src].info[address].token0.symbol}`}</div>
                 <TokenIcon symbol={SourceConst[src].info[address].token0.symbol.toLowerCase()} size={30} color="#fff" variant="background" className="rounded-full" />
                 <div className="text-xs text-washed">▼</div>

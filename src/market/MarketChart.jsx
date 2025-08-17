@@ -2,7 +2,7 @@
 
 
 import { useState } from "react";
-import SVGContainer from "../charts/SVGContainer";
+import SvgContainer from "../charts/SvgContainer";
 import Button, { PopoverButton } from "../Layout/Elements";
 import { Flex } from "../Layout/Layout";
 import { RangeSelector } from "./Components/ChartBarMenu";
@@ -14,11 +14,11 @@ import { isAgentMobile } from "../constants/environment";
 
 function MarketChart({ OHLCData, isError, setRange, range}) {
     const [chart, setChart] = useState({ n: "Candlestick", f: candlestick });
-    const [lengthPerItem, setLengthPerItem] = useState(isAgentMobile ? 6 : 9);
+    const [lengthPerItem, setLengthPerItem] = useState(isAgentMobile ? 6 : 7);
     const [isLogScale, setYscale] = useState("LOG");
 
     return (
-        <div className={`bg-primary-900 p-2 md:p-4 h-full w-full md:w-[80%]`}>
+        <div className={`bg-primary-900 p-2 md:p-4 h-full w-full md:w-[77%] md:flex-none`}>
             <Flex className="flex-col h-full">
                 <Flex className="pb-4 pt-4 items-center gap-2 justify-between">
                     <RangeSelector setRange={setRange} selected={range} />
@@ -37,7 +37,7 @@ function MarketChart({ OHLCData, isError, setRange, range}) {
                         <ZoomOverlay setLengthPerItem={setLengthPerItem} />
                     </Flex>
                 </Flex>
-                <SVGContainer
+                <SvgContainer
                     OHLCData={OHLCData}
                     range={range}
                     isError={isError}

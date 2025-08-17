@@ -49,12 +49,9 @@ export const wrappedTokenMap = {
     WXDAI: "XDAI",        // xDai (now Gnosis)
 };
 
-// D3 related constants
+// Charts related constants
 export const defaultDecimalRule = { 0: 2, 99: 3, rest: 2 };
 export const swapDecimalRule = { 0: 4, 99: 3, rest: 2 };
-
-export const chartGridColor = "rgb(110 146 255)";
-export const chartGridThickness = 0.1;
 
 export const d3TimeFormats = {
     "1m": "%H:%M",

@@ -10,9 +10,9 @@ import LivePriceLine from "./LivePriceLine";
 import { getBandXScale } from "./helper/getBandXScale";
 import { chartDim } from "./config";
 import SubIndicatorsSvgs from "./SubIndicatorsSvgs";
-import { ChartSVG } from "./ChartSVG";
+import { ChartSvg } from "./ChartSvg";
 
-const SVGContainer = ({
+const SvgContainer = ({
     OHLCData,
     range,
     isError,
@@ -102,7 +102,7 @@ const SVGContainer = ({
                     className={`overflow-x-auto whitespace-nowrap flex-1 hide-scrollbar scroll-stick-left`}
                     ref={scrollContainerRef}
                 >
-                    <ChartSVG svgRef={svgRef} width={lengthPerItem * OHLCData.length + 100} height={chartDim.height} />
+                    <ChartSvg svgRef={svgRef} width={lengthPerItem * OHLCData.length + 100} height={chartDim.height} />
                     <SubIndicatorsSvgs
                         width={lengthPerItem * OHLCData.length + 100}
                         OHLCData={OHLCData}
@@ -146,4 +146,4 @@ const SVGContainer = ({
     )
 };
 
-export default SVGContainer;
+export default SvgContainer;
