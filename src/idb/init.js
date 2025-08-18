@@ -9,6 +9,14 @@ export async function initPoolsInfo(network) {
             let obj = await res.json();
             SourceConst[network].info = {};
             Object.assign(SourceConst[network].info, obj.data);
+
+            // For swapped token
+            SourceConst[network].swappedSymbols?.forEach((address) => {
+                const temp = SourceConst[network].info[address].token0;
+                SourceConst[network].info[address].token0 = SourceConst[network].info[address].token1;
+                SourceConst[network].info[address].token1 = temp;
+
+            })
         }
 
         const savedTickExist = await isSavedStateExist(`savedTick-${network}`);

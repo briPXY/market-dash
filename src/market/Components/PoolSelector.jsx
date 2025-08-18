@@ -36,7 +36,7 @@ export const PoolSelector = ({ address }) => {
             </div>
             <div className="flex flex-col gap-3">
                 <Flex className="justify-between text-washed text-xs px-2">
-                    <div>{src == "dex" ? "Pool" : "Symbol"}</div>
+                    <div>Pool</div>
                     <div>Latest price/swap</div>
                 </Flex>
                 {Object.keys(SourceConst[src].info).map((poolAddress) => (
@@ -76,8 +76,8 @@ const SymbolSelectorItem = ({ poolAddress, setPool, network = SourceConst.Uniswa
     return (
         <Flex className="justify-between pr-3">
             <Button onClick={() => setPool(poolAddress)} className="w-fit p-0 text-sm gap-2">
-                <TokenIcon symbol={stdSymbol(symbol0).toLowerCase()} variant="branded" size={22} />
-                <div>{`${symbol1}/${symbol0}`}</div>
+                <TokenIcon symbol={stdSymbol(symbol1).toLowerCase()} variant="branded" size={18} />
+                <div>{`${symbol1} / ${symbol0}`}</div>
             </Button>
             <PriceText className="font-medium text-xs" input={price} />
             {!price && <svg.LoadingIcon className="w-10 h-10" />}

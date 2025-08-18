@@ -24,7 +24,8 @@ SourceConst.UniswapV3 = {
     getPriceURL: (poolAddress) => `${WSS_DOMAIN}/liveprice/UniswapV3/${poolAddress}`,
     priceConverter: getPriceFromSqrtPriceX96,
     invertAll: true,
-    invertTick: ['WETHUSDT', 'WBTCUSDC']
+    invertTick: ['WETHUSDT', 'WBTCUSDC'],
+    swappedSymbols:["0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801"],
 };
 
 // uniswap Sepolia testnet
@@ -42,6 +43,7 @@ SourceConst.UniswapV3Sepolia = {
     h24Query: UniswapV3_24h,
     priceConverter: getPriceFromSqrtPriceX96,
     getPriceURL: (poolAddress) => `${WSS_DOMAIN}/liveprice/UniswapV3Sepolia/${poolAddress}`,
+    swappedSymbols:[],
 };
 
 // Binance (this is CEX network not L2 chain or BSC)
@@ -60,8 +62,10 @@ SourceConst.binance = {
         return `wss://stream.binance.com:9443/ws/${token0.toLowerCase()}${token1.toLowerCase()}@trade`
     },
     priceConverter: (p) => p,
+    swappedSymbols:[],
 };
 
+// Initial network
 SourceConst.init = {
     name: "init",
     desc: "Loading Network",
@@ -76,4 +80,5 @@ SourceConst.init = {
     h24Query: async () => initData.ohlc,
     priceConverter: () => "",
     getPriceURL: () => "",
+    swappedSymbols:[],
 }
