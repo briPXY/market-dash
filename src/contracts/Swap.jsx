@@ -106,7 +106,7 @@ function Swap({ token0, token1, poolAddress, network, isDEX }) {
                     onClick={() => handleChangeSymbols(currentTokenOut, currentTokenIn, buyAmount, sellAmount, true)}
                     className="flex items-center justify-center bg-primary-100 p-3 rounded-full w-fit text-white -my-4.5 z-10"
                 >
-                    <svg.Swap />
+                    <svg.Swap color={reversed ? "#ffffff" : "#ffffff75"}/>
                 </button>
 
                 <div className="flex flex-col items-start gap-2 rounded-xl p-4 bg-primary-500 hover:border-active w-full">

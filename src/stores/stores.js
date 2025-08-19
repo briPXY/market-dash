@@ -25,6 +25,11 @@ export const useSourceStore = create((set) => ({
 	},
 }));
 
+export const usePriceInvertStore = create((set) => ({
+	priceInvert: false,
+	setPriceInvert: (bool) => set({ priceInvert: bool })
+}));
+
 // User wallet login info
 export const useWalletStore = create((set) => ({
 	address: null,          // string | null

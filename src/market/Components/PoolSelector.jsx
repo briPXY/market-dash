@@ -8,6 +8,7 @@ import { saveState } from "../../idb/stateDB";
 import { svg } from "../../Layout/svg";
 import { PriceText } from "../../generic_components/PriceText";
 import { stdSymbol } from "../../utils/utils";
+import { SymbolPair } from "../../generic_components/SymbolPair";
 
 export const PoolSelector = ({ address }) => {
     const src = useSourceStore(state => state.src);
@@ -30,7 +31,7 @@ export const PoolSelector = ({ address }) => {
     return (
         <PopoverButton onPopover={handlePopOver} showClass={"bg-primary-500 w-[65vw] md:w-80 h-fit top-[100%] p-2 left-0 z-65 rounded-md"}>
             <div className="flex cursor-pointer font-medium items-center gap-0.5 justify-start hover:brightness-125 rounded-md">
-                <div className="text-base md:text-lg">{`${SourceConst[src].info[address].token1.symbol}/${SourceConst[src].info[address].token0.symbol}`}</div>
+                <SymbolPair poolAddress={address} className="text-base md:text-lg"/>
                 <TokenIcon symbol={SourceConst[src].info[address].token0.symbol.toLowerCase()} size={30} color="#fff" variant="background" className="rounded-full" />
                 <div className="text-xs text-washed">▼</div>
             </div>
@@ -55,7 +56,7 @@ export const PoolSelector = ({ address }) => {
     )
 }
 
-const SymbolSelectorItem = ({ poolAddress, setPool, network = SourceConst.UniswapV3, preloadPrice, symbol0 = "", symbol1 = "" }) => {
+const SymbolSelectorItem = ({ poolAddress, setPool, network = SourceConst.UniswapV3, preloadPrice, symbol1 = "" }) => {
     const [price, setPrice] = useState(null);
 
     useEffect(() => {
@@ -77,7 +78,7 @@ const SymbolSelectorItem = ({ poolAddress, setPool, network = SourceConst.Uniswa
         <Flex className="justify-between pr-3">
             <Button onClick={() => setPool(poolAddress)} className="w-fit p-0 text-sm gap-2">
                 <TokenIcon symbol={stdSymbol(symbol1).toLowerCase()} variant="branded" size={18} />
-                <div>{`${symbol1} / ${symbol0}`}</div>
+                <SymbolPair poolAddress={poolAddress} />
             </Button>
             <PriceText className="font-medium text-xs" input={price} />
             {!price && <svg.LoadingIcon className="w-10 h-10" />}

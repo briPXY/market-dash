@@ -2,7 +2,7 @@
 
 import PropTypes from 'prop-types';
 import './layout.css';
-import React, { useState } from "react";
+import React, { useState, memo, cloneElement } from "react";
 
 const FlexHug = ({ column, wrap, style = {}, className = "", children, ...props }) => {
     return (
@@ -287,7 +287,7 @@ BulletText.propTypes = {
     style: PropTypes.object,
 };
 
-export function TabPanelParent({ children, className = "w-full bg-primary-900 max-w-md mx-auto", tabClassName = "flex-1 py-2 text-sm font-medium ", activeTabClassName = "bg-primary-500", inactiveTabClassName = "bg-primary-500 hover:bg-primary-900", style={}}) {
+export function TabPanelParent({ children, className = "w-full bg-primary-900 max-w-md mx-auto", tabClassName = "flex-1 py-2 text-sm font-medium ", activeTabClassName = "bg-primary-500", inactiveTabClassName = "bg-primary-500 hover:bg-primary-900", style = {} }) {
     const [activeTab, setActiveTab] = useState(0);
 
     return (
@@ -313,5 +313,37 @@ export function TabPanelParent({ children, className = "w-full bg-primary-900 ma
     );
 }
 
-export { Flex, Section, BoxStretch, Grid, Line, SectionFull, Textbox, Paragraph, FlexBC, FlexCC, FlexSC, Box, StackedImages, BulletText };
+const SvgMemo = memo(
+    ({
+        size = 24,
+        color = "currentColor",
+        margin,
+        position = "static",
+        style,
+        children,   // full <svg>...</svg> component
+        ...rest
+    }) => {
+        if (!children) return null;
+
+        // clone the passed <svg> and apply our props
+        return cloneElement(children, {
+            width: size,
+            height: size,
+            fill: color,
+            style: {
+                margin,
+                position,
+                display: "inline-block",
+                verticalAlign: "middle",
+                ...(children.props?.style || {}),
+                ...style,
+            },
+            ...rest,
+        });
+    }
+);
+
+SvgMemo.displayName = "SvgMemo";
+
+export { Flex, Section, BoxStretch, Grid, Line, SectionFull, Textbox, Paragraph, FlexBC, FlexCC, FlexSC, Box, StackedImages, BulletText, SvgMemo };
 export default FlexHug;

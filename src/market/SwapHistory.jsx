@@ -4,14 +4,8 @@ import { PriceText } from "../generic_components/PriceText";
 import { TokenIcon } from "@web3icons/react";
 import { useRef } from "react";
 import { ToggleButton } from "../Layout/Elements";
-
-// Copy icon component
-const CopyIcon = ({ className = "w-3 h-3 inline ml-1" }) => (
-    <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 16 16">
-        <rect x="5" y="5" width="7" height="7" rx="1" stroke="currentColor" />
-        <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" />
-    </svg>
-);
+import { CopyIcon } from "../Layout/svg";
+import { SvgMemo } from "../Layout/Layout";
 
 const toggleHeight = (ref) => {
     const el = ref.current;
@@ -97,7 +91,9 @@ export const SwapHistory = ({ swaps }) => {
                                 onClick={() => copy(trade.recipient)}
                                 tabIndex={-1}
                             >
-                                <CopyIcon />
+                                <SvgMemo>
+                                    <CopyIcon width="11"/>
+                                </SvgMemo>
                             </button>
                         </span>
                     </div>

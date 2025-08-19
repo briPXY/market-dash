@@ -58,3 +58,13 @@ export function formatPrice(str, isRaw = false, rule = defaultDecimalRule) {
 export function stdSymbol(symbol) {
     return wrappedTokenMap[symbol] || symbol;
 }
+
+export function invertedHistoricalPrices(array) {
+    return array.map(item => ({
+        ...item,
+        open: 1 / item.open,
+        high: 1 / item.high,
+        low: 1 / item.low,
+        close: 1 / item.close,
+    }));
+}

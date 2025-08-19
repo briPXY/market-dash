@@ -1,15 +1,16 @@
 
 import { useMemo, useRef } from "react";
-import usePriceStore from "../stores/stores";
+import usePriceStore, { usePriceInvertStore } from "../stores/stores";
 import { PriceText } from "../generic_components/PriceText";
 
 const LivePriceLine = ({ OHLCData, scale }) => {
     const ref = useRef(null);
     const livePrice = usePriceStore((state) => state.trade);
+    const invertedStatus = usePriceInvertStore((state) => state.priceInvert);
     const lastPrice = useMemo(() => OHLCData[OHLCData.length - 1].close, [OHLCData])
     const color = livePrice >= lastPrice ? "#0cb085" : "#ef3f3f";
 
-    const updatedPrice = scale.y(livePrice); //yScale(livePrice);
+    const updatedPrice = scale.y(invertedStatus ? 1 / livePrice : livePrice); //yScale(livePrice);
     const priceY = isNaN(updatedPrice) ? 0 : updatedPrice;
 
     return (
