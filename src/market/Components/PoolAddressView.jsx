@@ -10,11 +10,11 @@ export const PoolAddressView = ({ src, address }) => {
     };
 
     return (
-        <Flex className="text-[12px] md:text-xs text-washed gap-0.5 items-center font-light">
+        <Flex className="text-[12px] md:text-xs text-washed items-center font-light">
             <div className="max-w-[4rem] font-mono md:max-w-19 truncate">{address}</div>
             <button title="Copy Address" onClick={copyToClipboard} className="text-sm p-0" >
                 <SvgMemo>
-                    <CopyIcon />
+                    <CopyIcon className="text-washed"/>
                 </SvgMemo>
             </button>
         </Flex>

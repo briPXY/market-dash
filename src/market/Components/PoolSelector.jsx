@@ -5,7 +5,7 @@ import { useSourceStore, usePoolStore } from "../../stores/stores";
 import { Flex } from "../../Layout/Layout";
 import { useEffect, useState } from "react";
 import { saveState } from "../../idb/stateDB";
-import { svg } from "../../Layout/svg";
+import { LoadingIcon } from "../../Layout/svg";
 import { PriceText } from "../../generic_components/PriceText";
 import { stdSymbol } from "../../utils/utils";
 import { SymbolPair } from "../../generic_components/SymbolPair";
@@ -81,7 +81,7 @@ const SymbolSelectorItem = ({ poolAddress, setPool, network = SourceConst.Uniswa
                 <SymbolPair poolAddress={poolAddress} />
             </Button>
             <PriceText className="font-medium text-xs" input={price} />
-            {!price && <svg.LoadingIcon className="w-10 h-10" />}
+            {!price && <LoadingIcon className="w-10 h-10" />}
         </Flex>
     )
 }

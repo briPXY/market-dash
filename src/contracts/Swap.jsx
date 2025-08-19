@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import usePriceStore, { useWalletStore } from "../stores/stores";
 import { TokenIcon } from "@web3icons/react";
-import { svg } from "../Layout/svg";
+import { SwapIcon } from "../Layout/svg";
 import { WalletLogin } from "./Login";
 import FiatValue from "./FiatValue";
 import { formatPrice, stdSymbol } from "../utils/utils";
 import { SwapTokenInfo } from "./components/SwapTokenInfo";
 import { swapDecimalRule } from "../constants/constants";
+import { SvgMemo } from "../Layout/Layout";
 
 
 function removeNonNumeric(rawValue) {
@@ -106,7 +107,9 @@ function Swap({ token0, token1, poolAddress, network, isDEX }) {
                     onClick={() => handleChangeSymbols(currentTokenOut, currentTokenIn, buyAmount, sellAmount, true)}
                     className="flex items-center justify-center bg-primary-100 p-3 rounded-full w-fit text-white -my-4.5 z-10"
                 >
-                    <svg.Swap color={reversed ? "#ffffff" : "#ffffff75"}/>
+                    <SvgMemo>
+                        <SwapIcon color={reversed ? "#ffffff" : "#ffffff75"} />
+                    </SvgMemo>
                 </button>
 
                 <div className="flex flex-col items-start gap-2 rounded-xl p-4 bg-primary-500 hover:border-active w-full">

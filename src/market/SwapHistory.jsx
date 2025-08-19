@@ -30,8 +30,8 @@ export const SwapHistory = ({ swaps }) => {
     };
 
     return (
-        <div className="w-full bg-primary-900 p-4">
-            <div className="mb-3 mt-4 text-xs md:text-base">Transactions</div>
+        <div className="w-full md:w-260">
+            <div className="mb-3 mt-4 text-xs md:text-lg">Transactions</div>
 
             {/* Column Labels */}
             <div className="flex justify-between px-2 py-1 md:px-4 md:py-3 bg-primary-500 text-washed rounded-t-lg text-xs md:text-sm">
@@ -54,7 +54,7 @@ export const SwapHistory = ({ swaps }) => {
                 style={{ height: '32em', overflow: 'hidden', transition: 'height 0.3s ease' }}
                 className="border-secondary text-[11px] md:text-sm">
                 {swaps.map((trade, index) => (
-                    <div key={index} className="flex justify-between py-1 md:py-3 md:px-4 px-2">
+                    <div key={index} className="flex justify-between py-1 md:py-2.5 md:px-4 px-2">
                         <span className="w-1/6 text-left">{trade.date}</span>
 
                         {/* Price: force wrap with CSS */}
@@ -69,30 +69,17 @@ export const SwapHistory = ({ swaps }) => {
 
                         <span className="w-1/6 text-center ">{trade.amount}</span>
 
-                        {/* Sender: wrap and add copy button */}
-                        {/* <span className="w-1/6 text-center text-washed cursor-pointer rounded-md hover:text-white break-all flex flex-col items-center md:flex-row md:items-center md:justify-center">
-                            <span className="break-all">{trade.sender.slice(0, 4) + "..." + trade.sender.slice(-10)}</span>
-                            <button
-                                className="ml-1 p-0.5 rounded hover:bg-primary-500"
-                                title="Copy"
-                                onClick={() => copy(trade.sender)}
-                                tabIndex={-1}
-                            >
-                                <CopyIcon />
-                            </button>
-                        </span> */}
-
                         {/* Recipient: wrap and add copy button */}
                         <span className="w-1/6 text-right text-washed cursor-pointer rounded-md hover:text-white break-all flex flex-col items-end md:flex-row md:items-center md:justify-end">
                             <span className="break-all">{trade.recipient.slice(0, 4) + "..." + trade.recipient.slice(-8)}</span>
                             <button
-                                className="ml-1 p-0.5 rounded hover:bg-primary-500"
+                                className="rounded hover:bg-primary-500"
                                 title="Copy"
                                 onClick={() => copy(trade.recipient)}
                                 tabIndex={-1}
                             >
-                                <SvgMemo>
-                                    <CopyIcon width="11"/>
+                                <SvgMemo className="h-2.5">
+                                    <CopyIcon/>
                                 </SvgMemo>
                             </button>
                         </span>

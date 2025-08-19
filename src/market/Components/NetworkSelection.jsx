@@ -1,8 +1,8 @@
 import { NetworkIcon } from "@web3icons/react";
 import { SourceConst } from "../../constants/sourceConst";
-import { Flex } from "../../Layout/Layout"; 
+import { Flex, SvgMemo } from "../../Layout/Layout";
 import { useSourceStore } from "../../stores/stores";
-import { svg } from "../../Layout/svg";
+import { LoadingIcon } from "../../Layout/svg";
 
 export const NetworkSelection = ({ handleNetworkChange }) => {
     const { init, saved } = useSourceStore();
@@ -29,7 +29,9 @@ export const NetworkSelection = ({ handleNetworkChange }) => {
                 {
                     saved && <div className="flex items-center">
                         <div>Loading network</div>
-                        <svg.LoadingIcon className="w-12 h-12" />
+                        <SvgMemo>
+                            <LoadingIcon className="w-12 h-12" />
+                        </SvgMemo>
                     </div>
                 }
                 {!saved && Object.keys(SourceConst).slice(0, -1).map((network) => (

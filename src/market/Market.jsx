@@ -33,7 +33,7 @@ function Market({ handleNetworkChange }) {
             return invertedHistoricalPrices(data.ohlc)
         }
     }
-    , [data, invertedStatus]);
+        , [data, invertedStatus]);
 
     return (
         <div>
@@ -68,7 +68,9 @@ function Market({ handleNetworkChange }) {
                     </TabPanelParent>
                 </Flex>
 
-                <SwapHistory swaps={data.swaps ? data.swaps : []} />
+                <div className="flex w-full bg-primary-900 p-2 md:p-4 justify-center">
+                    <SwapHistory swaps={data.swaps ? data.swaps : []} />
+                </div>
             </Flex>
         </div>
     );

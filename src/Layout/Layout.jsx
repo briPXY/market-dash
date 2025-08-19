@@ -2,7 +2,7 @@
 
 import PropTypes from 'prop-types';
 import './layout.css';
-import React, { useState, memo, cloneElement } from "react";
+import React, { useState, memo } from "react";
 
 const FlexHug = ({ column, wrap, style = {}, className = "", children, ...props }) => {
     return (
@@ -314,34 +314,16 @@ export function TabPanelParent({ children, className = "w-full bg-primary-900 ma
 }
 
 const SvgMemo = memo(
-    ({
-        size = 24,
-        color = "currentColor",
-        margin,
-        position = "static",
-        style,
-        children,   // full <svg>...</svg> component
-        ...rest
+    ({ 
+        children 
     }) => {
         if (!children) return null;
 
-        // clone the passed <svg> and apply our props
-        return cloneElement(children, {
-            width: size,
-            height: size,
-            fill: color,
-            style: {
-                margin,
-                position,
-                display: "inline-block",
-                verticalAlign: "middle",
-                ...(children.props?.style || {}),
-                ...style,
-            },
-            ...rest,
-        });
+        const Child = children.type;
+        return <Child  {...children.props} />;
     }
 );
+
 
 SvgMemo.displayName = "SvgMemo";
 

@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import { Flex } from "../../Layout/Layout"
+import { Flex, SvgMemo } from "../../Layout/Layout"
 import { CardValueChange } from "./CardValueChange"
 import { calculateHistoricalChange } from "../../utils/price.math";
 import { use24HourQuery } from "../../queries/24hourQuery";
-import { svg } from "../../Layout/svg";
+import { LoadingIcon } from "../../Layout/svg";
 import { usePriceInvertStore } from "../../stores/stores";
 import { formatPrice, invertedHistoricalPrices } from "../../utils/utils";
 
@@ -27,7 +27,9 @@ export const Hour24Changes = ({ address, src }) => {
         return (
             <Flex className="items-center justify-center">
                 <div>Loading 24 hours data</div>
-                <svg.LoadingIcon className="w-12 h-12" />
+                <SvgMemo>
+                    <LoadingIcon className="w-12 h-12" />
+                </SvgMemo>
             </Flex>
         )
     }

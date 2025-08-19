@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import usePriceStore, { usePriceInvertStore } from "../../stores/stores";
 import { PriceText } from "../../generic_components/PriceText";
-import { svg } from "../../Layout/svg";
+import { SwapIcon } from "../../Layout/svg";
+import { SvgMemo } from "../../Layout/Layout";
 
 export const LivePriceText = ({ OHLCData }) => {
     const setInverted = usePriceInvertStore((fn) => fn.setPriceInvert);
@@ -17,9 +18,11 @@ export const LivePriceText = ({ OHLCData }) => {
 
     return (
         <div className="flex gap-0.5">
-            <PriceText input={tradePrice.toString()} className={`text-base ${textColor}`} />
+            <PriceText input={tradePrice.toString()} className={`${textColor}`} />
             <button title="Inverse Price" onClick={() => setInverted(!invertedStatus)}>
-                <svg.Swap className="rotate-90 w-3" color={invertedStatus ? "#ffffff" : "#ffffff65"} />
+                <SvgMemo>
+                    <SwapIcon className="rotate-90 w-3" color={invertedStatus ? "#ffffff" : "#ffffff65"} />
+                </SvgMemo>
             </button>
         </div>
     );

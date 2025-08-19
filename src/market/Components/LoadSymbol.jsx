@@ -1,5 +1,6 @@
 import { usePoolStore } from "../../stores/stores";
-import { svg } from "../../Layout/svg";
+import { LoadingIcon } from "../../Layout/svg";
+import { SvgMemo } from "../../Layout/Layout";
 
 export const LoadSymbol = () => {
     const { init } = usePoolStore();
@@ -13,7 +14,9 @@ export const LoadSymbol = () => {
         <div className="bg-primary-500 floating-modal" style={symbolUndefined[init]}>
             <div className="flex items-center rounded-lg pr-2 pl-8">
                 <div className="text-xs md:text-sm">Loading pools information</div>
-                <svg.LoadingIcon className="w-12 h-12" />
+                <SvgMemo>
+                    <LoadingIcon className="w-12 h-12" />
+                </SvgMemo>
             </div>
         </div>
     )
