@@ -103,3 +103,7 @@ body {
 .tick-labeled {
     display: none;
 }
+
+button:hover {
+    filter: brightness(140%);
+}

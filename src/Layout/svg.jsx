@@ -1,3 +1,5 @@
+import React from "react";
+
 export const SwapIcon = ({ color = "#ffffff", className }) => {
     return (
         <svg className={className}
@@ -112,3 +114,32 @@ export const CopyIcon = ({ width = "19", height = "22", className, ...rest }) =>
         </svg>
     );
 };
+
+export const ExternalLinkIcon = React.memo(({
+    color = 'currentColor', // Default stroke color
+    size = 24,       // Default size in pixels
+    strokeWidth = 2, // Default stroke width
+    className = '',  // Added className prop for Tailwind compatibility
+    ...props         // Any additional SVG props
+}) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24" // Standard 24x24 viewbox for common icon sizes
+        fill="none"       // No fill for the icon
+        stroke={color}    // Set stroke color based on props
+        strokeWidth={strokeWidth} // Set stroke width based on props
+        strokeLinecap="round"   // Rounded line caps
+        strokeLinejoin="round"  // Rounded line joins
+        className={`lucide lucide-external-link ${className}`} // Merging default and passed class names
+        {...props} // Spread any additional props to the SVG element
+    > 
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /> 
+        <path d="M15 3h6v6" />
+        <path d="M10 14L21 3" />
+    </svg>
+));
+
+// Adding a display name for better debugging in React DevTools
+ExternalLinkIcon.displayName = 'ExternalLinkIcon';

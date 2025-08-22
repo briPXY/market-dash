@@ -27,7 +27,7 @@ function FiatValue({ symbol, value }) {
         fetchAndSaveFiatValue();
     }, [symbol]);
 
-    return <div className="text-xs text-washed">{rate && value ? (rate * value).toFixed(2) : "?"}<span>{' USD'}</span></div>;
+    return <div className="text-xs text-washed"><span>{'$'}</span>{rate && value ? (rate * value).toFixed(2) : "?"}</div>;
 }
 
 export default FiatValue;

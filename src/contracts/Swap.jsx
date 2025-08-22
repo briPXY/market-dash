@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import usePriceStore, { useWalletStore } from "../stores/stores";
-import { TokenIcon } from "@web3icons/react";
-import { SwapIcon } from "../Layout/svg";
+import { TokenIcon, ExchangeIcon } from "@web3icons/react";
+import { ExternalLinkIcon, SwapIcon } from "../Layout/svg";
 import { WalletLogin } from "./Login";
 import FiatValue from "./FiatValue";
 import { formatPrice, stdSymbol } from "../utils/utils";
 import { SwapTokenInfo } from "./components/SwapTokenInfo";
 import { swapDecimalRule } from "../constants/constants";
 import { SvgMemo } from "../Layout/Layout";
-
 
 function removeNonNumeric(rawValue) {
     let cleaned = rawValue
@@ -86,7 +85,7 @@ function Swap({ token0, token1, poolAddress, network, isDEX }) {
     return (
         <div className="flex flex-col gap-2 bg-primary-900 p-4 rounded-md w-full h-full relative">
             <div className="flex gap-0 flex-col items-center">
-                <div className="flex flex-col items-start gap-2 rounded-xl p-4 bg-primary-500 hover:border-active w-full">
+                <div className="flex flex-col items-start gap-2 rounded-lg p-4 bg-primary-500 hover:border-active w-full">
                     <SwapTokenInfo label={"SELL"} tokenName={currentTokenIn.name} />
                     <div className="flex items-center w-full justify-between">
                         <input
@@ -105,14 +104,15 @@ function Swap({ token0, token1, poolAddress, network, isDEX }) {
 
                 <button
                     onClick={() => handleChangeSymbols(currentTokenOut, currentTokenIn, buyAmount, sellAmount, true)}
-                    className="flex items-center justify-center bg-primary-100 p-3 rounded-full w-fit text-white -my-4.5 z-10"
+                    className="flex items-center justify-center bg-primary-100 p-2.5 rounded-lg w-fit text-white -my-4.5 z-10"
+                    title="Switch currency"
                 >
                     <SvgMemo>
-                        <SwapIcon color={reversed ? "#ffffff" : "#ffffff75"} />
+                        <SwapIcon className="scale-110" color={reversed ? "#ffffff" : "#00000095"} />
                     </SvgMemo>
                 </button>
 
-                <div className="flex flex-col items-start gap-2 rounded-xl p-4 bg-primary-500 hover:border-active w-full">
+                <div className="flex flex-col items-start gap-2 rounded-lg p-4 bg-primary-500 hover:border-active w-full">
                     <SwapTokenInfo label={"BUY"} tokenName={currentTokenOut.name} />
                     <div className="flex items-center w-full justify-between">
                         <input
@@ -135,8 +135,9 @@ function Swap({ token0, token1, poolAddress, network, isDEX }) {
 
             <button
                 onClick={() => window.open(`${network.poolURL}${poolAddress}`, "_blank")}
-                className="bg-transparent p-3 rounded-md border-washed text-washed font-semibold"
-            >Swap on Uniswap
+                className="bg-transparent text-xs flex gap-1 items-center"
+                title={`Go to ${network.poolURL}${poolAddress}`}
+            ><ExternalLinkIcon size={14} /> Swap at {network.exchangeIcon.charAt(0).toUpperCase() + network.exchangeIcon.slice(1)} <span><ExchangeIcon id={network.exchangeIcon} variant="mono" size="18" /></span>
             </button>
 
             {loginState &&

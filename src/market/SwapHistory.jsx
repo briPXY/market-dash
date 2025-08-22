@@ -58,7 +58,7 @@ export const SwapHistory = ({ swaps }) => {
                         <span className="w-1/6 text-left">{trade.date}</span>
 
                         {/* Price: force wrap with CSS */}
-                        <PriceText className="w-1/6 text-center text-accent break-all" style={{ wordBreak: "break-all" }}
+                        <PriceText className="w-1/6 text-center break-all" style={{ wordBreak: "break-all" }}
                             input={trade.price.toString()}
                         />
 
@@ -78,14 +78,14 @@ export const SwapHistory = ({ swaps }) => {
                                 onClick={() => copy(trade.recipient)}
                                 tabIndex={-1}
                             >
-                                <SvgMemo className="h-2.5">
-                                    <CopyIcon/>
+                                <SvgMemo >
+                                    <CopyIcon className="w-3.5" />
                                 </SvgMemo>
                             </button>
                         </span>
                     </div>
                 ))}
-                
+
             </div>
             <div className="flex justify-center bg-primary-500 rounded-b-lg text-xs md:text-sm">
                 <ToggleButton className="text-sm rounded-b-lg px-2 py-2 md:px-4 w-full" onClick={() => toggleHeight(listBoxRef)}>

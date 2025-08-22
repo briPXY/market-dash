@@ -10,7 +10,7 @@ chartDim.innerHeight = chartDim.height - chartDim.margin.top - chartDim.margin.b
 export const barPadding = 0.3;
 
 export const Grid = {
-    dashes: "5 5",
-    color: "rgb(110 146 255)",
-    thickness: 0.1,
+    dashes: "3 6",
+    color: "rgb(90 125 240)",
+    thickness: 0.2,
 }

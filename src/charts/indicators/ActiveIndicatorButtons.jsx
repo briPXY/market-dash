@@ -1,8 +1,14 @@
 import { useCallback, useMemo } from "react"
 import { saveState } from "../../idb/stateDB";
 
-export const ActiveIndicatorButtons = ({svg, showedIndicators, setShowedIndicators, className, setSubIndicators, dbId }) => {
-    const indicatorNames = useMemo(() => Object.keys(showedIndicators), [showedIndicators]);
+export const ActiveIndicatorButtons = ({ svg, showedIndicators, setShowedIndicators, className, setSubIndicators, dbId }) => {
+    const indicatorInfo = useMemo(() => {
+        return Object.entries(showedIndicators).map(([name, values]) => {
+            // pick only numeric values from the inner object
+            const numbers = Object.values(values).filter(v => typeof v === "number");
+            return [name, ...numbers];
+        });
+    }, [showedIndicators]);
 
     // delete a sub indicator
     const deleteSubindicator = useCallback((name) => {
@@ -15,19 +21,20 @@ export const ActiveIndicatorButtons = ({svg, showedIndicators, setShowedIndicato
         saveState(dbId, rest);
         setShowedIndicators(rest);
         svg.select(`#${name}`).remove();
-        svg.selectAll(`.${name}`).remove(); 
+        svg.selectAll(`.${name}`).remove();
         setSubIndicators ? deleteSubindicator(name) : name
     }
 
     return (
         <div className={`flex flex-wrap max-w-100 gap-2 ${className}`}>
             {
-                indicatorNames.map((item) =>
+                indicatorInfo.map((item) =>
                 (
-                    <div key={item} className="flex gap-2 items-center text-[12px] p-1 rounded-sm border-washed">
-                        <div>{item}</div>
-                        <div style={{ backgroundColor: showedIndicators[item].color, width: "6px", height: "2px" }}></div>
-                        <div onClick={() => deleteIndicator(item)} className="bg-primary-500 text-[9px] px-0.5 rounded-sm cursor-pointer">X</div>
+                    <div key={item[0]} className="flex gap-1 items-center text-[12px] md:text-xs p-1 rounded-sm border-washed">
+                        <div style={{ backgroundColor: showedIndicators[item[0]].color, width: "4px", height: "4px", borderRadius: "3px" }}></div>
+                        <div className="font-semibold">{item[0]}</div>
+                        <div className="text-washed">{item.slice(1).join(" ")}</div>
+                        <button onClick={() => deleteIndicator(item[0])} className="bg-primary-500 text-[10px] px-0.5 rounded-sm cursor-pointer">X</button>
                     </div>
                 ))
             }

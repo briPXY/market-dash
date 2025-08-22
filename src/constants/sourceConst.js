@@ -12,6 +12,7 @@ export const SourceConst = {};
 SourceConst.UniswapV3 = {
     name: "UniswapV3",
     desc: "Uniswap V3 Ethereum",
+    exchangeIcon: "uniswap",
     network: "ethereum",
     isDex: true,
     poolURL: "https://app.uniswap.org/explore/pools/ethereum/",
@@ -32,6 +33,7 @@ SourceConst.UniswapV3 = {
 SourceConst.UniswapV3Sepolia = {
     name: "UniswapV3Sepolia",
     desc: "Uniswap V3 Sepolia (Testnet)",
+    exchangeIcon: "uniswap",
     network: "ethereum",
     isDex: true,
     poolURL: "https://app.uniswap.org/explore/pools/ethereum_sepolia/",
@@ -50,6 +52,7 @@ SourceConst.UniswapV3Sepolia = {
 SourceConst.binance = {
     name: "binance",
     desc: "Binance CEX",
+    exchangeIcon: "binance",
     network: "binance-smart-chain",
     isDex: false,
     intervals: ["1m", "5m", "15m", "1h", "4h", "1d", "1w", "1M"],
@@ -69,6 +72,7 @@ SourceConst.binance = {
 SourceConst.init = {
     name: "init",
     desc: "Loading Network",
+    exchangeIcon: "uniswap",
     network: "init",
     isDex: false,
     poolURL: "/",
