@@ -27,11 +27,11 @@ export const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList,
         }));
 
         if (setSubIndicators) {
-            setSubIndicators(prev => { 
+            setSubIndicators(prev => {
                 // No duplication
-                if (prev.includes(name)) { 
+                if (prev.includes(name)) {
                     return prev;
-                } 
+                }
                 return [...prev, name];
             });
         }
@@ -98,13 +98,15 @@ export const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList,
             </div>
             <div
                 ref={dropdownRef}
-                className={showSelector ? "floating-modal rounded-md flex items-start px-2 pb-6 z-50 flex-col gap-2 bg-primary-500 overflow-y-scroll max-h-[80vh] md:w-fit w-[95vw] border-primary-100" : "hidden"}>
-                <div className="text-center w-full px-2 py-2 md:px-4 md:py-3 md:mb-5">{`Select ${dbId}:`}</div>
+                className={showSelector ? "floating-modal rounded-md flex items-start px-2 pb-6 z-50 flex-col gap-2 bg-primary-500 overflow-y-scroll max-h-[80vh] md:max-w-110 w-[95vw] border-primary-100" : "hidden"}>
+
+                <div className="text-center px-2 py-2 w-full md:px-4 md:py-3 md:mb-5">{`Select ${dbId}:`}</div>
                 {
-                    Object.keys(indicatorList).map((name) => <IndicatorItem
-                        key={name}
-                        n={name}
-                        fn={indicatorList[name].fn}
+                    Object.keys(indicatorList).map((abbreviation) => <IndicatorItem
+                        key={abbreviation}
+                        abbreviation={abbreviation}
+                        name={indicatorList[abbreviation].name}
+                        fn={indicatorList[abbreviation].fn}
                         data={data}
                         addNewIndicator={addNewIndicator}
                     />)
@@ -114,34 +116,41 @@ export const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList,
     )
 }
 
-const IndicatorItem = ({ n, fn, drawIndicator, addNewIndicator }) => {
+const IndicatorItem = ({ abbreviation, name, fn, drawIndicator, addNewIndicator }) => {
     const [param, setParam] = useState(getParamsWithDefaults(fn));
     const [color, setColor] = useState(fn.defaultCol);
+    const [showOpt, setShowOpt] = useState(false);
 
     const updateParam = (prop, value) => {
         setParam((prev) => ({ ...prev, [prop]: value }));
     };
 
     return (
-        <div key={n} className="flex text-xs border-washed border-solid p-1 md:p-2 rounded-sm h-fit items-start md:items-center py-2">
-            <div className="flex gap-1 items-center">
-                <div className="w-20 md:w-36 overflow-hidden text-sm font-medium text-left">{n}</div>
-                <div className="text-xs cursor-pointer rounded-sm bg-primary-100 h-fit pb-1 pt-0.5 px-1.5" onClick={() => addNewIndicator(n, { color: color, fn: fn, ...param })}>Insert</div>
-                <input className="w-5 p-0 border-none" type="color" value={color} onChange={(e) => setColor(e.target.value)} name="colorPicker"></input>
+        <div key={abbreviation} className="flex flex-col text-xs p-1 md:p-2 gap-2 rounded-sm w-full items-start md:items-center py-2">
+            <div className="flex gap-1 justify-between items-center w-full">
+                <div className="flex-col w-[55%] break-words">
+                    <div className="overflow-hidden text-sm font-semibold text-left">{abbreviation}</div>
+                    <div className="text-xs text-washed font-light text-left"><i>{name}</i></div>
+                </div>
+                <div className="flex gap-1 h-full items-center">
+                    <input className="w-5 h-4 border-none cursor-pointer" type="color" value={color} onChange={(e) => setColor(e.target.value)} name="colorPicker"></input>
+                    <button className="text-xs cursor-pointer rounded-sm h-full p-1.5 border-1 box-border border-washed-dim" onClick={() => setShowOpt(!showOpt)}>Options</button>
+                    <button className="text-xs cursor-pointer rounded-sm bg-washed-dim p-1.5" onClick={() => addNewIndicator(abbreviation, { color: color, fn: fn, ...param })}>Insert</button>
+                </div>
             </div>
-            <div className="md:w-8 w-4"></div>
-            <ListOfInput fParam={param} func={fn} drawIndicator={drawIndicator} updateParam={updateParam} />
+            <ListOfInput fParam={param} drawIndicator={drawIndicator} updateParam={updateParam} style={{ display: showOpt ? "flex" : "none" }} />
         </div>
     )
 }
 
-const ListOfInput = ({ fParam, updateParam }) => {
+const ListOfInput = ({ fParam, updateParam, ...rest }) => {
     return (
-        <div className="flex flex-col md:flex-row flex-wrap md:gap-4 gap-1 md:max-w-150">
+        <div className="flex w-full flex-wrap md:gap-3 gap-2 mb-1" {...rest}>
+            {Object.keys(fParam).length === 0 && <div className="text-washed text-sm"><i>No parameter</i></div>}
             {Object.entries(fParam).map(([paramName, value]) => (
-                <div className="flex flex-row justify-between md:justify-start items-center md:w-28 w-full gap-2" key={paramName}>
-                    <label className="md:w-fit w-24 text-xs text-start" htmlFor="numInput">{`${paramName}:`}</label>
-                    <input className="w-full bg-primary-900 font-medium p-1 rounded-xs" type="number" id="numInput" value={value} onChange={(e) => updateParam(paramName, e.target.value)} />
+                <div className="flex flex-row justify-between md:justify-start items-center gap-1 " key={paramName}>
+                    <label className=" text-sm text-start " htmlFor="numInput">{`${paramName}:`}</label>
+                    <input className="w-10 bg-primary-900 p-1 rounded-xs" type="number" value={value} onChange={(e) => updateParam(paramName, e.target.value)} />
                 </div>
             ))}
         </div>

@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "tailwindcss"; 
 
 /* stylelint-disable at-rule-no-unknown */
 @theme {
@@ -8,6 +8,7 @@
     --color-primary-900: #0e0e14;
     --color-accent: #2fb59c;
     --color-washed: #aec2ff75;
+    --color-washed-dim: #aec2ff35;
 }
 
 #root {
@@ -106,4 +107,17 @@ body {
 
 button:hover {
     filter: brightness(140%);
+}
+
+/* Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  appearance: textfield;
+  -moz-appearance: textfield;
 }
