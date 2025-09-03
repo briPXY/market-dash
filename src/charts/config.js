@@ -11,6 +11,7 @@ export const barPadding = 0.3;
 
 export const Grid = {
     dashes: "3 6",
-    color: "rgb(90 125 240)",
+    color: "rgb(90,125,240,1)",
     thickness: 0.2,
+    text:"rgb(255,255,255,0.7)"
 }

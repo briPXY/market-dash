@@ -51,7 +51,7 @@ export function drawXAxis(svg, bandXScale, innerHeight, range) {
         .style("text-anchor", "center")
         .style("font-size", "1.3em")
         .attr("dy", "1.3em")
-        .style("fill", "rgb(255,255,255,0.3)");
+        .style("fill", Grid.text);
 
     // Style the axis domain
     d3.selectAll(".domain").each(function () {
@@ -88,7 +88,7 @@ export function drawYAxis(ySvg, scales, mainSvg) {
 
     // Style the tick labels
     yAxisGroup.selectAll("text")
-        .style("fill", "rgb(255,255,255,0.4)")
+        .style("fill", Grid.text)
         .style("font-size", "12px")
         .style("text-anchor", "start")
         .attr("dx", "5px");
