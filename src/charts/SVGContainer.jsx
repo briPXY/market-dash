@@ -12,6 +12,7 @@ import { chartDim } from "./config";
 import SubIndicatorsSvgs from "./SubIndicatorsSvgs";
 import { ChartSvg } from "./ChartSvg";
 import SubIndicatorYLabel from "./SubIndicatorYLabel";
+import { grabHandleMouseDown, grabHandleMouseLeave, grabHandleMouseMove, grabHandleMouseUp } from "./helper";
 
 const SvgContainer = ({
     OHLCData,
@@ -26,6 +27,10 @@ const SvgContainer = ({
     const tooltipRef = useRef(null);
     const scrollContainerRef = useRef(null); // For the scrollable div
     const [subIndicators, setSubIndicators] = useState({}); // Sub-indicator state need to be shared with y-axis/label (SubIndicatorYLabel)
+
+    // Controls xy chart grab scrolling
+    const [isDown, setIsDown] = useState(false);
+    const [start, setStart] = useState({ x: 0, y: 0, scrollLeft: 0, scrollTop: 0 });
 
     // Debounced scroll state for visibleOHLCData
     const [scrollStopped, setScrollStopped] = useState(null);
@@ -100,8 +105,12 @@ const SvgContainer = ({
         <div className="relative">
             <div className="flex gap-0">
                 <div
-                    className={`overflow-x-auto whitespace-nowrap flex-1 hide-scrollbar scroll-stick-left`}
+                    className={`overflow-auto whitespace-nowrap flex-1 hide-scrollbar scroll-stick-left cursor-crosshair select-none ${isDown ? "cursor-grabbing" : ""}`}
                     ref={scrollContainerRef}
+                    onMouseDown={(e) => grabHandleMouseDown(e, scrollContainerRef.current, setIsDown, setStart)}
+                    onMouseLeave={() => grabHandleMouseLeave(setIsDown)}
+                    onMouseUp={() => grabHandleMouseUp(setIsDown)}
+                    onMouseMove={(e) => grabHandleMouseMove(e, scrollContainerRef.current, isDown, start)}
                 >
                     <ChartSvg svgRef={svgRef} width={lengthPerItem * OHLCData.length + 100} height={chartDim.height} />
                     <SubIndicatorsSvgs
