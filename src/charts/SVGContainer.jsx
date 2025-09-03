@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
 import { drawXAxis, drawYAxis } from "./axis";
 import { xyScaler } from "./helper/xyScaler";
-import { IndicatorSelector } from "./indicators/IndicatorSelector";
+import IndicatorSelector from "./indicators/IndicatorSelector";
 import { indicatorList } from "./indicators/indicatorList"
 import { drawVolumeBars } from "./charts/volume";
 import { getVisibleIndexRange } from "./helper/getVisibleIndices";
@@ -11,6 +11,7 @@ import { getBandXScale } from "./helper/getBandXScale";
 import { chartDim } from "./config";
 import SubIndicatorsSvgs from "./SubIndicatorsSvgs";
 import { ChartSvg } from "./ChartSvg";
+import SubIndicatorYLabel from "./SubIndicatorYLabel";
 
 const SvgContainer = ({
     OHLCData,
@@ -24,6 +25,7 @@ const SvgContainer = ({
     const ySvgRef = useRef(null);
     const tooltipRef = useRef(null);
     const scrollContainerRef = useRef(null); // For the scrollable div
+    const [subIndicators, setSubIndicators] = useState({}); // Sub-indicator state need to be shared with y-axis/label (SubIndicatorYLabel)
 
     // Debounced scroll state for visibleOHLCData
     const [scrollStopped, setScrollStopped] = useState(null);
@@ -94,7 +96,6 @@ const SvgContainer = ({
         drawVolumeBars(d3, mainSvg, bandXScale, OHLCData, chartDim.innerHeight, tooltipRef);
     }, [OHLCData, bandXScale, innerWidth, mainSvg, range])
 
-
     return (
         <div className="relative">
             <div className="flex gap-0">
@@ -104,13 +105,15 @@ const SvgContainer = ({
                 >
                     <ChartSvg svgRef={svgRef} width={lengthPerItem * OHLCData.length + 100} height={chartDim.height} />
                     <SubIndicatorsSvgs
-                        width={lengthPerItem * OHLCData.length + 100}
                         OHLCData={OHLCData}
+                        width={lengthPerItem * OHLCData.length + 100}
                         chartDim={chartDim}
                         bandXScale={bandXScale}
-                        scale={scale}
+                        subIndicators={subIndicators}
+                        setSubIndicators={setSubIndicators}
                     />
                 </div>
+
                 {/*Y labels */}
                 <div className="w-fit">
                     <svg
@@ -118,7 +121,18 @@ const SvgContainer = ({
                         height={chartDim.height}
                         ref={ySvgRef}
                     ></svg>
+                    {Object.keys(subIndicators).map(e => (
+                        <SubIndicatorYLabel
+                            key={e}
+                            width={`${yLabelWidth}px`}
+                            height={chartDim.innerHeight * 0.5}
+                            scaleY={scale.y}
+                            subIndicator={e}
+                            data={subIndicators[e].indicatorData}
+                        />
+                    ))}
                 </div>
+
             </div>
             <div
                 ref={tooltipRef}

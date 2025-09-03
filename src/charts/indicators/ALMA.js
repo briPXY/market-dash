@@ -1,6 +1,6 @@
 import { singleLine } from "./draw/line";
 
-export const ALMA = (d3, data, period = 9, offset = 0.85, sigma = 6) => {
+export const ALMA = (data, period = 9, offset = 0.85, sigma = 6) => {
     const m = Math.floor(offset * (period - 1));
     const s = period / sigma;
     const w = [];

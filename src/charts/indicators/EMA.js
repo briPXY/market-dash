@@ -1,6 +1,7 @@
 import { singleLine } from "./draw/line";
+import * as d3 from "d3";
 
-export const EMA = (d3, data, period = 5) => {
+export const EMA = ( data, period = 5) => {
     const multiplier = 2 / (period + 1);
     let ema = [];
     

@@ -2,6 +2,7 @@ import { ALMA } from "./ALMA";
 import { EMA } from "./EMA";
 import { SMA } from "./SMA";
 import { MACD } from "./subs/MACD";
+import { drawLineMiddle } from "./subs/yLabels";
 import { Supertrend } from "./supertrend";
 import { VWAP } from "./VWAP";
 
@@ -15,5 +16,9 @@ export const indicatorList = {
 };
 
 export const subIndicatorList = {
-    MACD: { fn: MACD, name: "Moving Average Convergence Divergence" }
+    MACD: {
+        fn: MACD,
+        name: "Moving Average Convergence Divergence",
+        yLabelDrawFn: drawLineMiddle,
+    }
 };

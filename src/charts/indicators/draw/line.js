@@ -1,4 +1,6 @@
-export const singleLine = (d3, svg, data, scale, bandXScale, color = "white", id) => {
+import * as d3 from "d3";
+
+export const singleLine = (svg, data, scale, bandXScale, color = "white", id) => {
     try {
         // The line generator uses the bandXScale to position points at the center of each band
         const line = d3.line()

@@ -1,6 +1,7 @@
 import { singleLine } from "./draw/line";
+import * as d3 from "d3";
 
-export const SMA = (d3, data) => {
+export const SMA = (data) => {
     return data.map((d, i) => {
         if (i < 5) return { date: d.date, value: null };
 

@@ -1,52 +1,42 @@
-import { useEffect, useRef, useState, useCallback } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { ActiveIndicatorButtons } from "./ActiveIndicatorButtons";
 import Button from "../../Layout/Elements";
 import { isSavedStateExist, loadState, saveState } from "../../idb/stateDB";
-import * as d3 from "d3";
+import { drawIndicator } from "./draws";
+import { createSubIndicatorYScale } from "./subs/createSubIndicatorYScale";
 
-export const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList, outDimension, setSubIndicators, dbId, init }) => {
+const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList, outDimension, setSubIndicators, dbId, init }) => {
     const dropdownRef = useRef(null);
-
     const [showedIndicators, setShowedIndicators] = useState({});
     const [showSelector, setShowSelector] = useState(false);
 
-    const drawIndicator = useCallback(
-        (funcName, fn, param, color = "white") => {
-            svg.select(`#${funcName}`).remove();
-            svg.selectAll(`.${funcName}`).remove();
-            const indicatorData = fn(d3, data, ...Object.values(param));
-            fn.draw(d3, svg, indicatorData, scale, bandXScale, color, funcName, outDimension);
-        },
-        [svg, data, scale, bandXScale, outDimension] // Dependencies (make sure these are stable)
-    );
+    const addNewIndicator = (name, parameters) => {
+        setShowedIndicators(prev => {
+            const newState = { ...prev, [name]: parameters };
+            saveState(dbId, newState);
+            return newState;
+        });
+    };
 
-    const addNewIndicator = useCallback((name, params) => {
-        setShowedIndicators(prev => ({
-            ...prev,
-            [name]: params
-        }));
-
-        if (setSubIndicators) {
-            setSubIndicators(prev => {
-                // No duplication
-                if (prev.includes(name)) {
-                    return prev;
-                }
-                return [...prev, name];
-            });
-        }
-    }, [setSubIndicators]);
-
-    // Update on data/state changes
+    // Draw indicator on data/state changes
     useEffect(() => {
+        if (data.length <= 1){
+            return;
+        }
+        // Update real state of sub-indicators (on grandparent)
+        // Draw sub indicator on other component
+        if (setSubIndicators) {
+            updateSubIndicatorState(showedIndicators, setSubIndicators, data, outDimension);
+            return;
+        }
+
         for (const name in showedIndicators) {
             let { color, fn, ...fnParams } = showedIndicators[name];
             // fn not saved on db 
-            saveState(dbId, showedIndicators);
-            data ? drawIndicator(name, fn, fnParams, color) : '';
+            const indicatorData = fn(data, ...Object.values(fnParams));
+            drawIndicator(name, fn, indicatorData, color, svg, scale, bandXScale, outDimension);
         }
-
-    }, [data, dbId, drawIndicator, indicatorList, showedIndicators]);
+    }, [bandXScale, data, outDimension, scale, setSubIndicators, showedIndicators, svg]);
 
     // Handle outside click
     useEffect(() => {
@@ -60,30 +50,9 @@ export const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList,
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // Check if there are saved states
+    // Check if there are saved states (initial render)
     useEffect(() => {
-        async function check(id) {
-            const checkSavedStates = await isSavedStateExist(id);
-
-            if (checkSavedStates) {
-                const savedState = await loadState(id);
-                // Restore function reference
-                for (const name in savedState) {
-                    savedState[name].fn = indicatorList[name].fn;
-                }
-                setShowedIndicators(savedState);
-                setSubIndicators ? setSubIndicators(Object.keys(savedState)) : null;
-            }
-            // No saved states, use starter indicators
-            else {
-                const fn = indicatorList[init].fn;
-                const params = getParamsWithDefaults(fn);
-                setShowedIndicators({ [init]: { fn: fn, color: fn.defaultCol, ...params } });
-                setSubIndicators ? setSubIndicators([init]) : init;
-            }
-        }
-
-        check(dbId)
+        checkSavedIndicator(dbId, init, indicatorList, setShowedIndicators)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -94,7 +63,7 @@ export const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList,
                     <img className="w-2.5 h-2.5" src="/svg/g5.svg"></img>
                     <div>{outDimension ? "Sub" : "Main"}</div>
                 </Button>
-                <ActiveIndicatorButtons svg={svg} showedIndicators={showedIndicators} setShowedIndicators={setShowedIndicators} setSubIndicators={setSubIndicators} dbId={dbId} />
+                <ActiveIndicatorButtons svg={svg} showedIndicators={showedIndicators} setShowedIndicators={setShowedIndicators} dbId={dbId} />
             </div>
             <div
                 ref={dropdownRef}
@@ -107,7 +76,6 @@ export const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList,
                         abbreviation={abbreviation}
                         name={indicatorList[abbreviation].name}
                         fn={indicatorList[abbreviation].fn}
-                        data={data}
                         addNewIndicator={addNewIndicator}
                     />)
                 }
@@ -116,7 +84,7 @@ export const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList,
     )
 }
 
-const IndicatorItem = ({ abbreviation, name, fn, drawIndicator, addNewIndicator }) => {
+const IndicatorItem = ({ abbreviation, name, fn, addNewIndicator }) => {
     const [param, setParam] = useState(getParamsWithDefaults(fn));
     const [color, setColor] = useState(fn.defaultCol);
     const [showOpt, setShowOpt] = useState(false);
@@ -138,7 +106,7 @@ const IndicatorItem = ({ abbreviation, name, fn, drawIndicator, addNewIndicator 
                     <button className="text-xs cursor-pointer rounded-sm bg-washed-dim p-1.5" onClick={() => addNewIndicator(abbreviation, { color: color, fn: fn, ...param })}>Insert</button>
                 </div>
             </div>
-            <ListOfInput fParam={param} drawIndicator={drawIndicator} updateParam={updateParam} style={{ display: showOpt ? "flex" : "none" }} />
+            <ListOfInput fParam={param} updateParam={updateParam} style={{ display: showOpt ? "flex" : "none" }} />
         </div>
     )
 }
@@ -165,10 +133,47 @@ function getParamsWithDefaults(func) {
         .split(',')
         .map(p => p.trim())
         .filter(p => p) // Remove empty values
-        .slice(2) // Exclude the first two parameters
+        .slice(1) // Exclude only the first parameter
         .reduce((acc, param) => {
             const [name, defaultValue] = param.split('=').map(p => p.trim());
             acc[name] = defaultValue !== undefined ? eval(defaultValue) : null;
             return acc;
         }, {});
 }
+
+async function checkSavedIndicator(id, initialIndicatorName, indicatorList, setShowedIndicators) {
+    const checkSavedStates = await isSavedStateExist(id);
+
+    if (checkSavedStates) {
+        const savedState = await loadState(id);
+        // Restore function reference
+        for (const name in savedState) {
+            savedState[name].fn = indicatorList[name].fn;
+        }
+        setShowedIndicators(savedState);
+    }
+
+    // No saved states, use starter indicators
+    else {
+        const indicatorFunc = indicatorList[initialIndicatorName].fn;
+        const indicatorParams = getParamsWithDefaults(indicatorFunc);
+        setShowedIndicators({ [initialIndicatorName]: { fn: indicatorFunc, color: indicatorFunc.defaultCol, ...indicatorParams } });
+    }
+}
+
+function updateSubIndicatorState(state, setSubIndicators, data, dimension) {
+    const newSubIndicatorState = {};
+
+    for (const name in state) {
+        const { color, fn, ...fnParams } = state[name];
+        color;
+        newSubIndicatorState[name] = state[name];
+        newSubIndicatorState[name].indicatorData = fn(data, ...Object.values(fnParams));
+        newSubIndicatorState[name].yScaler = createSubIndicatorYScale(newSubIndicatorState[name].indicatorData, dimension);
+    }
+
+    setSubIndicators(newSubIndicatorState);
+}
+
+
+export default React.memo(IndicatorSelector);

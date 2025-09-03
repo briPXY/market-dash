@@ -1,7 +1,7 @@
-import { useCallback, useMemo } from "react"
+import { useMemo } from "react"
 import { saveState } from "../../idb/stateDB";
 
-export const ActiveIndicatorButtons = ({ svg, showedIndicators, setShowedIndicators, className, setSubIndicators, dbId }) => {
+export const ActiveIndicatorButtons = ({ svg, showedIndicators, setShowedIndicators, className, dbId }) => {
     const indicatorInfo = useMemo(() => {
         return Object.entries(showedIndicators).map(([name, values]) => {
             // pick only numeric values from the inner object
@@ -10,19 +10,16 @@ export const ActiveIndicatorButtons = ({ svg, showedIndicators, setShowedIndicat
         });
     }, [showedIndicators]);
 
-    // delete a sub indicator
-    const deleteSubindicator = useCallback((name) => {
-        setSubIndicators(prev => prev.filter(subIndicator => subIndicator !== name));
-    }, [setSubIndicators]);
-
     const deleteIndicator = (name) => {
         const { [name]: _unused, ...rest } = showedIndicators;
         _unused
         saveState(dbId, rest);
         setShowedIndicators(rest);
-        svg.select(`#${name}`).remove();
-        svg.selectAll(`.${name}`).remove();
-        setSubIndicators ? deleteSubindicator(name) : name
+        // Do not pass svg ref for subIndicator
+        if (svg) {
+            svg.select(`#${name}`).remove();
+            svg.selectAll(`.${name}`).remove();
+        }
     }
 
     return (

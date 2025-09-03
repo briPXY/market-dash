@@ -1,6 +1,7 @@
 import { singleLine } from "./draw/line";
+import * as d3 from "d3";
 
-export const Supertrend = (d3, data, atrPeriod = 10, multiplier = 3) => {
+export const Supertrend = (data, atrPeriod = 10, multiplier = 3) => {
     // Calculate ATR
     const atr = [];
     for (let i = 0; i < data.length; i++) {

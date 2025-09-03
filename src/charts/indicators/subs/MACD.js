@@ -1,6 +1,5 @@
 import { drawMACD } from "../draw/drawMACD";
 
-
 // Improved EMA function with a stable initial seed
 function EMA(prices, period) {
     const k = 2 / (period + 1);
@@ -17,7 +16,7 @@ function EMA(prices, period) {
     return emaArray;
 }
 // Function to calculate MACD values
-export function MACD(d3, data, fast = 12, slow = 26, signal = 9) { 
+export function MACD(data, fast = 12, slow = 26, signal = 9) { 
     // Calculate the EMAs  
     const closingPrices = data.map(d => d.close);
     const emaFast = EMA(closingPrices, fast);

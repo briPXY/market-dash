@@ -1,6 +1,6 @@
 import { singleLine } from "./draw/line";
 
-export const VWAP = (d3, data) => {
+export const VWAP = (data) => {
     let cumulativeVolume = 0;
     let cumulativeVolumePrice = 0;
 
