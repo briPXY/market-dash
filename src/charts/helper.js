@@ -32,3 +32,11 @@ export function grabHandleMouseMove(e, el, isDown, start) {
     el.scrollLeft = start.scrollLeft - (x - start.x);
     el.scrollTop = start.scrollTop - (y - start.y);
 }
+
+export function chartSvgCleanup(svg) {
+    svg.selectAll(".main").remove(); // Clears all elements with class "main" from previous charts/renderings
+    svg.selectAll(".line-chart-path-specific").remove();
+    svg.selectAll(".line-chart-circle-specific").remove();
+    svg.selectAll(".line-chart-area-specific").remove();
+    svg.selectAll('.tooltip-overlay').remove();
+}

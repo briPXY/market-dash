@@ -20,7 +20,7 @@ function MarketChart({ OHLCData, isError, setRange, range}) {
     return (
         <div className={`bg-primary-900 p-2 md:p-4 h-full w-full md:w-[77%] md:flex-none`}>
             <Flex className="flex-col h-full">
-                <Flex className="pb-4 pt-4 items-center gap-2 justify-between">
+                <Flex className="pb-3 pt-0 items-center gap-2 justify-between">
                     <RangeSelector setRange={setRange} selected={range} />
                     <div>{isError ? "Connection error" : ''}</div>
                     <Flex className="overflow-visible justify-end items-center gap-2 text-sm">

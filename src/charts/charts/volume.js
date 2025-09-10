@@ -1,11 +1,8 @@
-import { showToolTip } from "../tooltip";
-
 export function drawVolumeBars(d3, svg, bandXScale, historicalData, innerHeight, tooltipRef, volumeColor = "rgba(255, 255, 255, 0.1)") { 
 
     const barWidth = bandXScale.bandwidth();
 
-    svg.selectAll(".volume-bar-rect").remove();
-    const tooltip = d3.select(tooltipRef.current);
+    svg.selectAll(".volume-bar-rect").remove(); 
 
     // Append a group for volume bars if it doesn't exist, or select it
     // Using a specific class for the rects themselves is better than for the group if you're appending directly
@@ -32,10 +29,5 @@ export function drawVolumeBars(d3, svg, bandXScale, historicalData, innerHeight,
         .attr("y", d => yVolume(d.volume)) // Use new Y scale
         .attr("width", barWidth + 1)
         .attr("height", d => innerHeight - yVolume(d.volume)) // Adjust height
-        .attr("fill", volumeColor).on("mouseover", (event, d) => {
-            showToolTip(d3, event, tooltip, d);
-        })
-        .on("mouseout", () => {
-            tooltip.style("opacity", 0);
-        });
+        .attr("fill", volumeColor);
 }

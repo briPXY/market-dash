@@ -1,11 +1,12 @@
-import { showToolTip } from "../tooltip";
+import { chartSvgCleanup } from "../helper";
+import { addToolTipHandleOverlay } from "../tooltip";
 
 export function candlestick(d3, svg, scale, tooltipRef, historicalData, bandXScale, innerHeight, bullishColor = "#2fb59c", bearishColor = "#e74c3c") {
 
     const candleWidth = bandXScale.bandwidth(); // Use this consistent bandwidth
-    const tooltip = d3.select(tooltipRef.current);
 
-    svg.selectAll(".main").remove(); // Clear previous candles
+    // Clear previous drawings from other chart types too
+    chartSvgCleanup(svg); 
 
     const candles = svg.selectAll(".main")
         .data(historicalData)
@@ -44,16 +45,6 @@ export function candlestick(d3, svg, scale, tooltipRef, historicalData, bandXSca
         .attr("stroke", d => colorMap[(d.close > d.open) - (d.close < d.open)])
 
     // Transparent box for tooltip mouseover
-    candles.append("rect")
-        .attr("x", -candleWidth / 2) // Position relative to the *centered* 'g'
-        .attr("y", d => scale.y(Math.max(d.high, d.low))) // Use external scale.y
-        .attr("width", candleWidth)
-        .attr("height", d => Math.abs(scale.y(d.high) - scale.y(d.low)))
-        .attr("fill", "transparent")
-        .on("mouseover", (event, d) => {
-            showToolTip(d3, event, tooltip, d);
-        })
-        .on("mouseout", () => {
-            tooltip.style("opacity", 0);
-        });
+    svg.selectAll('.tooltip-overlay').remove();
+    addToolTipHandleOverlay(candles, candleWidth, tooltipRef, bandXScale, d3, innerHeight);
 }

@@ -13,6 +13,7 @@ import SubIndicatorsSvgs from "./SubIndicatorsSvgs";
 import { ChartSvg } from "./ChartSvg";
 import SubIndicatorYLabel from "./SubIndicatorYLabel";
 import { grabHandleMouseDown, grabHandleMouseLeave, grabHandleMouseMove, grabHandleMouseUp } from "./helper";
+import CrosshairOverlay from "./CrosshairOverlay";
 
 const SvgContainer = ({
     OHLCData,
@@ -22,10 +23,11 @@ const SvgContainer = ({
     lengthPerItem,
     isLogScale,
 }) => {
+    const containerRef = useRef(null);
     const svgRef = useRef(null);
     const ySvgRef = useRef(null);
     const tooltipRef = useRef(null);
-    const scrollContainerRef = useRef(null); // For the scrollable div
+    const chartContainerRef = useRef(null); // For the scrollable div
     const [subIndicators, setSubIndicators] = useState({}); // Sub-indicator state need to be shared with y-axis/label (SubIndicatorYLabel)
 
     // Controls xy chart grab scrolling
@@ -43,7 +45,7 @@ const SvgContainer = ({
 
     const visibleOHLCData = useMemo(() => {
         if (scrollStopped) {
-            const { iLeft, iRight } = getVisibleIndexRange(scrollContainerRef, OHLCData.length);
+            const { iLeft, iRight } = getVisibleIndexRange(chartContainerRef, OHLCData.length);
             return OHLCData.slice(iLeft, iRight);
         }
         else { // 1st render scroll chart to right, slicing data most right
@@ -62,7 +64,7 @@ const SvgContainer = ({
     useEffect(() => {
         if (isLogScale != "LOG") return;
 
-        const el = scrollContainerRef.current;
+        const el = chartContainerRef.current;
 
         let timeout;
         const onScroll = () => {
@@ -102,15 +104,16 @@ const SvgContainer = ({
     }, [OHLCData, bandXScale, innerWidth, mainSvg, range])
 
     return (
-        <div className="relative">
+        <div ref={containerRef} className="relative">
             <div className="flex gap-0">
                 <div
                     className={`overflow-auto whitespace-nowrap flex-1 hide-scrollbar scroll-stick-left cursor-crosshair select-none ${isDown ? "cursor-grabbing" : ""}`}
-                    ref={scrollContainerRef}
-                    onMouseDown={(e) => grabHandleMouseDown(e, scrollContainerRef.current, setIsDown, setStart)}
-                    onMouseLeave={() => grabHandleMouseLeave(setIsDown)}
+                    ref={chartContainerRef}
+                    onMouseDown={(e) => grabHandleMouseDown(e, chartContainerRef.current, setIsDown, setStart)}
                     onMouseUp={() => grabHandleMouseUp(setIsDown)}
-                    onMouseMove={(e) => grabHandleMouseMove(e, scrollContainerRef.current, isDown, start)}
+                    onMouseLeave={() => grabHandleMouseLeave(setIsDown)}
+                    onMouseMove={(e) => grabHandleMouseMove(e, chartContainerRef.current, isDown, start)}
+                    style={{ position: "relative" }}
                 >
                     <ChartSvg svgRef={svgRef} width={lengthPerItem * OHLCData.length + 100} height={chartDim.height} />
                     <SubIndicatorsSvgs
@@ -121,7 +124,14 @@ const SvgContainer = ({
                         subIndicators={subIndicators}
                         setSubIndicators={setSubIndicators}
                     />
+
                 </div>
+                
+                <CrosshairOverlay
+                    width={lengthPerItem * OHLCData.length + 100}
+                    height={chartDim.height}
+                    parentRef={containerRef} // Pass the parent container reference
+                />
 
                 {/*Y labels */}
                 <div className="w-fit">
@@ -145,7 +155,7 @@ const SvgContainer = ({
             </div>
             <div
                 ref={tooltipRef}
-                className="tooltip absolute flex gap-2 right-0 top-0 opacity-0 bg-[#0f0f147e] p-2"
+                className="tooltip z-50 absolute flex gap-2 right-12 top-0 opacity-0 bg-[#0f0f147e] p-1"
                 style={{
                     pointerEvents: "none",
                 }}
@@ -166,7 +176,7 @@ const SvgContainer = ({
                 />
             </div>
         </div>
-    )
+    );
 };
 
 export default SvgContainer;
