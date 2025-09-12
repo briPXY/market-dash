@@ -6,6 +6,7 @@ export const chartDim = {
 };
 
 chartDim.innerHeight = chartDim.height - chartDim.margin.top - chartDim.margin.bottom;
+chartDim.subIndicatorHeight = 150;
 
 export const barPadding = 0.3;
 

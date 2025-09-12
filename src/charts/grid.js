@@ -41,7 +41,7 @@ export function drawGrid(svg, scales, innerWidth, innerHeight, bandX) {
         .style("stroke-width", Grid.thickness); console.log("grid")
 }
 
-export function drawSubIndicatorGrid(svg, innerWidth, xScaleBand, innerIndicatorHeight, margin, subIndicators,) {
+export function drawSubIndicatorGrid(svg, xScaleBand, chartDim, subIndicators,) {
     if (subIndicators === 0) {
         svg.selectAll(".subGrid").remove();
         svg.selectAll(".subxaxis").remove();
@@ -51,7 +51,7 @@ export function drawSubIndicatorGrid(svg, innerWidth, xScaleBand, innerIndicator
 
     const yIndicator = d3.scaleLinear()
         .domain([0, 100]) // <== Set fixed range here
-        .range([innerIndicatorHeight, 0])
+        .range([chartDim.subIndicatorHeight, 0])
         .nice();
 
 
@@ -66,7 +66,7 @@ export function drawSubIndicatorGrid(svg, innerWidth, xScaleBand, innerIndicator
     // Y grid lines (for indicators)
     svg.append("g")
         .attr("class", "subGrid")
-        .attr("transform", `translate(${margin.left},0)`)
+        .attr("transform", `translate(${chartDim.margin.left},0)`)
         .call(d3.axisLeft(yIndicator)
             .tickValues([yDomain[0], middleValue, yDomain[1]])
             .tickSize(-innerWidth - 110)
@@ -81,7 +81,7 @@ export function drawSubIndicatorGrid(svg, innerWidth, xScaleBand, innerIndicator
 
     const xAxisGroup = svg.append("g")
         .attr("class", "subxaxis")
-        .attr("transform", `translate(0,${innerIndicatorHeight})`)
+        .attr("transform", `translate(0,${chartDim.subIndicatorHeight})`)
         .call(xAxis);
 
     // Apply same class to both tick line & tick text
@@ -99,7 +99,7 @@ export function drawSubIndicatorGrid(svg, innerWidth, xScaleBand, innerIndicator
         .attr("x1", 0)
         .attr("x2", 0)
         .attr("y1", 0)
-        .attr("y2", -innerIndicatorHeight)
+        .attr("y2", -chartDim.subIndicatorHeight)
         .attr("stroke", Grid.color)
         .attr("stroke-width", Grid.thickness)
         .attr("stroke-dasharray", Grid.dashes);

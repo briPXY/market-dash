@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import { drawXAxis, drawYAxis } from "./axis";
 import { xyScaler } from "./helper/xyScaler";
 import IndicatorSelector from "./indicators/IndicatorSelector";
-import { indicatorList } from "./indicators/indicatorList"
+import { indicatorList, subIndicatorList } from "./indicators/indicatorList"
 import { drawVolumeBars } from "./charts/volume";
 import { getVisibleIndexRange } from "./helper/getVisibleIndices";
 import LivePriceLine from "./LivePriceLine";
@@ -37,8 +37,11 @@ const SvgContainer = ({
     // Debounced scroll state for visibleOHLCData
     const [scrollStopped, setScrollStopped] = useState(null);
 
-    const innerWidth = useMemo(() => (lengthPerItem * OHLCData?.length) - chartDim.margin.left - chartDim.margin.right, [OHLCData, lengthPerItem]);
-    const yLabelWidth = useMemo(() => OHLCData[0].close.toString().length * 3.3, [OHLCData])
+    const innerWidth = useMemo(() => (lengthPerItem * OHLCData?.length), [OHLCData, lengthPerItem]);
+    const yLabelWidth = useMemo(() => OHLCData[0].close.toString().length * 3.3, [OHLCData]);
+    const subIndicatorDim = useMemo(() => {
+        return { w: innerWidth, h: chartDim.subIndicatorHeight, m: chartDim.margin }
+    }, [innerWidth])
 
     const mainSvg = d3.select(svgRef.current);
     const ySvg = d3.select(ySvgRef.current);
@@ -101,7 +104,7 @@ const SvgContainer = ({
         drawXAxis(mainSvg, bandXScale, chartDim.innerHeight, range);
         // Draw volume bar overlay
         drawVolumeBars(d3, mainSvg, bandXScale, OHLCData, chartDim.innerHeight, tooltipRef);
-    }, [OHLCData, bandXScale, innerWidth, mainSvg, range])
+    }, [OHLCData, bandXScale, innerWidth, mainSvg, range]);
 
     return (
         <div ref={containerRef} className="relative">
@@ -115,20 +118,19 @@ const SvgContainer = ({
                     onMouseMove={(e) => grabHandleMouseMove(e, chartContainerRef.current, isDown, start)}
                     style={{ position: "relative" }}
                 >
-                    <ChartSvg svgRef={svgRef} width={lengthPerItem * OHLCData.length + 100} height={chartDim.height} />
+                    <ChartSvg svgRef={svgRef} width={innerWidth} height={chartDim.height} />
                     <SubIndicatorsSvgs
                         OHLCData={OHLCData}
-                        width={lengthPerItem * OHLCData.length + 100}
+                        width={innerWidth}
                         chartDim={chartDim}
                         bandXScale={bandXScale}
                         subIndicators={subIndicators}
-                        setSubIndicators={setSubIndicators}
                     />
 
                 </div>
-                
+
                 <CrosshairOverlay
-                    width={lengthPerItem * OHLCData.length + 100}
+                    width={containerRef.current?.offsetWidth}
                     height={chartDim.height}
                     parentRef={containerRef} // Pass the parent container reference
                 />
@@ -144,7 +146,7 @@ const SvgContainer = ({
                         <SubIndicatorYLabel
                             key={e}
                             width={`${yLabelWidth}px`}
-                            height={chartDim.innerHeight * 0.5}
+                            height={chartDim.subIndicatorHeight}
                             scaleY={scale.y}
                             subIndicator={e}
                             data={subIndicators[e].indicatorData}
@@ -173,6 +175,19 @@ const SvgContainer = ({
                     dbId={"main-indicator"}
                     init={"SMA"}
                     bandXScale={bandXScale}
+                />
+            </div>
+            <div className="absolute left-0 bottom-0 z-30">
+                <IndicatorSelector
+                    svg={null}
+                    scale={null}
+                    bandXScale={bandXScale}
+                    data={OHLCData}
+                    indicatorList={subIndicatorList}
+                    outDimension={subIndicatorDim}
+                    setSubIndicators={setSubIndicators}
+                    dbId={"sub-indicator"}
+                    init={"MACD"}
                 />
             </div>
         </div>
