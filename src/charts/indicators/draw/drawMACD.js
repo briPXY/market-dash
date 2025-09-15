@@ -9,23 +9,38 @@ export function drawMACD(svg, data, yScale, bandXScale, color, id, dim) {
 
     // Clear previous elements within this SVG
     svg.selectAll(`.${id}-line`).remove();
+    svg.selectAll(`.${id}-signal-line`).remove();
     svg.selectAll(`.${id}-histogram-bar`).remove();
     svg.selectAll(`.${id}-zero-line`).remove();
 
-    // Draw MACD Line (only one line)
+    // MACD Line
     const macdLine = d3.line()
         .x(d => bandXScale(d.date) + barWidth / 2)
-        .y(d => yScale(d.MACD)); // This line will be the MACD line itself
+        .y(d => yScale(d.MACD));
 
     svg.append("path")
         .datum(processedData)
         .attr("class", `${id}-line`)
         .attr("fill", "none")
-        .attr("stroke", "#dddddd") // This will be MACD line
-        .attr("stroke-width", 1)
+        .attr("stroke", "#1c72c2")   // blue-ish for MACD
+        .attr("stroke-width", 1.5)
         .attr("d", macdLine);
 
-    // Draw Histogram Bars with Saturation Adjustment
+    // Signal Line
+    const signalLine = d3.line()
+        .defined(d => d.signal != null)
+        .x(d => bandXScale(d.date) + barWidth / 2)
+        .y(d => yScale(d.signal));
+
+    svg.append("path")
+        .datum(processedData)
+        .attr("class", `${id}-signal-line`)
+        .attr("fill", "none")
+        .attr("stroke", "#ff7f0e")   // orange-ish for Signal
+        .attr("stroke-width", 1.5)
+        .attr("d", signalLine);
+
+    // Histogram Bars
     svg.selectAll(`.${id}-histogram-bar`)
         .data(processedData)
         .enter().append("rect")
@@ -42,7 +57,7 @@ export function drawMACD(svg, data, yScale, bandXScale, color, id, dim) {
             }
         });
 
-    // Draw Zero Line
+    // Zero Line
     svg.append("line")
         .attr("class", `${id}-zero-line`)
         .attr("x1", dim.m.left)

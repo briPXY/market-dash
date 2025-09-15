@@ -37,7 +37,7 @@ const SvgContainer = ({
     // Debounced scroll state for visibleOHLCData
     const [scrollStopped, setScrollStopped] = useState(null);
 
-    const innerWidth = useMemo(() => (lengthPerItem * OHLCData?.length), [OHLCData, lengthPerItem]);
+    const innerWidth = useMemo(() => (lengthPerItem * OHLCData?.length) + chartDim.margin.right + chartDim.margin.left, [OHLCData, lengthPerItem]);
     const yLabelWidth = useMemo(() => OHLCData[0].close.toString().length * 3.3, [OHLCData]);
     const subIndicatorDim = useMemo(() => {
         return { w: innerWidth, h: chartDim.subIndicatorHeight, m: chartDim.margin }
@@ -118,10 +118,10 @@ const SvgContainer = ({
                     onMouseMove={(e) => grabHandleMouseMove(e, chartContainerRef.current, isDown, start)}
                     style={{ position: "relative" }}
                 >
-                    <ChartSvg svgRef={svgRef} width={innerWidth} height={chartDim.height} />
+                    <ChartSvg svgRef={svgRef} width={innerWidth + 100} height={chartDim.height} />
                     <SubIndicatorsSvgs
                         OHLCData={OHLCData}
-                        width={innerWidth}
+                        width={innerWidth + 100}
                         chartDim={chartDim}
                         bandXScale={bandXScale}
                         subIndicators={subIndicators}
@@ -129,11 +129,7 @@ const SvgContainer = ({
 
                 </div>
 
-                <CrosshairOverlay
-                    width={containerRef.current?.offsetWidth}
-                    height={chartDim.height}
-                    parentRef={containerRef} // Pass the parent container reference
-                />
+                <CrosshairOverlay parentRef={containerRef} />
 
                 {/*Y labels */}
                 <div className="w-fit">
@@ -145,10 +141,10 @@ const SvgContainer = ({
                     {Object.keys(subIndicators).map(e => (
                         <SubIndicatorYLabel
                             key={e}
-                            width={`${yLabelWidth}px`}
+                            name={e}
+                            width={yLabelWidth}
                             height={chartDim.subIndicatorHeight}
-                            scaleY={scale.y}
-                            subIndicator={e}
+                            yScaler={subIndicators[e].yScaler}
                             data={subIndicators[e].indicatorData}
                         />
                     ))}

@@ -1,14 +1,14 @@
 import React, { useRef, useEffect } from "react";
 import * as d3 from "d3";
-import { subIndicatorList } from "./indicators/indicatorList"; 
+import { subIndicatorList } from "./indicators/indicatorList";
 
-const SubIndicatorYLabels = ({ width, height, scaleY, subIndicator}) => {
+const SubIndicatorYLabels = ({ name, width, height, yScaler, data }) => {
     const subYLabelRef = useRef(null);
-    const subYLabelSvg = d3.select(subYLabelRef.current);
 
     useEffect(() => {
-        subIndicatorList[subIndicator].yLabelDrawFn(subYLabelSvg, width, height, scaleY);
-    }, [height, scaleY, subIndicator, subYLabelSvg, width]);
+        const subYLabelSvg = d3.select(subYLabelRef.current);
+        subIndicatorList[name].yLabelDrawFn(subYLabelSvg, width, height, yScaler, data);
+    }, [data, height, name, width, yScaler]);
 
     return (
         <>

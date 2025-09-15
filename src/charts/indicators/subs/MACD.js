@@ -16,7 +16,7 @@ function EMA(prices, period) {
     return emaArray;
 }
 // Function to calculate MACD values
-export function MACD(data, fast = 12, slow = 26, signal = 9) { 
+export function MACD(data, fast = 12, slow = 26, signal = 9) {
     // Calculate the EMAs  
     const closingPrices = data.map(d => d.close);
     const emaFast = EMA(closingPrices, fast);
@@ -27,17 +27,18 @@ export function MACD(data, fast = 12, slow = 26, signal = 9) {
 
     // Calculate the Signal line
     const signalLine = EMA(macdLine.slice(slow - 1), signal); // Start at the first valid MACD value
+    const signalLineFull = Array(slow - 1).fill(null).concat(signalLine);
 
     // Calculate the MACD Histogram
-    const histogram = macdLine.map((macd, index) => macd - (signalLine[index] || 0)); 
+    const histogram = macdLine.map((macd, index) => macd - (signalLine[index] || 0));
 
     // Combine the results into an array of objects
     const macdData = data.map((d, index) => ({
         date: d.date,
         MACD: macdLine[index],
-        signal: signalLine[index] || null, // Handle cases where signalLine isn't fully available
-        histogram: histogram[index] || null
-    })); 
+        signal: signalLineFull[index],
+        histogram: histogram[index] //macdLine[index] - (signalLineFull[index] ?? 0)
+    }));
 
     return macdData;
 }
