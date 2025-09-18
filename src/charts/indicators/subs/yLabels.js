@@ -13,22 +13,22 @@ export function drawMacdYAxisLabel(subYLabelSvg, width, height, scaleY, data) {
     subYLabelSvg.selectAll(".macd-label-border").remove();
 
     // Helper function to add a label with a border
-    const addLabelWithBorder = (yValue, text, fillColor, borderColor) => {
-        const textWidth = Math.min(100, width - 10); // Constrain width to the parameter
-        const textHeight = 20; // Approximate height of the text
+    const addLabelWithBorder = (yValue, text, fillColor, /*borderColor*/) => {
+        //const textWidth = Math.min(100, width - 10); // Constrain width to the parameter
+        //const textHeight = 20; // Approximate height of the text
         const xCenter = width / 2;
 
         // Append the border (rect element)
-        subYLabelSvg
-            .append("rect")
-            .attr("class", "macd-label-border")
-            .attr("x", xCenter - textWidth / 2) // Center horizontally
-            .attr("y", scaleY(yValue) - textHeight / 2) // Center vertically
-            .attr("width", textWidth)
-            .attr("height", textHeight)
-            .attr("fill", "none")
-            .attr("stroke", borderColor)
-            .attr("stroke-width", 1);
+        // subYLabelSvg
+        //     .append("rect")
+        //     .attr("class", "macd-label-border")
+        //     .attr("x", xCenter - textWidth / 2) // Center horizontally
+        //     .attr("y", scaleY(yValue) - textHeight / 2) // Center vertically
+        //     .attr("width", textWidth)
+        //     .attr("height", textHeight)
+        //     .attr("fill", "none")
+        //     .attr("stroke", borderColor)
+        //     .attr("stroke-width", 1);
 
         // Append the text label
         subYLabelSvg
@@ -37,14 +37,14 @@ export function drawMacdYAxisLabel(subYLabelSvg, width, height, scaleY, data) {
             .attr("x", xCenter) // Center horizontally
             .attr("y", scaleY(yValue)) // Position using scaleY
             .attr("fill", fillColor)
-            .attr("font-size", "10px")
+            .attr("font-size", "11px")
             .attr("text-anchor", "middle")
             .attr("dominant-baseline", "middle") // Center text vertically
             .text(text);
     };
 
     // Add labels with borders
-    addLabelWithBorder(histogram, `${histogram.toFixed(2)}`, "#ffffff", "#ffffff");
-    addLabelWithBorder(signal, `${signal.toFixed(2)}`, "#ff7f0e", "#ff7f0e");
-    addLabelWithBorder(MACD, `${MACD.toFixed(2)}`, "#1c72c2", "#1c72c2");
+    addLabelWithBorder(histogram, `${histogram.toFixed(4)}`, "#ffffff", "#ffffff");
+    addLabelWithBorder(signal, `${signal.toFixed(4)}`, "#ff7f0e", "#ff7f0e");
+    addLabelWithBorder(MACD, `${MACD.toFixed(4)}`, "#1c72c2", "#1c72c2");
 }

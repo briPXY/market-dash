@@ -24,53 +24,31 @@ export function formatXAxis(
     return axis;
 }
 
-export function drawXAxis(svg, bandXScale, innerHeight, range) {
-    // Need to modify formatXAxis if it's not compatible with band scales
+export function drawXAxisLabel(svg, bandXScale, height, range) {
     const xAxis = formatXAxis(bandXScale, 12, timeFormat(d3TimeFormats[range]));
 
-    // Clean previous axes and lines
-    svg.selectAll(".xaxis").remove();
-    svg.selectAll(".x-tick-line").remove(); // Clear previous vertical lines
-    svg.selectAll(".text").remove();
-    svg.selectAll(".tick").remove();
+    // Remove previous labels
+    svg.selectAll(".xaxis-text").remove();
 
-    // Draw X Axis
+    // Draw axis group
     const xAxisGroup = svg.append("g")
-        .attr("class", "xaxis")
-        .attr("transform", `translate(0,${innerHeight})`)
+        .attr("class", "xaxis-text")
         .call(xAxis);
-
-    // Classing tick lines (for display none)
-    xAxisGroup.selectAll(".tick")
-        .each(function () {
-            d3.select(this).select("line").classed("tick-labeled", true);
-        });
-
-    // Style the tick labels
+    // Style tick labels
     xAxisGroup.selectAll("text")
-        .style("text-anchor", "center")
-        .style("font-size", "1.3em")
-        .attr("dy", "1.3em")
-        .style("fill", Grid.text);
+        .style("text-anchor", "middle")   // ✅ correct value
+        .style("font-size", "1.2em")
+        .attr("dy", "1.2em")
+        .style("fill", Grid.text || "#fff");  // fallback if Grid.text is undefined
 
-    // Style the axis domain
-    d3.selectAll(".domain").each(function () {
-        this.setAttribute("stroke", "#ffffff1a");
-    });
+    // Style only THIS axis domain
+    xAxisGroup.selectAll(".domain")
+        .attr("stroke", "#ffffff1a");
 
-    // Add vertical lines only for labeled ticks
-    xAxisGroup.selectAll(".tick")
-        .filter(function () { return d3.select(this).select("text").text() !== ""; }) // Only ticks with text
-        .append("line")
-        .attr("class", "x-tick-line")
-        .attr("x1", 0) // Relative to tick position
-        .attr("x2", 0)
-        .attr("y1", 0)
-        .attr("y2", -innerHeight) // Full height upward
-        .attr("stroke", Grid.color)
-        .attr("stroke-width", Grid.thickness)
-        .attr("stroke-dasharray", Grid.dashes);
+    // Remove ONLY tick lines (not domain path)
+    xAxisGroup.selectAll(".tick line").remove();
 }
+
 
 export function drawYAxis(ySvg, scales, mainSvg) {
     ySvg.selectAll(".yaxis").remove();

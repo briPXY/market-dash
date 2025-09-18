@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
-import { drawXAxis, drawYAxis } from "./axis";
+import { drawXAxisLabel, drawYAxis } from "./axis";
 import { xyScaler } from "./helper/xyScaler";
 import IndicatorSelector from "./indicators/IndicatorSelector";
 import { indicatorList, subIndicatorList } from "./indicators/indicatorList"
@@ -8,12 +8,13 @@ import { drawVolumeBars } from "./charts/volume";
 import { getVisibleIndexRange } from "./helper/getVisibleIndices";
 import LivePriceLine from "./LivePriceLine";
 import { getBandXScale } from "./helper/getBandXScale";
-import { chartDim } from "./config";
+import { chartDim, subIndicatorMargin } from "./config";
 import SubIndicatorsSvgs from "./SubIndicatorsSvgs";
 import { ChartSvg } from "./ChartSvg";
 import SubIndicatorYLabel from "./SubIndicatorYLabel";
 import { grabHandleMouseDown, grabHandleMouseLeave, grabHandleMouseMove, grabHandleMouseUp } from "./helper";
 import CrosshairOverlay from "./CrosshairOverlay";
+import { drawXAxisGrid } from "./grid";
 
 const SvgContainer = ({
     OHLCData,
@@ -26,25 +27,21 @@ const SvgContainer = ({
     const containerRef = useRef(null);
     const svgRef = useRef(null);
     const ySvgRef = useRef(null);
+    const xLabelRef = useRef(null);
     const tooltipRef = useRef(null);
     const chartContainerRef = useRef(null); // For the scrollable div
+    const mainSvg = d3.select(svgRef.current);
+
     const [subIndicators, setSubIndicators] = useState({}); // Sub-indicator state need to be shared with y-axis/label (SubIndicatorYLabel)
-
-    // Controls xy chart grab scrolling
-    const [isDown, setIsDown] = useState(false);
-    const [start, setStart] = useState({ x: 0, y: 0, scrollLeft: 0, scrollTop: 0 });
-
-    // Debounced scroll state for visibleOHLCData
-    const [scrollStopped, setScrollStopped] = useState(null);
+    const [isDown, setIsDown] = useState(false); // Controls xy chart grab scrolling
+    const [start, setStart] = useState({ x: 0, y: 0, scrollLeft: 0, scrollTop: 0 }); 
+    const [scrollStopped, setScrollStopped] = useState(null); // Debounced scroll state for visibleOHLCData
 
     const innerWidth = useMemo(() => (lengthPerItem * OHLCData?.length) + chartDim.margin.right + chartDim.margin.left, [OHLCData, lengthPerItem]);
     const yLabelWidth = useMemo(() => OHLCData[0].close.toString().length * 3.3, [OHLCData]);
     const subIndicatorDim = useMemo(() => {
-        return { w: innerWidth, h: chartDim.subIndicatorHeight, m: chartDim.margin }
+        return { w: innerWidth, h: chartDim.subIndicatorHeight, m: subIndicatorMargin }
     }, [innerWidth])
-
-    const mainSvg = d3.select(svgRef.current);
-    const ySvg = d3.select(ySvgRef.current);
 
     const visibleOHLCData = useMemo(() => {
         if (scrollStopped) {
@@ -87,6 +84,7 @@ const SvgContainer = ({
 
     // Y Dynamic SVGs
     useEffect(() => {
+        const ySvg = d3.select(ySvgRef.current);
         ySvg.selectAll('*').remove();
 
         if (OHLCData?.length <= 1 || isError) return;
@@ -95,13 +93,18 @@ const SvgContainer = ({
         //drawGrid(mainSvg, scale, innerWidth, chartDim.innerHeight, bandXScale);
         chart(d3, mainSvg, scale, tooltipRef, OHLCData, bandXScale, chartDim.innerHeight);
 
-    }, [OHLCData, innerWidth, scale, isError, chart, bandXScale, mainSvg, ySvg]);
+    }, [OHLCData, innerWidth, scale, isError, chart, bandXScale, mainSvg]);
 
     // Y Static SVGs
     useEffect(() => {
         if (OHLCData.length < 1) return;
+
+        const xLabelSvg = d3.select(xLabelRef.current);
+        const svgLabelHeight = xLabelRef.current?.getBoundingClientRect().height;
+        xLabelSvg.selectAll('*').remove();
         // draw axis/label
-        drawXAxis(mainSvg, bandXScale, chartDim.innerHeight, range);
+        drawXAxisGrid(mainSvg, bandXScale, chartDim.innerHeight, range);
+        drawXAxisLabel(xLabelSvg, bandXScale, svgLabelHeight, range);
         // Draw volume bar overlay
         drawVolumeBars(d3, mainSvg, bandXScale, OHLCData, chartDim.innerHeight, tooltipRef);
     }, [OHLCData, bandXScale, innerWidth, mainSvg, range]);
@@ -126,6 +129,7 @@ const SvgContainer = ({
                         bandXScale={bandXScale}
                         subIndicators={subIndicators}
                     />
+                    <svg ref={xLabelRef} width={innerWidth + 100} height={30} ></svg>
 
                 </div>
 

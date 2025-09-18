@@ -2,50 +2,48 @@ import * as d3 from "d3";
 import { d3TimeFormats } from "../constants/constants";
 import { formatXAxis } from "./axis";
 import { Grid } from "./config";
+import { timeFormat } from "d3-time-format";
 
-export function drawGrid(svg, scales, innerWidth, innerHeight, bandX) {
-    // Remove previous grid lines
-    svg.selectAll(".chart-grid").remove();
+export function drawXAxisGrid(svg, bandXScale, innerHeight, range) {
+    const xAxis = formatXAxis(bandXScale, 12, timeFormat(d3TimeFormats[range]));
 
-    // X-axis grid using band scale
-    const xAxis = d3.axisBottom(bandX)
-        .tickSize(-innerHeight)
-        .tickFormat("")
-        .tickValues(bandX.domain().filter((d, i) => {
-            const total = bandX.domain().length;
-            const step = Math.ceil(total / 10);
-            return i % step === 0;
-        }))
-        .tickFormat("") // no label for grid
-        .tickSize(-innerHeight)
+    // Clean previous grid lines
+    svg.selectAll(".chart-x-grid").remove();
+    svg.selectAll(".x-vert-line").remove();
 
-    svg.insert("g", ":first-child")
-        .attr("class", "chart-grid")
+    const xAxisGroup = svg.append("g")
+        .attr("class", "chart-x-grid")
         .attr("transform", `translate(0,${innerHeight})`)
-        .call(xAxis)
-        .call(g => g.selectAll(".tick")
-            .attr("transform", d => `translate(${bandX(d) + bandX.bandwidth() / 2},0)`))
-        .selectAll("line")
-        .attr("stroke", Grid.color)
-        .attr("stroke-width", Grid.thickness);
+        .call(xAxis);
 
-    // Y-axis grid remains unchanged
-    svg.append("g")
-        .attr("class", "chart-grid")
-        .call(d3.axisLeft(scales.y)
-            .tickSize(-innerWidth - 110)
-            .tickFormat("")
-        )
-        .selectAll("line")
-        .style("stroke", Grid.color)
-        .style("stroke-width", Grid.thickness); console.log("grid")
+    // Add vertical lines only for ticks that *have a text element*
+    xAxisGroup.selectAll(".tick")
+        .filter(function () {
+            const textNode = d3.select(this).select("text").node();
+            return textNode && textNode.textContent.trim() !== "";
+        })
+        .append("line")
+        .attr("class", "x-vert-line")
+        .attr("x1", 0)
+        .attr("x2", 0)
+        .attr("y1", 0)
+        .attr("y2", -innerHeight)
+        .attr("stroke", Grid.color)
+        .attr("stroke-width", Grid.thickness)
+        .attr("stroke-dasharray", Grid.dashes);
+
+    // 🔹 Now remove the default axis artifacts
+    xAxisGroup.selectAll(".tick line:not(.x-vert-line)").remove();
+    xAxisGroup.selectAll(".tick text").remove();
 }
+
 
 export function drawSubIndicatorGrid(svg, xScaleBand, chartDim, subIndicators,) {
     if (subIndicators === 0) {
         svg.selectAll(".subGrid").remove();
         svg.selectAll(".subxaxis").remove();
-        svg.selectAll(".x-tick-line").remove();
+        svg.selectAll(".sub-vert-line").remove();
+        svg.selectAll(".tick").remove();
         return;
     }
 
@@ -55,9 +53,10 @@ export function drawSubIndicatorGrid(svg, xScaleBand, chartDim, subIndicators,) 
         .nice();
 
 
-    svg.selectAll(".x-tick-line").remove();
+    svg.selectAll(".sub-vert-line").remove();
     svg.selectAll(".subxaxis").remove();
     svg.selectAll(".subGrid").remove();
+    svg.selectAll(".tick").remove();
 
     // Get the Y-axis domain for indicators (e.g., MACD)
     const yDomain = yIndicator.domain();
@@ -85,17 +84,17 @@ export function drawSubIndicatorGrid(svg, xScaleBand, chartDim, subIndicators,) 
         .call(xAxis);
 
     // Apply same class to both tick line & tick text
-   xAxisGroup.selectAll(".tick")
-    .each(function () {
-        d3.select(this).select("line").classed("tick-labeled", true);
-        d3.select(this).select("text").classed("tick-labeled", true);
-    });
+    xAxisGroup.selectAll(".tick")
+        .each(function () {
+            d3.select(this).select("line").classed("tick-labeled", true);
+            d3.select(this).select("text").classed("tick-labeled", true);
+        });
 
     // Add custom long grid lines only for labeled ticks
     xAxisGroup.selectAll(".tick")
         .filter(d => xAxis._showLabel.has(d))
         .append("line")
-        .attr("class", "x-tick-line")
+        .attr("class", "sub-vert-line")
         .attr("x1", 0)
         .attr("x2", 0)
         .attr("y1", 0)
