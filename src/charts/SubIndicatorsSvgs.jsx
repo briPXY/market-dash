@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import { drawSubIndicatorGrid } from "./grid";
 import * as d3 from "d3";
 import { drawIndicator } from "./indicators/draws";
 
@@ -12,18 +11,6 @@ const SubIndicatorsSvgs = ({ width, chartDim, bandXScale, subIndicators }) => {
         h: 150,
         m: chartDim.margin
     }), [chartDim.margin, width]);
-
-    // Draw grid
-    useEffect(() => {
-        if (Object.keys(subIndicators).length === 0) {
-            return;
-        }
-
-        Object.keys(subRefs.current).forEach(name => {
-            d3Svgs.current[name] = d3.select(subRefs.current[name]);
-            drawSubIndicatorGrid(d3Svgs.current[name], bandXScale, chartDim, subIndicators.length);
-        });
-    }, [bandXScale, chartDim, subIndicators]);
 
     // Draw sub indicator on data/state changes
     useEffect(() => {

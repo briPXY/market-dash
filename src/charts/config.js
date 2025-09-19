@@ -3,6 +3,7 @@
 export const chartDim = {
     margin: { top: 15, right: 5, bottom: 0, left: 5 },
     height: window.innerHeight * 0.42,
+    extraLeft: 100,
 };
 
 chartDim.innerHeight = chartDim.height - chartDim.margin.top - chartDim.margin.bottom;

@@ -6,7 +6,7 @@ export default function CrosshairOverlay({ parentRef }) {
     const canvasRef = useRef(null);
 
     useEffect(() => {
-        const canvas = canvasRef.current;
+        const canvas = canvasRef.current;//console.log(width, height);
         const parent = parentRef.current;
         if (!canvas || !parent) return;
 
@@ -16,7 +16,7 @@ export default function CrosshairOverlay({ parentRef }) {
         const dpr = window.devicePixelRatio || 1;
         canvas.width = width * dpr;
         canvas.height = height * dpr;
-        ctx.scale(dpr, dpr);
+        ctx.scale(dpr, dpr);//console.log(canvas.width, canvas.height, "(canvas)");
 
         const handleMouseMove = (e) => {
             const rect = parent.getBoundingClientRect();

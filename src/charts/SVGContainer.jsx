@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
-import { drawXAxisLabel, drawYAxis } from "./axis";
+import { drawYAxis } from "./axis";
 import { xyScaler } from "./helper/xyScaler";
 import IndicatorSelector from "./indicators/IndicatorSelector";
 import { indicatorList, subIndicatorList } from "./indicators/indicatorList"
@@ -14,7 +14,7 @@ import { ChartSvg } from "./ChartSvg";
 import SubIndicatorYLabel from "./SubIndicatorYLabel";
 import { grabHandleMouseDown, grabHandleMouseLeave, grabHandleMouseMove, grabHandleMouseUp } from "./helper";
 import CrosshairOverlay from "./CrosshairOverlay";
-import { drawXAxisGrid } from "./grid";
+import OverlayXGridAxis from "./OverlayXGridAxis";
 
 const SvgContainer = ({
     OHLCData,
@@ -34,7 +34,7 @@ const SvgContainer = ({
 
     const [subIndicators, setSubIndicators] = useState({}); // Sub-indicator state need to be shared with y-axis/label (SubIndicatorYLabel)
     const [isDown, setIsDown] = useState(false); // Controls xy chart grab scrolling
-    const [start, setStart] = useState({ x: 0, y: 0, scrollLeft: 0, scrollTop: 0 }); 
+    const [start, setStart] = useState({ x: 0, y: 0, scrollLeft: 0, scrollTop: 0 });
     const [scrollStopped, setScrollStopped] = useState(null); // Debounced scroll state for visibleOHLCData
 
     const innerWidth = useMemo(() => (lengthPerItem * OHLCData?.length) + chartDim.margin.right + chartDim.margin.left, [OHLCData, lengthPerItem]);
@@ -100,11 +100,7 @@ const SvgContainer = ({
         if (OHLCData.length < 1) return;
 
         const xLabelSvg = d3.select(xLabelRef.current);
-        const svgLabelHeight = xLabelRef.current?.getBoundingClientRect().height;
         xLabelSvg.selectAll('*').remove();
-        // draw axis/label
-        drawXAxisGrid(mainSvg, bandXScale, chartDim.innerHeight, range);
-        drawXAxisLabel(xLabelSvg, bandXScale, svgLabelHeight, range);
         // Draw volume bar overlay
         drawVolumeBars(d3, mainSvg, bandXScale, OHLCData, chartDim.innerHeight, tooltipRef);
     }, [OHLCData, bandXScale, innerWidth, mainSvg, range]);
@@ -113,7 +109,7 @@ const SvgContainer = ({
         <div ref={containerRef} className="relative">
             <div className="flex gap-0">
                 <div
-                    className={`overflow-auto whitespace-nowrap flex-1 hide-scrollbar scroll-stick-left cursor-crosshair select-none ${isDown ? "cursor-grabbing" : ""}`}
+                    className={`overflow-auto whitespace-nowrap flex-1 hide-scrollbar scroll-stick-left cursor-crosshair pb-8 select-none ${isDown ? "cursor-grabbing" : ""}`}
                     ref={chartContainerRef}
                     onMouseDown={(e) => grabHandleMouseDown(e, chartContainerRef.current, setIsDown, setStart)}
                     onMouseUp={() => grabHandleMouseUp(setIsDown)}
@@ -121,15 +117,16 @@ const SvgContainer = ({
                     onMouseMove={(e) => grabHandleMouseMove(e, chartContainerRef.current, isDown, start)}
                     style={{ position: "relative" }}
                 >
-                    <ChartSvg svgRef={svgRef} width={innerWidth + 100} height={chartDim.height} />
+                    <ChartSvg svgRef={svgRef} width={innerWidth + chartDim.extraLeft} height={chartDim.height} />
                     <SubIndicatorsSvgs
                         OHLCData={OHLCData}
-                        width={innerWidth + 100}
+                        width={innerWidth + chartDim.extraLeft}
                         chartDim={chartDim}
                         bandXScale={bandXScale}
                         subIndicators={subIndicators}
                     />
-                    <svg ref={xLabelRef} width={innerWidth + 100} height={30} ></svg>
+                    {/* x axis overlay-grid and labels */}
+                    <OverlayXGridAxis bandXScale={bandXScale} innerWidth={innerWidth} range={range} parentRef={chartContainerRef} />
 
                 </div>
 

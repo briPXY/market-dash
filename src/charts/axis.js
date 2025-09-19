@@ -24,31 +24,55 @@ export function formatXAxis(
     return axis;
 }
 
-export function drawXAxisLabel(svg, bandXScale, height, range) {
+export function drawXGridAxisLabel(svg, bandXScale, svgHeight, range) {
     const xAxis = formatXAxis(bandXScale, 12, timeFormat(d3TimeFormats[range]));
 
-    // Remove previous labels
-    svg.selectAll(".xaxis-text").remove();
+    // Clear previous
+    svg.selectAll(".chart-x-grid").remove();
+    svg.selectAll(".x-vert-line").remove();
 
-    // Draw axis group
+    // Place axis at bottom, just above the padding
     const xAxisGroup = svg.append("g")
-        .attr("class", "xaxis-text")
+        .attr("class", "chart-x-grid")
+        .attr("transform", `translate(0,${svgHeight - 36})`) // shifted up
         .call(xAxis);
+
     // Style tick labels
     xAxisGroup.selectAll("text")
-        .style("text-anchor", "middle")   // ✅ correct value
+        .attr("fill", Grid.text)
+        .style("fill", Grid.text)
+        .style("text-anchor", "middle")
         .style("font-size", "1.2em")
-        .attr("dy", "1.2em")
-        .style("fill", Grid.text || "#fff");  // fallback if Grid.text is undefined
+        .attr("y", 0)
+        .attr("dy", "1em")
+        .attr("dominant-baseline", "hanging");
 
-    // Style only THIS axis domain
-    xAxisGroup.selectAll(".domain")
-        .attr("stroke", "#ffffff1a");
+    // Add vertical grid lines
+    xAxisGroup.selectAll(".tick")
+        .filter(function () {
+            const textNode = d3.select(this).select("text").node();
+            return textNode && textNode.textContent.trim() !== "";
+        })
+        .append("line")
+        .attr("class", "x-vert-line")
+        .attr("x1", 0)
+        .attr("x2", 0)
+        .attr("y1", 0)
+        .attr("y2", -(svgHeight)) // stop at chart top + extend 40px
+        .attr("stroke", Grid.color)
+        .attr("stroke-width", Grid.thickness)
+        .attr("stroke-dasharray", Grid.dashes);
 
-    // Remove ONLY tick lines (not domain path)
-    xAxisGroup.selectAll(".tick line").remove();
+    // Remove default tiny ticks
+    xAxisGroup.selectAll(".tick line:not(.x-vert-line)").remove();
+    // Remove axis line on bottom
+    xAxisGroup.selectAll(".domain").remove();
+    // Remove ticks with no vertical line
+    xAxisGroup.selectAll(".tick")
+        .filter(function () {
+            return d3.select(this).select("line.x-vert-line").empty();
+        }).remove();
 }
-
 
 export function drawYAxis(ySvg, scales, mainSvg) {
     ySvg.selectAll(".yaxis").remove();
