@@ -154,7 +154,7 @@ const SvgContainer = ({
             </div>
             <div
                 ref={tooltipRef}
-                className="tooltip z-50 absolute flex gap-2 right-12 top-0 opacity-0 bg-[#0f0f147e] p-1"
+                className="tooltip z-50 absolute text-[11.5px] md:text-xs left-0 md:right-12 flex flex-wrap md:max-w-full max-w-60 md:justify-end justify-start gap-1 md:gap-2 md:top-0 top-6 opacity-0 p-1"
                 style={{
                     pointerEvents: "none",
                 }}
