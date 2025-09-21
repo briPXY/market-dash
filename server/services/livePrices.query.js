@@ -19,7 +19,7 @@ function delay(ms) {
 
 export const fetchLivePrice = async (network, decimals0, decimals1, address) => {
     try {
-        await delay(Math.floor(Math.random() * (2000 - 100 + 1)) + 100) 
+        await delay(Math.floor(Math.random() * (2000 - 100 + 1)) + 100)
 
         const provider = new ethers.JsonRpcProvider(Subgraphs[network].RPC);  // Public RPC
 
@@ -28,8 +28,8 @@ export const fetchLivePrice = async (network, decimals0, decimals1, address) => 
         ];
 
         const poolContract = new ethers.Contract(address, poolABI, provider);
-        const slot0 = await poolContract.slot0(); 
- 
+        const slot0 = await poolContract.slot0();
+
         const sqrtPriceX96 = slot0.sqrtPriceX96.toString();
 
         LivePrice[network][address] = sqrtPriceX96;
@@ -42,7 +42,14 @@ export const fetchLivePrice = async (network, decimals0, decimals1, address) => 
         });
     }
     catch (e) {
-        console.error("fetchLivePrice error @ address", address, e);
+        console.error("fetchLivePrice error pada @ alamat", address, "jaringan:", network);
+        LivePriceListener.emit(`priceUpdate:${network}:${address}`, {
+            provider: network,
+            address: address,
+            p: "error",
+            message: e,
+            timestamp: new Date().toISOString()
+        });
     }
 
 }

@@ -15,6 +15,7 @@ import SubIndicatorYLabel from "./SubIndicatorYLabel";
 import { grabHandleMouseDown, grabHandleMouseLeave, grabHandleMouseMove, grabHandleMouseUp } from "./helper";
 import CrosshairOverlay from "./CrosshairOverlay";
 import OverlayXGridAxis from "./OverlayXGridAxis";
+import CrosshairXYLabels from "./CrosshairXYLabels";
 
 const SvgContainer = ({
     OHLCData,
@@ -131,6 +132,7 @@ const SvgContainer = ({
                 </div>
 
                 <CrosshairOverlay parentRef={containerRef} />
+                <CrosshairXYLabels parentRef={containerRef} yScaler={scale.y}/>
 
                 {/*Y labels */}
                 <div className="w-fit">
