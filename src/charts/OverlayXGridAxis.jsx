@@ -3,21 +3,31 @@ import * as d3 from "d3";
 import { drawXGridAxisLabel } from "./axis";
 import { useElementSizeThrottled } from "../stores/hooks";
 import { chartDim } from "./config";
+import { hoveredData } from "./helper";
 
-const OverlayXGridAxis = ({ bandXScale, innerWidth, range, parentRef }) => {
+const OverlayXGridAxis = ({ bandXScale, innerWidth, range, parentRef, tooltipRef, data }) => {
     const { height } = useElementSizeThrottled(parentRef, 500);
     const xLabelRef = useRef(null);
 
-    useEffect(() => { 
-        const xLabelSvg = d3.select(xLabelRef.current); 
+    useEffect(() => {
+        function handleTickHover(_event, tickData) {
+            hoveredData.date = d3.timeFormat("%H:%M:%S")(tickData.d);
+            tooltipRef.current.innerHTML = `<div> O:${data[tickData.i].open.toFixed(6)} </div>
+                 <div class="text-accent"> H:${data[tickData.i].high.toFixed(6)} </div>
+                 <div class="text-negative-accent"> L:${data[tickData.i].low.toFixed(6)} </div>
+                 <div> C:${data[tickData.i].close.toFixed(6)} </div>
+                 <div> VOL:${data[tickData.i].volume.toFixed(2)} </div>`;
+        }
+
+        const xLabelSvg = d3.select(xLabelRef.current);
         xLabelSvg.selectAll("*").remove();
 
         // Draw axis/label 
-        drawXGridAxisLabel(xLabelSvg, bandXScale, height + 42, range);
-    }, [bandXScale, innerWidth, range, height]);
+        drawXGridAxisLabel(xLabelSvg, bandXScale, height + 42, range, handleTickHover);
+    }, [bandXScale, innerWidth, range, height, tooltipRef, data]);
 
     return (
-        <svg className="absolute bottom-0 pointer-events-none" ref={xLabelRef} width={innerWidth + chartDim.extraLeft} height={height + 42} ></svg>
+        <svg className="absolute bottom-0" ref={xLabelRef} width={innerWidth + chartDim.extraLeft} height={height + 42} ></svg>
     );
 };
 

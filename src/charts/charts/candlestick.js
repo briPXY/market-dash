@@ -1,5 +1,4 @@
-import { chartSvgCleanup } from "../helper";
-import { addToolTipHandleOverlay } from "../tooltip";
+import { chartSvgCleanup } from "../helper"; 
 
 export function candlestick(d3, svg, scale, tooltipRef, historicalData, bandXScale, innerHeight, bullishColor = "#2fb59c", bearishColor = "#e74c3c") {
 
@@ -43,8 +42,4 @@ export function candlestick(d3, svg, scale, tooltipRef, historicalData, bandXSca
         })
         .attr("fill", d => colorMap[(d.close > d.open) - (d.close < d.open)])
         .attr("stroke", d => colorMap[(d.close > d.open) - (d.close < d.open)])
-
-    // Transparent box for tooltip mouseover
-    svg.selectAll('.tooltip-overlay').remove();
-    addToolTipHandleOverlay(candles, candleWidth, tooltipRef, bandXScale, d3, innerHeight);
 }

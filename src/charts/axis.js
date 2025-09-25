@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import { timeFormat } from "d3-time-format";
 import { d3TimeFormats } from "../constants/constants";
 import { Grid } from "./config";
+// import { addToolTipHandleOverlay } from "./tooltip";
 
 export function formatXAxis(
     bandXScale,
@@ -24,17 +25,17 @@ export function formatXAxis(
     return axis;
 }
 
-export function drawXGridAxisLabel(svg, bandXScale, svgHeight, range) {
+export function drawXGridAxisLabel(svg, bandXScale, svgHeight, range, handleTickHover) {
     const xAxis = formatXAxis(bandXScale, 12, timeFormat(d3TimeFormats[range]));
 
     // Clear previous
     svg.selectAll(".chart-x-grid").remove();
     svg.selectAll(".x-vert-line").remove();
 
-    // Place axis at bottom, just above the padding
+    // Place axis at bottom
     const xAxisGroup = svg.append("g")
         .attr("class", "chart-x-grid")
-        .attr("transform", `translate(0,${svgHeight - 36})`) // shifted up
+        .attr("transform", `translate(0,${svgHeight - 36})`)
         .call(xAxis);
 
     // Style tick labels
@@ -47,7 +48,7 @@ export function drawXGridAxisLabel(svg, bandXScale, svgHeight, range) {
         .attr("dy", "1em")
         .attr("dominant-baseline", "hanging");
 
-    // Add vertical grid lines
+    // Add dashed vertical lines only for visible ticks (with labels)
     xAxisGroup.selectAll(".tick")
         .filter(function () {
             const textNode = d3.select(this).select("text").node();
@@ -58,20 +59,64 @@ export function drawXGridAxisLabel(svg, bandXScale, svgHeight, range) {
         .attr("x1", 0)
         .attr("x2", 0)
         .attr("y1", 0)
-        .attr("y2", -(svgHeight)) // stop at chart top + extend 40px
+        .attr("y2", -(svgHeight))
         .attr("stroke", Grid.color)
         .attr("stroke-width", Grid.thickness)
         .attr("stroke-dasharray", Grid.dashes);
 
     // Remove default tiny ticks
-    xAxisGroup.selectAll(".tick line:not(.x-vert-line)").remove();
+    xAxisGroup.selectAll(".tick line")
+        .filter(function () {
+            return !d3.select(this).classed("x-vert-line");
+        })
+        .remove();
+
     // Remove axis line on bottom
     xAxisGroup.selectAll(".domain").remove();
-    // Remove ticks with no vertical line
-    xAxisGroup.selectAll(".tick")
-        .filter(function () {
-            return d3.select(this).select("line.x-vert-line").empty();
-        }).remove();
+    // ---- Precomputed ranges for O(1) lookup ----
+    const tickCenters = bandXScale.domain().map((d, i) => ({
+        d,
+        i: i,
+        x: bandXScale(d) + bandXScale.bandwidth() / 2
+    }));
+
+    // Build boundary edges between ticks
+    const tickZones = tickCenters.map((t, i, arr) => {
+        let left, right;
+        if (i === 0) {
+            left = -Infinity;
+        } else {
+            left = (arr[i - 1].x + t.x) / 2;
+        }
+        if (i === arr.length - 1) {
+            right = Infinity;
+        } else {
+            right = (t.x + arr[i + 1].x) / 2;
+        }
+        return { ...t, left, right };
+    });
+
+    function findNearest(mx) {
+        const zone = tickZones.find(z => mx >= z.left && mx < z.right);
+        return zone || tickZones[0];
+    }
+
+    const rootSvg = svg.node().ownerSVGElement || svg.node();
+
+    // mousemove via D3
+    d3.select(rootSvg).on("mousemove", (event) => {
+        const [mx] = d3.pointer(event, svg.node());
+        const nearest = findNearest(mx);
+        if (handleTickHover) handleTickHover(event, nearest);
+    });
+
+    // touchmove manually, passive:true
+    rootSvg.addEventListener("touchmove", (event) => {
+        const [mx] = d3.pointer(event, svg.node());
+        const nearest = findNearest(mx);
+        if (handleTickHover) handleTickHover(event, nearest);
+    }, { passive: true });
+
 }
 
 export function drawYAxis(ySvg, scales, mainSvg) {

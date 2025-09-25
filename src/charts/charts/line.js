@@ -1,5 +1,4 @@
 import { chartSvgCleanup } from "../helper";
-import { addToolTipHandleOverlay } from "../tooltip";
 
 export function line(d3, svg, scale, tooltipRef, historicalData, bandXScale, innerHeight, lineColor = "#2fb59c", fillColor = "#2fb59c26") {
     const barWidth = bandXScale.bandwidth(); // Get the bandwidth for centering
@@ -20,7 +19,7 @@ export function line(d3, svg, scale, tooltipRef, historicalData, bandXScale, inn
         .curve(d3.curveMonotoneX);
 
     // Draw circles for interaction/tooltips
-    const nodes = svg.selectAll("circle.line-chart-circle-specific")
+    svg.selectAll("circle.line-chart-circle-specific")
         .data(historicalData)
         .join("circle")
         .attr("class", "line-chart-circle-specific")
@@ -44,7 +43,4 @@ export function line(d3, svg, scale, tooltipRef, historicalData, bandXScale, inn
         .attr("stroke", lineColor)
         .attr("stroke-width", 2)
         .attr("d", lineGenerator);
-
-    svg.selectAll('.tooltip-overlay').remove();
-    addToolTipHandleOverlay(nodes, bandXScale.bandwidth(), tooltipRef, bandXScale, d3, innerHeight);
 }

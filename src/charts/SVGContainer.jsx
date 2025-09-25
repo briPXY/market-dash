@@ -1,18 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
-import { drawYAxis } from "./axis";
-import { xyScaler } from "./helper/xyScaler";
+import { drawYAxis } from "./axis"; 
 import IndicatorSelector from "./indicators/IndicatorSelector";
-import { indicatorList, subIndicatorList } from "./indicators/indicatorList"
+import { indicatorList, subIndicatorList } from "./indicators/indicatorList";
 import { drawVolumeBars } from "./charts/volume";
-import { getVisibleIndexRange } from "./helper/getVisibleIndices";
 import LivePriceLine from "./LivePriceLine";
-import { getBandXScale } from "./helper/getBandXScale";
 import { chartDim, subIndicatorMargin } from "./config";
 import SubIndicatorsSvgs from "./SubIndicatorsSvgs";
 import { ChartSvg } from "./ChartSvg";
 import SubIndicatorYLabel from "./SubIndicatorYLabel";
-import { grabHandleMouseDown, grabHandleMouseLeave, grabHandleMouseMove, grabHandleMouseUp } from "./helper";
+import { getBandXScale, getVisibleIndexRange, grabHandleMouseDown, grabHandleMouseLeave, grabHandleMouseMove, grabHandleMouseUp, xyScaler } from "./helper";
 import CrosshairOverlay from "./CrosshairOverlay";
 import OverlayXGridAxis from "./OverlayXGridAxis";
 import CrosshairXYLabels from "./CrosshairXYLabels";
@@ -55,10 +52,10 @@ const SvgContainer = ({
         }
     }, [OHLCData, innerWidth, scrollStopped]);
 
-    const scale = useMemo(() => xyScaler(d3, visibleOHLCData, "date", "close", isLogScale, innerWidth, chartDim.innerHeight, chartDim.margin), [visibleOHLCData, innerWidth, isLogScale]);
+    const scale = useMemo(() => xyScaler(visibleOHLCData, "date", "close", isLogScale, innerWidth, chartDim.innerHeight, chartDim.margin), [visibleOHLCData, innerWidth, isLogScale]);
 
     const bandXScale = useMemo(() => {
-        return getBandXScale(d3, OHLCData, innerWidth)
+        return getBandXScale(OHLCData, innerWidth)
     }, [OHLCData, innerWidth]);
 
     // Chart X scroll stop listener
@@ -127,12 +124,12 @@ const SvgContainer = ({
                         subIndicators={subIndicators}
                     />
                     {/* x axis overlay-grid and labels */}
-                    <OverlayXGridAxis bandXScale={bandXScale} innerWidth={innerWidth} range={range} parentRef={chartContainerRef} />
+                    <OverlayXGridAxis bandXScale={bandXScale} innerWidth={innerWidth} range={range} parentRef={chartContainerRef} tooltipRef={tooltipRef} data={OHLCData}/>
 
                 </div>
 
                 <CrosshairOverlay parentRef={containerRef} />
-                <CrosshairXYLabels parentRef={containerRef} yScaler={scale.y}/>
+                <CrosshairXYLabels parentRef={containerRef} yScaler={scale.y }/>
 
                 {/*Y labels */}
                 <div className="w-fit">
@@ -156,7 +153,7 @@ const SvgContainer = ({
             </div>
             <div
                 ref={tooltipRef}
-                className="tooltip z-50 absolute text-[11.5px] md:text-xs left-0 md:right-12 flex flex-wrap md:max-w-full max-w-60 md:justify-end justify-start gap-1 md:gap-2 md:top-0 top-6 opacity-0 p-1"
+                className="tooltip z-55 absolute text-[11.5px] md:text-xs left-0 md:right-12 flex flex-wrap md:max-w-full max-w-60 md:justify-end justify-start gap-1 md:gap-2 md:top-0 top-6 p-1"
                 style={{
                     pointerEvents: "none",
                 }}
