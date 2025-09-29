@@ -14,7 +14,7 @@ import { isAgentMobile } from "../constants/environment";
 
 function MarketChart({ OHLCData, isError, setRange, range}) {
     const [chart, setChart] = useState({ n: "Candlestick", f: candlestick });
-    const [lengthPerItem, setLengthPerItem] = useState(isAgentMobile ? 6 : 7);
+    const [lengthPerItem, setLengthPerItem] = useState(isAgentMobile ? 4 : 7);
     const [isLogScale, setYscale] = useState("LOG");
 
     return (

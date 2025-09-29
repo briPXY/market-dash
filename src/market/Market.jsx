@@ -18,7 +18,7 @@ import { invertedHistoricalPrices } from "../utils/utils";
 
 function Market({ handleNetworkChange }) {
     const [range, setRange] = useState("1h");
-    const { address } = usePoolStore();
+    const address = usePoolStore(state => state.address);
     const { src: network } = useSourceStore();
     const invertedStatus = usePriceInvertStore((state) => state.priceInvert);
 
@@ -42,7 +42,7 @@ function Market({ handleNetworkChange }) {
             <Flex className="flex-col gap-1">
                 <Flex className="justify-between gap-3 bg-primary-900 p-2 py-4 md:p-4 md:items-center">
                     <Flex className="flex-col md:flex-row md:gap-5 md:items-center items-start text-sm md:text-lg font-semibold">
-                        <PoolSelector address={address} />
+                        <PoolSelector />
                         <LivePriceText OHLCData={data.ohlc} />
                         <PoolAddressView src={network} address={address} />
                     </Flex>

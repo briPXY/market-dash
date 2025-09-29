@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
-import { drawYAxis } from "./axis"; 
+import { drawYAxis } from "./axis";
 import IndicatorSelector from "./indicators/IndicatorSelector";
 import { indicatorList, subIndicatorList } from "./indicators/indicatorList";
 import { drawVolumeBars } from "./charts/volume";
@@ -36,7 +36,7 @@ const SvgContainer = ({
     const [scrollStopped, setScrollStopped] = useState(null); // Debounced scroll state for visibleOHLCData
 
     const innerWidth = useMemo(() => (lengthPerItem * OHLCData?.length) + chartDim.margin.right + chartDim.margin.left, [OHLCData, lengthPerItem]);
-    const yLabelWidth = useMemo(() => OHLCData[0].close.toString().length * 3.3, [OHLCData]);
+    const yLabelWidth = useMemo(() => (((Math.floor(Math.log10(Math.abs(Math.round(OHLCData[0].close) + 1))) + 1) + (OHLCData[0].close.toString().match(/\.0+/)?.[0].length || 0))) * 13, [OHLCData]);
     const subIndicatorDim = useMemo(() => {
         return { w: innerWidth, h: chartDim.subIndicatorHeight, m: subIndicatorMargin }
     }, [innerWidth])
@@ -124,15 +124,15 @@ const SvgContainer = ({
                         subIndicators={subIndicators}
                     />
                     {/* x axis overlay-grid and labels */}
-                    <OverlayXGridAxis bandXScale={bandXScale} innerWidth={innerWidth} range={range} parentRef={chartContainerRef} tooltipRef={tooltipRef} data={OHLCData}/>
+                    <OverlayXGridAxis bandXScale={bandXScale} innerWidth={innerWidth} range={range} parentRef={chartContainerRef} tooltipRef={tooltipRef} data={OHLCData} />
 
                 </div>
 
                 <CrosshairOverlay parentRef={containerRef} />
-                <CrosshairXYLabels parentRef={containerRef} yScaler={scale.y }/>
+                <CrosshairXYLabels parentRef={containerRef} yScaler={scale.y} />
 
                 {/*Y labels */}
-                <div className="w-fit">
+                <div >
                     <svg
                         width={`${yLabelWidth}px`}
                         height={chartDim.height}
@@ -172,8 +172,9 @@ const SvgContainer = ({
                     init={"SMA"}
                     bandXScale={bandXScale}
                 />
+
             </div>
-            <div className="absolute left-0 bottom-0 z-30">
+            <div className="absolute left-0 z-30" style={{ top: chartDim.innerHeight }}>
                 <IndicatorSelector
                     svg={null}
                     scale={null}

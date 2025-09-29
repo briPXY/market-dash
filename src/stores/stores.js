@@ -1,3 +1,4 @@
+import { SourceConst } from "../constants/sourceConst";
 import { saveState } from "../idb/stateDB";
 import { create } from "zustand";
 
@@ -6,12 +7,6 @@ const usePriceStore = create((set) => ({
 	index: 0,
 	setTradePrice: (price) => set({ trade: price }),
 	setIndexPrice: (price) => set({ index: price }),
-}));
-
-export const usePoolStore = create((set) => ({
-	address: "init",
-	init: true,
-	setAddress: (address) => set({ address: address, init: false }),
 }));
 
 export const useSourceStore = create((set) => ({
@@ -25,9 +20,37 @@ export const useSourceStore = create((set) => ({
 	},
 }));
 
+export const usePoolStore = create((set) => ({
+	address: "init",
+	init: true,
+	symbol0: "",
+	symbol1: "",
+
+	setAddress: (address) => {
+		set({
+			address,
+			init: false,
+			symbol0: SourceConst[useSourceStore.getState().src].info[address].token0.symbol,
+			symbol1: SourceConst[useSourceStore.getState().src].info[address].token1.symbol,
+		});
+	},
+
+	// internal symbol swapper, only called from setPriceInvert
+	swapSymbols: () =>
+		set((state) => ({
+			symbol0: state.symbol1,
+			symbol1: state.symbol0,
+		})),
+}));
+
+// This store only tracks priceInvert and proxies its update to PoolStore.
 export const usePriceInvertStore = create((set) => ({
 	priceInvert: false,
-	setPriceInvert: (bool) => set({ priceInvert: bool })
+	setPriceInvert: (bool) => {
+		set({ priceInvert: bool });
+		// When toggled, also swap symbols in pool store
+		usePoolStore.getState().swapSymbols();
+	},
 }));
 
 // User wallet login info

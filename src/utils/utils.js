@@ -68,3 +68,9 @@ export function invertedHistoricalPrices(array) {
         close: 1 / item.close,
     }));
 }
+
+export function trimmedFloatDigits(num, maxFloatingNonZeros = 2) {
+    const floatings = num.toString().match(/\.[0-9]+/)?.[0] || "";
+    const leadingZeros = floatings.match(/0+/)?.[0].length || 0;
+    return leadingZeros + maxFloatingNonZeros;
+}

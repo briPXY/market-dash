@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { hoveredData } from "./helper";
+import { trimmedFloatDigits } from "../utils/utils";
 
 export default function CrosshairXYLabels({ parentRef, yScaler }) {
     const [pointer, setPointer] = useState({ x: 0, y: 0, price: 0 });
     const rafRef = useRef(null);
+    const floatDigits = useRef(0);
 
     const handleMouseMove = useCallback(
         (e) => {
@@ -13,9 +15,8 @@ export default function CrosshairXYLabels({ parentRef, yScaler }) {
                 const rect = parentRef.current.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
-                const invertedY = yScaler.invert(y);
 
-                setPointer({ x, y, price: invertedY.toFixed(2) });
+                setPointer({ x, y, price: yScaler.invert(y).toFixed(floatDigits.current) });
             });
         },
         [parentRef, yScaler]
@@ -24,11 +25,13 @@ export default function CrosshairXYLabels({ parentRef, yScaler }) {
     useEffect(() => {
         const parent = parentRef.current;
         parent.addEventListener("mousemove", handleMouseMove);
+        floatDigits.current = trimmedFloatDigits(yScaler.invert(0)) + 1;
+
         return () => {
             parent.removeEventListener("mousemove", handleMouseMove);
             if (rafRef.current) cancelAnimationFrame(rafRef.current);
         };
-    }, [handleMouseMove, parentRef]);
+    }, [handleMouseMove, parentRef, yScaler]);
 
     return (
         <>

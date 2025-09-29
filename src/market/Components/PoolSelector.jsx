@@ -1,19 +1,21 @@
-import { TokenIcon } from "@web3icons/react";
 import { SourceConst } from "../../constants/sourceConst";
-import Button, { PopoverButton } from "../../Layout/Elements"
+import { PopoverButton } from "../../Layout/Elements"
 import { useSourceStore, usePoolStore } from "../../stores/stores";
 import { Flex } from "../../Layout/Layout";
 import { useEffect, useState } from "react";
 import { saveState } from "../../idb/stateDB";
 import { LoadingIcon } from "../../Layout/svg";
 import { PriceText } from "../../generic_components/PriceText";
-import { stdSymbol } from "../../utils/utils";
 import { SymbolPair } from "../../generic_components/SymbolPair";
+import PairIcon from "../../generic_components/PairIcon";
 
-export const PoolSelector = ({ address }) => {
+export const PoolSelector = () => {
     const src = useSourceStore(state => state.src);
     const setAddress = usePoolStore(fn => fn.setAddress);
+    const address = usePoolStore(state => state.address);
     const [bulkPrices, setBulkPrices] = useState(null);
+    const symbol0 = usePoolStore(state => state.symbol0);
+    const symbol1 = usePoolStore(state => state.symbol1);
 
     const setPool = async (selectedAddress) => {
         await saveState(`savedTick-${src}`, selectedAddress)
@@ -27,15 +29,15 @@ export const PoolSelector = ({ address }) => {
         }
         return;
     }
-    
+
     return (
-        <PopoverButton onPopover={handlePopOver} showClass={"bg-primary-500 w-[65vw] md:w-80 h-fit top-[100%] p-2 left-0 z-65 rounded-md"}>
-            <div className="flex cursor-pointer font-medium items-center gap-0.5 justify-start hover:brightness-125 rounded-md">
-                <SymbolPair poolAddress={address} className="text-base md:text-lg"/>
-                <TokenIcon symbol={SourceConst[src].info[address].token0.symbol.toLowerCase()} size={30} color="#fff" variant="background" className="rounded-full" />
+        <PopoverButton onPopover={handlePopOver} showClass={"bg-primary-500 w-[75vw] md:w-80 h-fit top-[100%] p-2 left-0 z-65 rounded-md"}>
+            <div className="flex cursor-pointer font-medium items-center gap-1 justify-start hover:brightness-125 rounded-md">
+                <SymbolPair poolAddress={address} className="inline-block text-base md:text-lg text-start text-nowrap" />
+                <PairIcon className="w-1/2 flex"  symbol0={symbol0} symbol1={symbol1} spacing="-100%" style={{width:"30px"}} style1={{ clipPath: "inset(0 0 0 50%)" }} />
                 <div className="text-xs text-washed">▼</div>
             </div>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-0">
                 <Flex className="justify-between text-washed text-xs px-2">
                     <div>Pool</div>
                     <div>Latest price/swap</div>
@@ -56,7 +58,7 @@ export const PoolSelector = ({ address }) => {
     )
 }
 
-const SymbolSelectorItem = ({ poolAddress, setPool, network = SourceConst.UniswapV3, preloadPrice, symbol1 = "" }) => {
+const SymbolSelectorItem = ({ poolAddress, setPool, network = SourceConst.UniswapV3, preloadPrice, symbol1 = "", symbol0 = "" }) => {
     const [price, setPrice] = useState(null);
 
     useEffect(() => {
@@ -75,13 +77,13 @@ const SymbolSelectorItem = ({ poolAddress, setPool, network = SourceConst.Uniswa
     }, [poolAddress, network, preloadPrice]);
 
     return (
-        <Flex className="justify-between pr-3">
-            <Button onClick={() => setPool(poolAddress)} className="w-fit p-0 text-sm gap-2">
-                <TokenIcon symbol={stdSymbol(symbol1).toLowerCase()} variant="branded" size={18} />
+        <button onClick={() => setPool(poolAddress)} className="flex w-full p-2 hover:brightness-125 rounded-sm bg-primary-500 text-sm justify-between">
+            <div className="flex gap-2">
                 <SymbolPair poolAddress={poolAddress} />
-            </Button>
+                <PairIcon symbol0={symbol0} symbol1={symbol1} size={18} spacing="2px" />
+            </div>
             <PriceText className="font-medium text-xs" input={price} />
             {!price && <LoadingIcon className="w-10 h-10" />}
-        </Flex>
+        </button>
     )
 }
