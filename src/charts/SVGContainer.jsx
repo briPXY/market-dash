@@ -5,7 +5,7 @@ import IndicatorSelector from "./indicators/IndicatorSelector";
 import { indicatorList, subIndicatorList } from "./indicators/indicatorList";
 import { drawVolumeBars } from "./charts/volume";
 import LivePriceLine from "./LivePriceLine";
-import { chartDim, subIndicatorMargin } from "./config";
+import { chartDim, } from "./config";
 import SubIndicatorsSvgs from "./SubIndicatorsSvgs";
 import { ChartSvg } from "./ChartSvg";
 import SubIndicatorYLabel from "./SubIndicatorYLabel";
@@ -36,10 +36,8 @@ const SvgContainer = ({
     const [scrollStopped, setScrollStopped] = useState(null); // Debounced scroll state for visibleOHLCData
 
     const innerWidth = useMemo(() => (lengthPerItem * OHLCData?.length) + chartDim.margin.right + chartDim.margin.left, [OHLCData, lengthPerItem]);
+    const innerHeight = useMemo(() => chartDim.containerHeight - (Object.keys(subIndicators).length * chartDim.subIndicatorHeight) - 14, [subIndicators]);
     const yLabelWidth = useMemo(() => (((Math.floor(Math.log10(Math.abs(Math.round(OHLCData[0].close) + 1))) + 1) + (OHLCData[0].close.toString().match(/\.0+/)?.[0].length || 0))) * 13, [OHLCData]);
-    const subIndicatorDim = useMemo(() => {
-        return { w: innerWidth, h: chartDim.subIndicatorHeight, m: subIndicatorMargin }
-    }, [innerWidth])
 
     const visibleOHLCData = useMemo(() => {
         if (scrollStopped) {
@@ -52,7 +50,7 @@ const SvgContainer = ({
         }
     }, [OHLCData, innerWidth, scrollStopped]);
 
-    const scale = useMemo(() => xyScaler(visibleOHLCData, "date", "close", isLogScale, innerWidth, chartDim.innerHeight, chartDim.margin), [visibleOHLCData, innerWidth, isLogScale]);
+    const scale = useMemo(() => xyScaler(visibleOHLCData, "date", "close", isLogScale, innerWidth, innerHeight, chartDim.margin), [visibleOHLCData, isLogScale, innerWidth, innerHeight]);
 
     const bandXScale = useMemo(() => {
         return getBandXScale(OHLCData, innerWidth)
@@ -88,10 +86,10 @@ const SvgContainer = ({
         if (OHLCData?.length <= 1 || isError) return;
 
         drawYAxis(ySvg, scale, mainSvg);
-        //drawGrid(mainSvg, scale, innerWidth, chartDim.innerHeight, bandXScale);
-        chart(d3, mainSvg, scale, tooltipRef, OHLCData, bandXScale, chartDim.innerHeight);
+        //drawGrid(mainSvg, scale, innerWidth, innerHeight, bandXScale);
+        chart(d3, mainSvg, scale, tooltipRef, OHLCData, bandXScale, innerHeight);
 
-    }, [OHLCData, innerWidth, scale, isError, chart, bandXScale, mainSvg]);
+    }, [OHLCData, innerWidth, scale, isError, chart, bandXScale, mainSvg, innerHeight]);
 
     // Y Static SVGs
     useEffect(() => {
@@ -100,14 +98,14 @@ const SvgContainer = ({
         const xLabelSvg = d3.select(xLabelRef.current);
         xLabelSvg.selectAll('*').remove();
         // Draw volume bar overlay
-        drawVolumeBars(d3, mainSvg, bandXScale, OHLCData, chartDim.innerHeight, tooltipRef);
-    }, [OHLCData, bandXScale, innerWidth, mainSvg, range]);
+        drawVolumeBars(d3, mainSvg, bandXScale, OHLCData, innerHeight, tooltipRef);
+    }, [OHLCData, bandXScale, innerHeight, innerWidth, mainSvg, range]);
 
     return (
-        <div ref={containerRef} className="relative">
+        <div ref={containerRef} style={{ height: `${chartDim.containerHeight}px` }} className="relative">
             <div className="flex gap-0">
                 <div
-                    className={`overflow-auto whitespace-nowrap flex-1 hide-scrollbar scroll-stick-left cursor-crosshair pb-8 select-none ${isDown ? "cursor-grabbing" : ""}`}
+                    className={`overflow-auto whitespace-nowrap flex-1 hide-scrollbar scroll-stick-left cursor-crosshair select-none ${isDown ? "cursor-grabbing" : ""}`}
                     ref={chartContainerRef}
                     onMouseDown={(e) => grabHandleMouseDown(e, chartContainerRef.current, setIsDown, setStart)}
                     onMouseUp={() => grabHandleMouseUp(setIsDown)}
@@ -115,15 +113,15 @@ const SvgContainer = ({
                     onMouseMove={(e) => grabHandleMouseMove(e, chartContainerRef.current, isDown, start)}
                     style={{ position: "relative" }}
                 >
-                    <ChartSvg svgRef={svgRef} width={innerWidth + chartDim.extraLeft} height={chartDim.height} />
+                    <ChartSvg svgRef={svgRef} width={innerWidth + chartDim.extraLeft} height={innerHeight} />
                     <SubIndicatorsSvgs
                         OHLCData={OHLCData}
-                        width={innerWidth + chartDim.extraLeft}
-                        chartDim={chartDim}
+                        width={innerWidth + chartDim.extraLeft} 
                         bandXScale={bandXScale}
                         subIndicators={subIndicators}
                     />
                     {/* x axis overlay-grid and labels */}
+                    <div className="w-1 h-[14px]"></div>
                     <OverlayXGridAxis bandXScale={bandXScale} innerWidth={innerWidth} range={range} parentRef={chartContainerRef} tooltipRef={tooltipRef} data={OHLCData} />
 
                 </div>
@@ -135,7 +133,7 @@ const SvgContainer = ({
                 <div >
                     <svg
                         width={`${yLabelWidth}px`}
-                        height={chartDim.height}
+                        height={innerHeight}
                         ref={ySvgRef}
                     ></svg>
                     {Object.keys(subIndicators).map(e => (
@@ -174,14 +172,14 @@ const SvgContainer = ({
                 />
 
             </div>
-            <div className="absolute left-0 z-30" style={{ top: chartDim.innerHeight }}>
+            <div className="absolute left-0 z-30" style={{ top: innerHeight }}>
                 <IndicatorSelector
                     svg={null}
                     scale={null}
                     bandXScale={bandXScale}
                     data={OHLCData}
-                    indicatorList={subIndicatorList}
-                    outDimension={subIndicatorDim}
+                    innerWidth={innerWidth}
+                    indicatorList={subIndicatorList} 
                     setSubIndicators={setSubIndicators}
                     dbId={"sub-indicator"}
                     init={"MACD"}

@@ -29,7 +29,7 @@ const OverlayXGridAxis = ({ bandXScale, innerWidth, range, parentRef, tooltipRef
     }, [bandXScale, innerWidth, range, height, tooltipRef, data, digits]);
 
     return (
-        <svg className="absolute bottom-0" ref={xLabelRef} width={innerWidth + chartDim.extraLeft} height={height + 42} ></svg>
+        <svg className="absolute bottom-0" ref={xLabelRef} width={innerWidth + chartDim.extraLeft} height={height + 28} ></svg>
     );
 };
 

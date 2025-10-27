@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import * as d3 from "d3";
 import { drawIndicator } from "./indicators/draws";
+import { chartDim } from "./config";
 
-const SubIndicatorsSvgs = ({ width, chartDim, bandXScale, subIndicators }) => {
+const SubIndicatorsSvgs = ({ width,  bandXScale, subIndicators }) => {
     const subRefs = useRef({});
     const d3Svgs = useRef({});
 
@@ -10,7 +11,7 @@ const SubIndicatorsSvgs = ({ width, chartDim, bandXScale, subIndicators }) => {
         w: width,
         h: 150,
         m: chartDim.margin
-    }), [chartDim.margin, width]);
+    }), [width]);  
 
     // Draw sub indicator on data/state changes
     useEffect(() => {

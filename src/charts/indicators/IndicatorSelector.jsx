@@ -4,8 +4,9 @@ import Button from "../../Layout/Elements";
 import { isSavedStateExist, loadState, saveState } from "../../idb/stateDB";
 import { drawIndicator } from "./draws";
 import { createSubIndicatorYScale } from "./subs/createSubIndicatorYScale";
+import { subIndHeight, subIndicatorMargin } from "../config";
 
-const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList, outDimension, setSubIndicators, dbId, init }) => {
+const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList, innerWidth, setSubIndicators, dbId, init }) => {
     const dropdownRef = useRef(null);
     const [showedIndicators, setShowedIndicators] = useState({});
     const [showSelector, setShowSelector] = useState(false);
@@ -20,13 +21,15 @@ const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList, outDim
 
     // Draw indicator on data/state changes
     useEffect(() => {
-        if (data.length <= 1){
+        if (data.length <= 1) {
             return;
         }
+
+        const dimension = { w: innerWidth, h: subIndHeight[Object.keys(showedIndicators).length], m: subIndicatorMargin };
         // Update real state of sub-indicators (on grandparent)
         // Draw sub indicator on other component
         if (setSubIndicators) {
-            updateSubIndicatorState(showedIndicators, setSubIndicators, data, outDimension);
+            updateSubIndicatorState(showedIndicators, setSubIndicators, data, dimension);
             return;
         }
 
@@ -34,9 +37,9 @@ const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList, outDim
             let { color, fn, ...fnParams } = showedIndicators[name];
             // fn not saved on db 
             const indicatorData = fn(data, ...Object.values(fnParams));
-            drawIndicator(name, fn, indicatorData, color, svg, scale, bandXScale, outDimension);
+            drawIndicator(name, fn, indicatorData, color, svg, scale, bandXScale);
         }
-    }, [bandXScale, data, outDimension, scale, setSubIndicators, showedIndicators, svg]);
+    }, [bandXScale, data, innerWidth, scale, setSubIndicators, showedIndicators, svg]);
 
     // Handle outside click
     useEffect(() => {
@@ -61,7 +64,7 @@ const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList, outDim
             <div className="flex gap-1">
                 <Button onClick={() => setShowSelector(!showSelector)} className="text-[12px] gap-2">
                     <img className="w-2.5 h-2.5" src="/svg/g5.svg"></img>
-                    <div>{outDimension ? "Sub" : "Main"}</div>
+                    <div>{setSubIndicators ? "Sub" : "Main"}</div>
                 </Button>
                 <ActiveIndicatorButtons svg={svg} showedIndicators={showedIndicators} setShowedIndicators={setShowedIndicators} dbId={dbId} />
             </div>
