@@ -1,7 +1,7 @@
 import { ALMA } from "./ALMA";
 import { EMA } from "./EMA";
 import { SMA } from "./SMA";
-import { MACD } from "./MACD";
+import { MACD, RSI } from "./subindicators";
 import { drawMacdYAxisLabel } from "./yLabels";
 import { Supertrend } from "./supertrend";
 import { VWAP } from "./VWAP";
@@ -20,5 +20,10 @@ export const subIndicatorList = {
         fn: MACD,
         name: "Moving Average Convergence Divergence",
         yLabelDrawFn: drawMacdYAxisLabel,
-    }
+    },
+    // RSI: {
+    //     fn: RSI,
+    //     name: "Relative Strength Index",
+    //     yLabelDrawFn: drawMacdYAxisLabel,
+    // }
 };
