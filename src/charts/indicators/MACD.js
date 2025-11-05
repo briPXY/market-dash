@@ -1,4 +1,4 @@
-import { drawMACD } from "../draw/drawMACD";
+import { drawMACD } from "./draw/drawMACD";
 
 // Improved EMA function with a stable initial seed
 function EMA(prices, period) {

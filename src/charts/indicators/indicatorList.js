@@ -1,8 +1,8 @@
 import { ALMA } from "./ALMA";
 import { EMA } from "./EMA";
 import { SMA } from "./SMA";
-import { MACD } from "./subs/MACD";
-import { drawMacdYAxisLabel } from "./subs/yLabels";
+import { MACD } from "./MACD";
+import { drawMacdYAxisLabel } from "./yLabels";
 import { Supertrend } from "./supertrend";
 import { VWAP } from "./VWAP";
 

@@ -3,7 +3,7 @@ import { ActiveIndicatorButtons } from "./ActiveIndicatorButtons";
 import Button from "../../Layout/Elements";
 import { isSavedStateExist, loadState, saveState } from "../../idb/stateDB";
 import { drawIndicator } from "./draws";
-import { createSubIndicatorYScale } from "./subs/createSubIndicatorYScale";
+import { createSubIndicatorYScale } from "./createSubIndicatorYScale";
 import { subIndHeight, subIndicatorMargin } from "../config";
 
 const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList, innerWidth, setSubIndicators, dbId, init }) => {
