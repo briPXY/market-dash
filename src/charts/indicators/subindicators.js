@@ -1,4 +1,4 @@
-import { drawMACD } from "./draw/drawMACD";
+import { drawMACD, drawRSI } from "./draw/specials";
 
 // Improved EMA function with a stable initial seed
 function EMA(prices, period) {
@@ -92,3 +92,6 @@ export function RSI(ohlcData, period = 14) {
 
     return rsiValues;
 }
+
+RSI.draw = drawRSI;
+RSI.defaultCol = "#a17bf7";

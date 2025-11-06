@@ -144,6 +144,7 @@ const SvgContainer = ({
                             height={chartDim.subIndicatorHeight}
                             yScaler={subIndicators[e].yScaler}
                             data={subIndicators[e].indicatorData}
+                            color={subIndicators[e].color || "#FFFFFF"}
                         />
                     ))}
                 </div>

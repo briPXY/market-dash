@@ -17,8 +17,8 @@ const SubIndicatorsSvgs = ({ width,  bandXScale, subIndicators }) => {
     useEffect(() => {
         if (Object.keys(subIndicators).length === 0) {
             return;
-        }
-        Object.keys(subRefs.current).forEach(name => {
+        } 
+        Object.keys(subRefs.current).forEach(name => {//console.log(subRefs.current, "current name", name)
             const { color, indicatorData, yScaler, fn } = subIndicators[name];
             d3Svgs.current[name] = d3.select(subRefs.current[name]);
             drawIndicator(name, fn, indicatorData, color, d3Svgs.current[name], yScaler, bandXScale, outDimension);

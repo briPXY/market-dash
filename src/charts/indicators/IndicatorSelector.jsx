@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 import { ActiveIndicatorButtons } from "./ActiveIndicatorButtons";
 import Button from "../../Layout/Elements";
 import { isSavedStateExist, loadState, saveState } from "../../idb/stateDB";
-import { drawIndicator } from "./draws";
-import { createSubIndicatorYScale } from "./createSubIndicatorYScale";
+import { drawIndicator } from "./draws"; 
 import { subIndHeight, subIndicatorMargin } from "../config";
 
 const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList, innerWidth, setSubIndicators, dbId, init }) => {
@@ -29,7 +28,7 @@ const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList, innerW
         // Update real state of sub-indicators (on grandparent)
         // Draw sub indicator on other component
         if (setSubIndicators) {
-            updateSubIndicatorState(showedIndicators, setSubIndicators, data, dimension);
+            updateSubIndicatorState(showedIndicators, setSubIndicators, data, dimension, indicatorList);
             return;
         }
 
@@ -39,7 +38,7 @@ const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList, innerW
             const indicatorData = fn(data, ...Object.values(fnParams));
             drawIndicator(name, fn, indicatorData, color, svg, scale, bandXScale);
         }
-    }, [bandXScale, data, innerWidth, scale, setSubIndicators, showedIndicators, svg]);
+    }, [bandXScale, data, indicatorList, innerWidth, scale, setSubIndicators, showedIndicators, svg]);
 
     // Handle outside click
     useEffect(() => {
@@ -164,17 +163,16 @@ async function checkSavedIndicator(id, initialIndicatorName, indicatorList, setS
     }
 }
 
-function updateSubIndicatorState(state, setSubIndicators, data, dimension) {
+function updateSubIndicatorState(state, setSubIndicators, data, dimension, subIndicatorList) {
     const newSubIndicatorState = {};
 
     for (const name in state) {
         const { color, fn, ...fnParams } = state[name];
-        color;
         newSubIndicatorState[name] = state[name];
         newSubIndicatorState[name].indicatorData = fn(data, ...Object.values(fnParams));
-        newSubIndicatorState[name].yScaler = createSubIndicatorYScale(newSubIndicatorState[name].indicatorData, dimension);
-    }
-
+        newSubIndicatorState[name].yScaler = subIndicatorList[name].yScaler(newSubIndicatorState[name].indicatorData, dimension);
+        newSubIndicatorState[name].color = color;
+    } 
     setSubIndicators(newSubIndicatorState);
 }
 
