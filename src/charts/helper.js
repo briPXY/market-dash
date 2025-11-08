@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import { useMemo } from 'react';
 
 export const hoveredData = {};
 
@@ -137,4 +138,18 @@ export function yIndicator(indicatorData, innerIndicatorHeight, valueTarget) {
 
     return yIndicator
 
+}
+
+export function useYLabelWidth(OHLCData) {
+  return useMemo(() => {
+    if (!OHLCData?.length || !OHLCData[0]?.close) return 0;
+
+    const closeValue = OHLCData[0].close;
+    const integerDigits = Math.floor(Math.log10(Math.abs(Math.round(closeValue) + 1))) + 1;
+    const decimalLength = closeValue.toString().match(/\.0+/)?.[0].length || 0;
+
+    const ywidth =  (integerDigits + decimalLength) * 13; 
+    return Math.max(ywidth, 50);
+    
+  }, [OHLCData]);
 }

@@ -11,6 +11,8 @@ chartDim.subIndicatorHeight = 150;
 export const barPadding = 0.3;
 
 export const subIndicatorMargin = { top: 0, right: chartDim.margin.right, bottom: 0, left: chartDim.margin.left }
+
+// Also define max subindicators on a chart
 export const subIndHeight = {
     0: 0,
     1: chartDim.containerHeight * 0.22,

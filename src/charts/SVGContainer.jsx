@@ -5,11 +5,11 @@ import IndicatorSelector from "./indicators/IndicatorSelector";
 import { indicatorList, subIndicatorList } from "./indicators/indicatorList";
 import { drawVolumeBars } from "./charts/volume";
 import LivePriceLine from "./LivePriceLine";
-import { chartDim, } from "./config";
-import SubIndicatorsSvgs from "./SubIndicatorsSvgs";
+import { chartDim, subIndHeight, } from "./config";
+import SubIndicatorsSvg from "./SubIndicatorsSvg";
 import { ChartSvg } from "./ChartSvg";
 import SubIndicatorYLabel from "./SubIndicatorYLabel";
-import { getBandXScale, getVisibleIndexRange, grabHandleMouseDown, grabHandleMouseLeave, grabHandleMouseMove, grabHandleMouseUp, xyScaler } from "./helper";
+import { getBandXScale, getVisibleIndexRange, grabHandleMouseDown, grabHandleMouseLeave, grabHandleMouseMove, grabHandleMouseUp, useYLabelWidth, xyScaler } from "./helper";
 import CrosshairOverlay from "./CrosshairOverlay";
 import OverlayXGridAxis from "./OverlayXGridAxis";
 import CrosshairXYLabels from "./CrosshairXYLabels";
@@ -37,7 +37,7 @@ const SvgContainer = ({
 
     const innerWidth = useMemo(() => (lengthPerItem * OHLCData?.length) + chartDim.margin.right + chartDim.margin.left, [OHLCData, lengthPerItem]);
     const innerHeight = useMemo(() => chartDim.containerHeight - (Object.keys(subIndicators).length * chartDim.subIndicatorHeight) - 14, [subIndicators]);
-    const yLabelWidth = useMemo(() => (((Math.floor(Math.log10(Math.abs(Math.round(OHLCData[0].close) + 1))) + 1) + (OHLCData[0].close.toString().match(/\.0+/)?.[0].length || 0))) * 13, [OHLCData]);
+    const yLabelWidth = useYLabelWidth(OHLCData);
 
     const visibleOHLCData = useMemo(() => {
         if (scrollStopped) {
@@ -113,13 +113,26 @@ const SvgContainer = ({
                     onMouseMove={(e) => grabHandleMouseMove(e, chartContainerRef.current, isDown, start)}
                     style={{ position: "relative" }}
                 >
+
                     <ChartSvg svgRef={svgRef} width={innerWidth + chartDim.extraLeft} height={innerHeight} />
-                    <SubIndicatorsSvgs
-                        OHLCData={OHLCData}
-                        width={innerWidth + chartDim.extraLeft} 
-                        bandXScale={bandXScale}
-                        subIndicators={subIndicators}
-                    />
+
+                    {/* Sub indicators svg/drawing */}
+                    {Object.keys(subIndicators).map(e => {
+                        const { color, indicatorData, yScaler, fn } = subIndicators[e];
+                        return (<SubIndicatorsSvg
+                            height={subIndHeight[Object.keys(subIndicators).length]}
+                            width={innerWidth + chartDim.extraLeft}
+                            bandXScale={bandXScale}
+                            subIndicator={subIndicators[e]}
+                            color={color}
+                            indicatorData={indicatorData}
+                            yScaler={yScaler}
+                            fn={fn}
+                            key={e}
+                            name={e}
+                        />)
+                    })}
+
                     {/* x axis overlay-grid and labels */}
                     <div className="w-1 h-[14px]"></div>
                     <OverlayXGridAxis bandXScale={bandXScale} innerWidth={innerWidth} range={range} parentRef={chartContainerRef} tooltipRef={tooltipRef} data={OHLCData} />
@@ -180,7 +193,7 @@ const SvgContainer = ({
                     bandXScale={bandXScale}
                     data={OHLCData}
                     innerWidth={innerWidth}
-                    indicatorList={subIndicatorList} 
+                    indicatorList={subIndicatorList}
                     setSubIndicators={setSubIndicators}
                     dbId={"sub-indicator"}
                     init={"MACD"}

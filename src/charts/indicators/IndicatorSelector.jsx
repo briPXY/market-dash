@@ -24,10 +24,15 @@ const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList, innerW
             return;
         }
 
-        const dimension = { w: innerWidth, h: subIndHeight[Object.keys(showedIndicators).length], m: subIndicatorMargin };
         // Update real state of sub-indicators (on grandparent)
         // Draw sub indicator on other component
         if (setSubIndicators) {
+            // Maximum numbers of subindicators on chart is reached
+            if (Object.keys(showedIndicators).length > Object.keys(subIndHeight).length){
+                return;
+            }
+
+            const dimension = { w: innerWidth, h: subIndHeight[Object.keys(showedIndicators).length], m: subIndicatorMargin };
             updateSubIndicatorState(showedIndicators, setSubIndicators, data, dimension, indicatorList);
             return;
         }

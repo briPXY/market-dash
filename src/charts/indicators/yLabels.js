@@ -53,7 +53,7 @@ export function drawRsiYAxisLabel(subYLabelSvg, width, height, scaleY, data, col
     const yPos = scaleY(lastValue);
     const text = `${lastValue.toFixed(2)}`;
     const labelPadding = 4;
-    const fontSize = 13;
+    const fontSize = 12;
 
     // Measure text width (rough estimate)
     const tempText = subYLabelSvg.append("text")
