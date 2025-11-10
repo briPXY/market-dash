@@ -1,4 +1,4 @@
-import { WalletLogin } from "../contracts/Login";
+import { WalletLogin } from "../order/Login";
 import Button from "../Layout/Elements"
 import { Flex } from "../Layout/Layout"
 import { useWalletStore } from "../stores/stores";

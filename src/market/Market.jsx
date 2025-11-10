@@ -11,7 +11,7 @@ import { NetworkSelection } from "./Components/NetworkSelection";
 import { LoadSymbol } from "./Components/LoadSymbol";
 import { PoolAddressView } from "./Components/PoolAddressView";
 import { SwapHistory } from "./SwapHistory";
-import Swap from "../contracts/Swap";
+import Swap from "../order/Swap";
 import { SourceConst } from "../constants/sourceConst";
 import { initData } from "../constants/initData";
 import { invertedHistoricalPrices } from "../utils/utils";
@@ -59,9 +59,7 @@ function Market({ handleNetworkChange }) {
                     <TabPanelParent className="bg-primary-900 md:flex-1" style={{ display: SourceConst[network]?.isDex ? "block" : "none" }}>
                         <Swap
                             token0={SourceConst[network].info[address].token0}
-                            token1={SourceConst[network].info[address].token1}
-                            poolAddress={address}
-                            network={SourceConst[network]}
+                            token1={SourceConst[network].info[address].token1} 
                             isDEX={SourceConst[network].isDex}
                             label="Swap"
                         />

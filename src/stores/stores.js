@@ -2,7 +2,7 @@ import { SourceConst } from "../constants/sourceConst";
 import { saveState } from "../idb/stateDB";
 import { create } from "zustand";
 
-const usePriceStore = create((set) => ({
+export const usePriceStore = create((set) => ({
 	trade: 0,
 	index: 0,
 	setTradePrice: (price) => set({ trade: price }),

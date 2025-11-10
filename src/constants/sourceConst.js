@@ -5,6 +5,7 @@ import { binanceTicker, UniswapV3BulkPrice } from "../queries/livePrice";
 import { binanceTicks } from "./binanceTicks";
 import { WSS_DOMAIN } from "./environment";
 import { initData, initToken } from "./initData";
+import { getUniswapQuoteQueryFn } from "../queries/quotes";
 
 export const SourceConst = {};
 
@@ -27,6 +28,7 @@ SourceConst.UniswapV3 = {
     invertAll: true,
     invertTick: ['WETHUSDT', 'WBTCUSDC'],
     swappedSymbols:["0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801"],
+    quoteFunction: getUniswapQuoteQueryFn,
 };
 
 // uniswap Sepolia testnet
