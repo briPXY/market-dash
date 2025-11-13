@@ -1,27 +1,23 @@
 
-import { TokenIcon, ExchangeIcon } from "@web3icons/react";
-import { ExternalLinkIcon, SwapIcon } from "../Layout/svg";
+import { TokenIcon } from "@web3icons/react";
+import { SwapIcon } from "../Layout/svg";
 import { WalletLogin } from "./Login";
 import FiatValue from "./FiatValue";
 import { SwapTokenInfo } from "./components/SwapTokenInfo";
 import { SvgMemo } from "../Layout/Layout";
-import { usePoolStore, useSourceStore, useWalletStore } from "../stores/stores";
+import { useWalletStore } from "../stores/stores";
 import { stdSymbol } from "../utils/utils";
 import { useState } from "react";
-import { SourceConst } from "../constants/sourceConst";
 
 
 function SwapForm({ currentTokenIn, currentTokenOut, handleSellChange, sellAmount, buyAmount, handleBuyChange, handleChangeSymbols, reversed, isDEX }) {
-    const accountAddress = useWalletStore(state => state.address); // Real logged-in/off state 
-    const source = useSourceStore(state => state.src);
-    const poolAddress = usePoolStore(state => state.address);
-    const [loginState, setloginState] = useState(null); // For displaying login process status text only 
-    const network = SourceConst[source];
+    const accountAddress = useWalletStore(state => state.address); // Real logged-in/off state  
+    const [loginState, setloginState] = useState(null); // For displaying login process status text only  
 
     if (!isDEX) return null;
 
     return (
-        <div className="flex flex-col gap-2 bg-primary-900 p-4 rounded-md w-full h-full relative">
+        <div className="flex flex-col p-3 gap-2 bg-primary-900 w-full h-full relative">
             <div className="flex gap-0 flex-col items-center">
                 <div className="flex flex-col items-start gap-2 rounded-lg p-4 bg-primary-500 hover:border-active w-full">
                     <SwapTokenInfo label={"SELL"} tokenName={currentTokenIn.name} />
@@ -71,12 +67,6 @@ function SwapForm({ currentTokenIn, currentTokenOut, handleSellChange, sellAmoun
             {!accountAddress && <WalletLogin setLogState={setloginState} />}
             {accountAddress && <button className="bg-accent p-3 rounded-md text-primary-900 font-semibold">Swap</button>}
 
-            <button
-                onClick={() => window.open(`${network.poolURL}${poolAddress}`, "_blank")}
-                className="bg-transparent text-xs flex gap-1 items-center"
-                title={`Go to ${network.poolURL}${poolAddress}`}
-            ><ExternalLinkIcon size={14} /> Swap at {network.exchangeIcon.charAt(0).toUpperCase() + network.exchangeIcon.slice(1)} <span><ExchangeIcon id={network.exchangeIcon} variant="mono" size="18" /></span>
-            </button>
 
             {loginState &&
                 <div className="h-full w-full bg-transparent-blur absolute left-0 top-0">

@@ -25,7 +25,7 @@ const PriceUpdater = ({ type }) => {
 
     useEffect(() => {
 
-        if (!pool || !src) return; 
+        if (pool == "init" || src == "init") return; 
  
         const connectWebSocket = () => {
             if (ws.current !== null) {

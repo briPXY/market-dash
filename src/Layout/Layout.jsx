@@ -292,7 +292,7 @@ export function TabPanelParent({ children, className = "w-full bg-primary-900 ma
 
     return (
         <div className={className} style={style}>
-            <div className="flex space-x-2 mb-4">
+            <div className="flex space-x-2">
                 {React.Children.map(children, (child, index) => (
                     <button
                         onClick={() => setActiveTab(index)}
@@ -302,20 +302,20 @@ export function TabPanelParent({ children, className = "w-full bg-primary-900 ma
                     </button>
                 ))}
             </div>
-            <div>
+            <>
                 {React.Children.map(children, (child, index) => (
                     <div className={activeTab === index ? "block" : "hidden"}>
                         {child}
                     </div>
                 ))}
-            </div>
+            </>
         </div>
     );
 }
 
 const SvgMemo = memo(
-    ({ 
-        children 
+    ({
+        children
     }) => {
         if (!children) return null;
 

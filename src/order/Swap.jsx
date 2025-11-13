@@ -3,6 +3,7 @@ import { usePoolStore, usePriceStore } from "../stores/stores";
 import SwapForm from "./SwapForm";
 import { formatPrice } from "../utils/utils";
 import { swapDecimalRule } from "../constants/constants";
+import SwapQuotesPanel from "./SwapQuotesPanel";
 
 function removeNonNumeric(rawValue) {
     let cleaned = rawValue
@@ -40,7 +41,7 @@ export default function Swap({ token0, token1, isDEX }) {
     };
 
     const handleSellChange = (value) => {
-        let cleaned = removeNonNumeric(value);
+        let cleaned = removeNonNumeric(value); console.log("CALLED")
         const numeric = parseFloat(cleaned.replace(',', '.'));
         setSellAmount(cleaned);
         if (!isNaN(numeric)) {
@@ -71,10 +72,10 @@ export default function Swap({ token0, token1, isDEX }) {
         setReversed(false);
         setSellAmount(0);
         setBuyAmount(0);
-    }, [token0, token1, poolAddress]); 
+    }, [token0, token1, poolAddress]);
 
     return (
-        < >
+        <div className="flex flex-col gap-1">
             <SwapForm
                 currentTokenIn={currentTokenIn}
                 currentTokenOut={currentTokenOut}
@@ -83,9 +84,14 @@ export default function Swap({ token0, token1, isDEX }) {
                 buyAmount={buyAmount}
                 sellAmount={sellAmount}
                 handleChangeSymbols={handleChangeSymbols}
-                isDEX={isDEX} 
+                isDEX={isDEX}
             />
-            <div>Quotes Panel</div>
-        </>
+            <SwapQuotesPanel
+                tokenIn={currentTokenIn}
+                tokenOut={currentTokenOut}
+                amount={sellAmount}
+                queryEnabled={currentTokenIn.id != null && sellAmount > 0}
+            />
+        </div>
     );
 }

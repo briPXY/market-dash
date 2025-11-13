@@ -8,12 +8,14 @@ export const initToken = {
         "token0": {
             "decimals": 1,
             "name": "loading",
-            "symbol": "..."
+            "symbol": "...",
+            "id":null,
         },
         "token1": {
             "decimals": 1,
             "name": "loading",
-            "symbol": "..."
+            "symbol": "...",
+            "id":null,
         }
     },
 };

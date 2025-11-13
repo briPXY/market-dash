@@ -5,7 +5,7 @@ import { binanceTicker, UniswapV3BulkPrice } from "../queries/livePrice";
 import { binanceTicks } from "./binanceTicks";
 import { WSS_DOMAIN } from "./environment";
 import { initData, initToken } from "./initData";
-import { getUniswapQuoteQueryFn } from "../queries/quotes";
+import { getUniswapQuoteFromContract, getUniswapQuoteQueryFn, initDummy } from "../queries/quotes";
 
 export const SourceConst = {};
 
@@ -27,8 +27,8 @@ SourceConst.UniswapV3 = {
     priceConverter: getPriceFromSqrtPriceX96,
     invertAll: true,
     invertTick: ['WETHUSDT', 'WBTCUSDC'],
-    swappedSymbols:["0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801"],
-    quoteFunction: getUniswapQuoteQueryFn,
+    swappedSymbols: ["0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801"],
+    quoteFunction: getUniswapQuoteFromContract,
 };
 
 // uniswap Sepolia testnet
@@ -47,7 +47,8 @@ SourceConst.UniswapV3Sepolia = {
     h24Query: UniswapV3_24h,
     priceConverter: getPriceFromSqrtPriceX96,
     getPriceURL: (poolAddress) => `${WSS_DOMAIN}/liveprice/UniswapV3Sepolia/${poolAddress}`,
-    swappedSymbols:[],
+    swappedSymbols: [],
+    quoteFunction: getUniswapQuoteQueryFn,
 };
 
 // Binance (this is CEX network not L2 chain or BSC)
@@ -67,7 +68,8 @@ SourceConst.binance = {
         return `wss://stream.binance.com:9443/ws/${token0.toLowerCase()}${token1.toLowerCase()}@trade`
     },
     priceConverter: (p) => p,
-    swappedSymbols:[],
+    swappedSymbols: [],
+    quoteFunction: initDummy,
 };
 
 // Initial network
@@ -85,6 +87,7 @@ SourceConst.init = {
     ohlcFetch: async () => initData,
     h24Query: async () => initData.ohlc,
     priceConverter: () => "",
-    getPriceURL: () => "",
-    swappedSymbols:[],
+    getPriceURL: () => "init",
+    swappedSymbols: [],
+    quoteFunction: initDummy,
 }

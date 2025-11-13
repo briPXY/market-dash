@@ -56,7 +56,7 @@ function Market({ handleNetworkChange }) {
                         isError={isError}
                         network={SourceConst[network]}
                     />
-                    <TabPanelParent className="bg-primary-900 md:flex-1" style={{ display: SourceConst[network]?.isDex ? "block" : "none" }}>
+                    <TabPanelParent className="md:flex-1" style={{ display: SourceConst[network]?.isDex ? "block" : "none" }}>
                         <Swap
                             token0={SourceConst[network].info[address].token0}
                             token1={SourceConst[network].info[address].token1} 

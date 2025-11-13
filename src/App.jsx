@@ -43,7 +43,7 @@ function App() {
 		<>
 			<PriceUpdater type="trade" />  {/* ✅ Updates trade price */}
 			<PriceUpdater type="index" />  {/* ✅ Updates index price */}
-			<Section className="overflow-visible w-full">
+			<Section className="overflow-visible w-full mb-1">
 				<TopBar handleNetworkChange={handleNetworkChange} />
 			</Section>
 			<Section className="overflow-visible w-full">
