@@ -3,15 +3,40 @@ import { SourceConst } from '../constants/sourceConst';
 import { usePoolStore, useSourceStore } from '../stores/stores';
 import { ExternalLinkIcon } from '../Layout/svg';
 import { ExchangeIcon } from '@web3icons/react';
+import { useEffect, useMemo, useState } from 'react';
+import { debounce } from 'lodash';
 
-export default function SwapQuotesPanel({ tokenIn, tokenOut, amount, queryEnabled }) {
+export default function SwapQuotesPanel({ tokenIn, tokenOut, amount, enabled, queryFn }) {
     const source = useSourceStore(state => state.src);
     const poolAddress = usePoolStore(state => state.address);
+    const [isDebouncing, setIsDebouncing] = useState(false);
+    const [debouncedKey, setDebouncedKey] = useState(null);
     const network = SourceConst[source];
-    const { data, isLoading, error } = useQuery({
-        queryKey: ['uniswapQuote', { tokenIn, tokenOut, amount }],
-        queryFn: SourceConst[source].quoteFunction,
-        enabled: queryEnabled,
+
+    // Create a stable debounced function ONCE
+    const debouncedUpdate = useMemo(() =>
+        debounce((values) => {
+            if (enabled) {
+                setIsDebouncing(false);
+                setDebouncedKey(values);
+                // console.log("debounced:", values.amount);
+            }
+        }, 3000), [enabled]);
+
+    // Call debounced function when inputs change
+    useEffect(() => {
+        if (enabled) {
+            // Set the pending state immediately
+            setIsDebouncing(true);
+        }
+        debouncedUpdate({ tokenIn, tokenOut, amount });
+        return () => debouncedUpdate.cancel();
+    }, [tokenIn, tokenOut, amount, debouncedUpdate, enabled]);
+
+    const { data, error, isFetching } = useQuery({
+        queryKey: ['uniswapQuote', debouncedKey],
+        queryFn: queryFn,
+        enabled: enabled && !!debouncedKey,
         retry: 1,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
@@ -20,8 +45,16 @@ export default function SwapQuotesPanel({ tokenIn, tokenOut, amount, queryEnable
             Liquidity: "-",
             "Fee Tier": "-",
             // whatever shape your quoteFunction normally returns
-        },
+        }
     });
+
+    // useEffect(() => {
+    //     if (isLoading) {
+    //         setLoading(tr);
+    //         return;
+    //     }
+    //     setLoading(true);
+    // }, [isLoading, amount]) 
 
     if (error) console.error(error.message);
 
@@ -29,18 +62,18 @@ export default function SwapQuotesPanel({ tokenIn, tokenOut, amount, queryEnable
         <div className="overflow-y-scroll bg-primary-900 p-3">
 
             <div className='flex justify-between text-xs'>
-                <div key={source} className='flex flex-col flex-1 items-start gap-2'>
+                <div key={source} className='text-washed flex flex-col flex-1 items-start gap-2'>
                     {
                         SourceConst[source].quoteFunction.props.map(e => (<div key={e} >{e}</div>))
                     }
                 </div>
                 <div key={amount} className='flex flex-col flex-1 items-end gap-2'>
                     {
-                        Object.keys(data).map(e => (<div key={e}>{isLoading ? "..." : data[e]}</div>))
+                        Object.keys(data).map(e => (<div style={{fontStyle:isFetching || isDebouncing ? "italic" : "normal"}} key={e}>{isDebouncing ? "pending" : isFetching ? "fetching" : data[e]}</div>))
                     }
                 </div>
             </div>
-            {error && <div className='w-full text-xs'>{error.message}</div>}
+            {error && <div className='w-full text-xs text-washed'>{error.message}</div>}
             <div className='h-4'></div>
             <button
                 onClick={() => window.open(`${network.poolURL}${poolAddress}`, "_blank")}

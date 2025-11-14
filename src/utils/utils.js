@@ -74,3 +74,39 @@ export function trimmedFloatDigits(num, maxFloatingNonZeros = 2) {
     const leadingZeros = floatings.match(/0+/)?.[0].length || 0;
     return leadingZeros + maxFloatingNonZeros;
 }
+
+export async function getAvailableRPC(rpcUrls) {
+    for (let i = 0; i < rpcUrls.length; i++) {
+        const url = rpcUrls[i];
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    jsonrpc: "2.0",
+                    id: 1,
+                    method: "eth_blockNumber",
+                    params: []
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`RPC returned status ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (data.result) {
+                return url;
+            } else {
+                throw new Error("No block data received");
+            }
+        } catch (error) { 
+            console.warn(`❌ RPC failed [${url}]: ${error.message}`);
+            // Continue to next URL
+        }
+    }
+
+    // All RPCs failed
+    console.error("⚠️ All RPC URLs failed.");
+    throw new Error("⚠️ All RPC URLs failed.");
+}

@@ -1,7 +1,8 @@
-import { ethers, parseUnits } from "ethers";
-import { getAvailableRPC, RPC_URLS } from "../order/checkRPC";
-import { formatPrice } from "../utils/utils";
-import { swapDecimalRule } from "../constants/constants";
+import { ethers, parseUnits } from "ethers"; 
+import { formatPrice, getAvailableRPC } from "../utils/utils";
+import { RPC_URLS, swapDecimalRule } from "../constants/constants";
+
+const workingRPC = {};
 
 function truncateToDecimals(value, decimals) {
     const decIn = Number(decimals);
@@ -57,7 +58,6 @@ export async function getUniswapQuoteQueryFn({ queryKey }) {
     };
 }
 
-
 export async function getUniswapQuoteFromContract({ queryKey }) {
 
     const QUOTER_ADDRESS = "0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6";
@@ -66,7 +66,7 @@ export async function getUniswapQuoteFromContract({ queryKey }) {
         "function quoteExactInputSingle(address tokenIn, address tokenOut, uint24 fee, uint256 amountIn, uint160 sqrtPriceLimitX96) external returns (uint256 amountOut)"
     ];
     // eslint-disable-next-line no-unused-vars
-    const [_key, { tokenIn, tokenOut, amount, fee = 3000 }] = queryKey;
+    const [_key, { tokenIn, tokenOut, amount, fee = 3000 }] = queryKey; 
     // 🧮 Prepare input
     const addressIn = tokenIn.id;
     const addressOut = tokenOut.id;
@@ -74,13 +74,15 @@ export async function getUniswapQuoteFromContract({ queryKey }) {
     const amountInBase = parseUnits(safeAmount, Number(tokenIn.decimals));
 
     // 🪄 Setup read-only provider (you can use any RPC endpoint)
-    const RPC = await getAvailableRPC(RPC_URLS.UniswapV3);
-    const provider = new ethers.JsonRpcProvider(RPC);
+    if (!workingRPC.quoter){
+        workingRPC.quoter = await getAvailableRPC(RPC_URLS.default);
+    }
 
+    const provider = new ethers.JsonRpcProvider(workingRPC.quoter);  
     const quoter = new ethers.Contract(QUOTER_ADDRESS, QUOTER_ABI, provider);
 
     // 🔍 Call contract read (no gas, no CORS)
-    let amountOut;
+    let amountOut; 
     try {
         amountOut = await quoter.quoteExactInputSingle.staticCall(
             addressIn,

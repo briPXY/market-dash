@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { usePoolStore, usePriceStore } from "../stores/stores";
+import { usePoolStore, usePriceStore, useSourceStore } from "../stores/stores";
 import SwapForm from "./SwapForm";
 import { formatPrice } from "../utils/utils";
 import { swapDecimalRule } from "../constants/constants";
-import SwapQuotesPanel from "./SwapQuotesPanel";
+import SwapQuotesPanel from "./SwapQuotesPanel"; 
+import { SourceConst } from "../constants/sourceConst";
 
 function removeNonNumeric(rawValue) {
     let cleaned = rawValue
@@ -24,6 +25,7 @@ function removeNonNumeric(rawValue) {
 }
 
 export default function Swap({ token0, token1, isDEX }) {
+    const source = useSourceStore(state => state.src);
     const poolAddress = usePoolStore(state => state.address);
     const [sellAmount, setSellAmount] = useState('');
     const [buyAmount, setBuyAmount] = useState(0);
@@ -41,7 +43,7 @@ export default function Swap({ token0, token1, isDEX }) {
     };
 
     const handleSellChange = (value) => {
-        let cleaned = removeNonNumeric(value); console.log("CALLED")
+        let cleaned = removeNonNumeric(value);
         const numeric = parseFloat(cleaned.replace(',', '.'));
         setSellAmount(cleaned);
         if (!isNaN(numeric)) {
@@ -87,10 +89,11 @@ export default function Swap({ token0, token1, isDEX }) {
                 isDEX={isDEX}
             />
             <SwapQuotesPanel
+                queryFn={SourceConst[source].quoteFunction}
                 tokenIn={currentTokenIn}
                 tokenOut={currentTokenOut}
                 amount={sellAmount}
-                queryEnabled={currentTokenIn.id != null && sellAmount > 0}
+                enabled={currentTokenIn.id != null && sellAmount > 0}
             />
         </div>
     );

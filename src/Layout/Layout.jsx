@@ -287,12 +287,12 @@ BulletText.propTypes = {
     style: PropTypes.object,
 };
 
-export function TabPanelParent({ children, className = "w-full bg-primary-900 max-w-md mx-auto", tabClassName = "flex-1 py-2 text-sm font-medium ", activeTabClassName = "bg-primary-500", inactiveTabClassName = "bg-primary-500 hover:bg-primary-900", style = {} }) {
+export function TabPanelParent({ children, className = "w-full bg-primary-900 max-w-md mx-auto", tabClassName = "flex-1 py-2 text-sm font-medium ", activeTabClassName = "bg-primary-500", inactiveTabClassName = "bg-primary-500 hover:bg-primary-900", btnContainerClassName = "flex space-x-2", style = {} }) {
     const [activeTab, setActiveTab] = useState(0);
 
     return (
         <div className={className} style={style}>
-            <div className="flex space-x-2">
+            <div className={btnContainerClassName}>
                 {React.Children.map(children, (child, index) => (
                     <button
                         onClick={() => setActiveTab(index)}
