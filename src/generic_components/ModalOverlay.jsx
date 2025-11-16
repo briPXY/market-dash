@@ -1,19 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 
-export const ModalOverlay = ({ children, isOpen, onClose = () => { } }) => {
-    const [openState, setOpenState] = useState(isOpen);
+export const ModalOverlay = ({ children, isOpen, closeFn }) => {
     // Handle clicks on the backdrop (the outer div)
     const handleCloseClick = useCallback((event) => {
-        // Check if the click originated from the backdrop itself, not a child element
-        if (event.target === event.currentTarget) {
-            setOpenState(false);
-            onClose();
+        event.stopPropagation();
+        if (event.target === event.currentTarget && closeFn) {
+            closeFn();
         }
-    }, [onClose]);
+    }, [closeFn]);
 
-    useEffect(() => setOpenState(isOpen), [isOpen])
-
-    if (!openState) {
+    if (!isOpen) {
         return null;
     }
 
@@ -29,14 +25,16 @@ export const ModalOverlay = ({ children, isOpen, onClose = () => { } }) => {
         // Backdrop: Fixed position, full screen, semi-transparent black
         // Flex utilities center the content horizontally and vertically
         <div
-            className="fixed inset-0 z-50 bg-transparent flex items-center justify-center p-4 transition-opacity duration-300" 
+            onClick={handleCloseClick}
+            className="fixed inset-0 z-90 flex items-center justify-center p-4 transition-opacity duration-400"
             aria-modal="true"
             role="dialog"
+            style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)', backdropFilter: "blur(5px)" }}
         >
             {/* Close Button positioned at the top-right corner of the overlay */}
             <button
                 onClick={handleCloseClick}
-                className="absolute top-4 right-4 p-2 text-black hover:text-gray-800 transition-colors duration-150 rounded-full bg-gray-300 hover:bg-gray-50 z-50"
+                className="absolute top-4 right-4 p-2 text-black hover:text-gray-800 transition-all duration-500 rounded-full bg-gray-300 hover:bg-gray-50 z-90"
                 aria-label="Close modal"
             >
                 {CloseIcon}

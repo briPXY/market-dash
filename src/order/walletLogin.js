@@ -1,6 +1,6 @@
 import { BrowserProvider } from "ethers";
 
-export async function walletLogin(setState = () => { null }) {
+export async function walletLogin(onSuccess = () => { }, setState = () => { null }) {
     try {
         if (!window.ethereum) {
             setState("❌ No Ethereum wallet detected. Please install MetaMask or a similar wallet extension.");
@@ -9,7 +9,7 @@ export async function walletLogin(setState = () => { null }) {
 
         // Use BrowserProvider in ethers v6
         const provider = new BrowserProvider(window.ethereum);
-        
+
         setState("🚀 Requesting wallet accounts...");
         const accounts = await provider.send("eth_requestAccounts", []);
 
@@ -29,13 +29,17 @@ export async function walletLogin(setState = () => { null }) {
 
         let signature = null;
         try {
-            setState("✍️ Requesting signature for authentication message...");
+            setState("Requesting signature for authentication message...");
             signature = await signer.signMessage(messageToSign);
-            setState("✅ Message signed. Signature:\n" + signature);
+            setState("Message signed.");
+            // eslint-disable-next-line no-unused-vars
         } catch (signError) {
-            console.warn("⚠️ Message signing rejected or failed:", signError.message);
+            console.warn("Message signing rejected or failed");
             setState("Signature Required", "Signing the message is required for full authentication. You can still use the DApp, but some features might be limited.");
+            return null;
         }
+
+        onSuccess();
 
         return {
             address: connectedAddress,
@@ -43,7 +47,7 @@ export async function walletLogin(setState = () => { null }) {
         };
 
     } catch (error) {
-        setState("❌ Wallet login failed:\n" + error);
+        setState("Wallet login failed");
 
         let errorMessage = "An unknown error occurred during wallet login.";
         if (error.code === 4001) { // User rejected request

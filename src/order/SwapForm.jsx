@@ -1,18 +1,18 @@
 
 import { TokenIcon } from "@web3icons/react";
 import { SwapIcon } from "../Layout/svg";
-import { WalletLogin } from "./Login";
 import FiatValue from "./FiatValue";
 import { SwapTokenInfo } from "./components/SwapTokenInfo";
 import { SvgMemo } from "../Layout/Layout";
-import { useWalletStore } from "../stores/stores";
+import { useModalVisibilityStore, useWalletStore } from "../stores/stores";
 import { stdSymbol } from "../utils/utils";
-import { useState } from "react";
+// import { useState } from "react";
 
 
 function SwapForm({ currentTokenIn, currentTokenOut, handleSellChange, sellAmount, buyAmount, handleBuyChange, handleChangeSymbols, reversed, isDEX }) {
     const accountAddress = useWalletStore(state => state.address); // Real logged-in/off state  
-    const [loginState, setloginState] = useState(null); // For displaying login process status text only  
+    // const [loginState, setloginState] = useState(null);
+    const { setModalVisibility } = useModalVisibilityStore();
 
     if (!isDEX) return null;
 
@@ -64,15 +64,15 @@ function SwapForm({ currentTokenIn, currentTokenOut, handleSellChange, sellAmoun
                 </div>
             </div>
 
-            {!accountAddress && <WalletLogin setLogState={setloginState} />}
+            {!accountAddress && <button onClick={() => setModalVisibility("wallet", true)} className="bg-primary-500 p-3 rounded-md text-accent font-semibold">Login</button>}
             {accountAddress && <button className="bg-accent p-3 rounded-md text-primary-900 font-semibold">Swap</button>}
 
-
+            {/* 
             {loginState &&
                 <div className="h-full w-full bg-transparent-blur absolute left-0 top-0">
                     <div className="mx-auto max-w-[80%] p-4 bg-primary-900 rounded-md border-washed text-sm">{loginState}</div>
                 </div>
-            }
+            } */}
         </div>
     );
 }

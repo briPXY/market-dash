@@ -15,6 +15,7 @@ import Swap from "../order/Swap";
 import { SourceConst } from "../constants/sourceConst";
 import { initData } from "../constants/initData";
 import { invertedHistoricalPrices } from "../utils/utils";
+import WalletList from "../order/WalletList";
 
 function Market({ handleNetworkChange }) {
     const [range, setRange] = useState("1h");
@@ -70,6 +71,8 @@ function Market({ handleNetworkChange }) {
                     <SwapHistory swaps={data.swaps ? data.swaps : []} />
                 </div>
             </Flex>
+            {/* Modals */}
+            <WalletList/>
         </div>
     );
 }
