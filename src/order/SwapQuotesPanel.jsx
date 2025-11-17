@@ -6,6 +6,9 @@ import { ExchangeIcon } from '@web3icons/react';
 import { useEffect, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
 
+
+const initProps = { "Sell": '-', "Min. Receive": '-', "Avg. Price": '-', "Fee Tier": '-', "Quoter Address": '-' };
+
 export default function SwapQuotesPanel({ tokenIn, tokenOut, amount, enabled, queryFn }) {
     const source = useSourceStore(state => state.src);
     const poolAddress = usePoolStore(state => state.address);
@@ -40,12 +43,7 @@ export default function SwapQuotesPanel({ tokenIn, tokenOut, amount, enabled, qu
         retry: 1,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
-        initialData: {
-            Price: "-",
-            Liquidity: "-",
-            "Fee Tier": "-",
-            // whatever shape your quoteFunction normally returns
-        }
+        initialData: initProps
     });
 
     // useEffect(() => {
@@ -64,12 +62,12 @@ export default function SwapQuotesPanel({ tokenIn, tokenOut, amount, enabled, qu
             <div className='flex justify-between text-xs'>
                 <div key={source} className='text-washed flex flex-col flex-1 items-start gap-2'>
                     {
-                        SourceConst[source].quoteFunction.props.map(e => (<div key={e} >{e}</div>))
+                        Object.keys(data).map(e => (<div key={e} >{e}</div>))
                     }
                 </div>
                 <div key={amount} className='flex flex-col flex-1 items-end gap-2'>
                     {
-                        Object.keys(data).map(e => (<div style={{fontStyle:isFetching || isDebouncing ? "italic" : "normal"}} key={e}>{isDebouncing ? "pending" : isFetching ? "fetching" : data[e]}</div>))
+                        Object.keys(data).map(e => (<div style={{ fontStyle: isFetching || isDebouncing ? "italic" : "normal" }} key={e}>{isDebouncing ? "pending" : isFetching ? "fetching" : data[e]}</div>))
                     }
                 </div>
             </div>

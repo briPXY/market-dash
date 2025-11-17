@@ -1,4 +1,4 @@
-import { ethers, parseUnits } from "ethers"; 
+import { ethers, parseUnits } from "ethers";
 import { formatPrice, getAvailableRPC } from "../utils/utils";
 import { RPC_URLS, swapDecimalRule } from "../constants/constants";
 
@@ -66,7 +66,7 @@ export async function getUniswapQuoteFromContract({ queryKey }) {
         "function quoteExactInputSingle(address tokenIn, address tokenOut, uint24 fee, uint256 amountIn, uint160 sqrtPriceLimitX96) external returns (uint256 amountOut)"
     ];
     // eslint-disable-next-line no-unused-vars
-    const [_key, { tokenIn, tokenOut, amount, fee = 3000 }] = queryKey; 
+    const [_key, { tokenIn, tokenOut, amount, fee = 3000 }] = queryKey;
     // 🧮 Prepare input
     const addressIn = tokenIn.id;
     const addressOut = tokenOut.id;
@@ -74,15 +74,15 @@ export async function getUniswapQuoteFromContract({ queryKey }) {
     const amountInBase = parseUnits(safeAmount, Number(tokenIn.decimals));
 
     // 🪄 Setup read-only provider (you can use any RPC endpoint)
-    if (!workingRPC.quoter){
+    if (!workingRPC.quoter) {
         workingRPC.quoter = await getAvailableRPC(RPC_URLS.default);
     }
 
-    const provider = new ethers.JsonRpcProvider(workingRPC.quoter);  
+    const provider = new ethers.JsonRpcProvider(workingRPC.quoter);
     const quoter = new ethers.Contract(QUOTER_ADDRESS, QUOTER_ABI, provider);
 
     // 🔍 Call contract read (no gas, no CORS)
-    let amountOut; 
+    let amountOut;
     try {
         amountOut = await quoter.quoteExactInputSingle.staticCall(
             addressIn,
@@ -102,16 +102,19 @@ export async function getUniswapQuoteFromContract({ queryKey }) {
     const formattedOut = Number(ethers.formatUnits(amountOut, decOut));
     const executionPrice = formattedOut / formattedIn;
 
+    // Add symbol to quote panel's properties
+    const sellText = `Sell (${tokenIn.symbol})`;
+    const receiveText = `Min. Receive (${tokenOut.symbol})`;
+    const priceText = `Avg. Price (${tokenIn.symbol}/${tokenOut.symbol})`
+
     return {
-        "Amount-In": `${formatPrice(formattedIn.toString(), false, swapDecimalRule)} ${tokenIn.symbol}`,
-        "Amount-Out": `${formatPrice(formattedOut.toString(), false, swapDecimalRule)} ${tokenOut.symbol}`,
-        "Execution Price": executionPrice.toPrecision(6),
-        "Fee Tier": `${fee / 10000}%`,
-        "Quoter Contract": `${QUOTER_ADDRESS.slice(0, 12)}...`
+        [sellText]: `${formatPrice(formattedIn.toString(), false, swapDecimalRule)}`,
+        [receiveText]: `${formatPrice(formattedOut.toString(), false, swapDecimalRule)}`,
+        [priceText]: `${executionPrice.toPrecision(6)}`,
+        "Fee tier": `${fee / 10000}%`,
+        "Quoter Address": `${QUOTER_ADDRESS.slice(0, 10)}...${QUOTER_ADDRESS.slice(QUOTER_ADDRESS.length - 4, QUOTER_ADDRESS.length - 1)}`
     };
 }
-
-getUniswapQuoteFromContract.props = ["Amount-In", "Amount-Out", "Execution Price", "Fee Tier", "Quoter Contract"];
 
 export function initDummy() { return null }
 initDummy.props = ["Loading Network", "Loading Pool"]
