@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Flex, TabPanelParent } from "../Layout/Layout";
 import MarketChart from "./MarketChart";
 
 import { PriceUpdater } from './PriceUpdater';
 import { useChartQuery } from "../queries/chartquery";
 import { LivePriceText } from "./Components/LivePriceText";
-import { useSourceStore, usePoolStore } from "../stores/stores";
+import { useSourceStore, usePoolStore, usePriceInvertStore } from "../stores/stores";
 import { Hour24Changes } from "./Components/Hour24Changes";
 import { PoolSelector } from "./Components/PoolSelector";
 import { NetworkSelection } from "./Components/NetworkSelection";
@@ -16,17 +16,34 @@ import Swap from "../order/Swap";
 import { SourceConst } from "../constants/sourceConst";
 import { initData } from "../constants/initData";
 import WalletList from "../order/WalletList";
+import { PriceSample } from "../utils/price.math";
+import { invertedHistoricalPrices } from "../utils/utils";
 
 function Market({ handleNetworkChange }) {
     const [range, setRange] = useState("1h");
     const address = usePoolStore(state => state.address);
     const { src: network } = useSourceStore();
+    const invertedStatus = usePriceInvertStore((state) => state.priceInvert);
 
     const { data = initData, isError } = useChartQuery({
         address: address,
         interval: range,
         network: network,
     });
+
+    useEffect(() => {
+        if (!isError && data) {
+            PriceSample.historical = data.ohlc[0].close;
+        }
+
+    }, [data, isError]); // Dependencies: runs whenever `data` or `isError` changes
+
+    const invertedHistorical = useMemo(() => {
+        if (invertedStatus) {
+            return invertedHistoricalPrices(data.ohlc)
+        }
+    }
+        , [data, invertedStatus]);
 
     return (
         <div>
@@ -36,7 +53,7 @@ function Market({ handleNetworkChange }) {
                 <Flex className="justify-between gap-3 bg-primary-900 p-2 py-4 md:p-4 md:items-center">
                     <Flex className="flex-col md:flex-row md:gap-5 md:items-center items-start text-sm md:text-lg font-semibold">
                         <PoolSelector />
-                        <LivePriceText OHLCData={data.ohlc} />
+                        <LivePriceText OHLCData={invertedStatus ? invertedHistorical : data.ohlc} />
                         <PoolAddressView src={network} address={address} />
                     </Flex>
                     <Hour24Changes address={address} src={network} />
@@ -45,7 +62,7 @@ function Market({ handleNetworkChange }) {
                     <MarketChart
                         setRange={setRange}
                         range={range}
-                        OHLCData={data.ohlc}
+                        OHLCData={invertedStatus ? invertedHistorical : data.ohlc}
                         isError={isError}
                         network={SourceConst[network]}
                     />

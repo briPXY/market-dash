@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 // import { isTickPriceReversed } from './utils';
 import { SourceConst } from '../constants/sourceConst';
 
+export const PriceSample = { historical: 0 };
 /**
  * Convert Uniswap V3 sqrtPriceX96 to price (token1 per token0 by default)
  *
@@ -24,6 +25,7 @@ export function getPriceFromSqrtPriceX96(
     const sqrt = new Decimal(sqrtPriceX96.toString());
     const price = sqrt.pow(2).div(new Decimal(2).pow(192));
 
+
     // ❗ Correct: token0Decimals - token1Decimals
     const scaleFactor = new Decimal(10).pow(Number(token0Decimals) - Number(token1Decimals));
     let adjustedPrice = price.mul(scaleFactor);
@@ -32,7 +34,11 @@ export function getPriceFromSqrtPriceX96(
     //     adjustedPrice = new Decimal(1).div(adjustedPrice);
     // }
 
-    const result = adjustedPrice.toFixed(16);
+    const isOhlcAboveOne = PriceSample.historical > 1;
+    const isLivePriceAboveOne = adjustedPrice > 1;
+    const notInverted = isLivePriceAboveOne && isOhlcAboveOne;
+
+    const result = notInverted ? adjustedPrice.toFixed(16) : (1 / adjustedPrice).toFixed(16);
     return result;
 }
 
