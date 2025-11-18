@@ -1,7 +1,6 @@
 
 import './App.css';
 import { Section } from './Layout/Layout'
-import { PriceUpdater } from './market/PriceUpdater';
 import Market from './market/Market';
 import { TopBar } from './generic_components/TopBar';
 import "./idb/init.js";
@@ -47,8 +46,6 @@ function App() {
     return (
         <>
             {/* <BadComponentTest /> */}
-            <PriceUpdater type="trade" />  {/* ✅ Updates trade price */}
-            <PriceUpdater type="index" />  {/* ✅ Updates index price */}
             <Section className="overflow-visible w-full mb-1">
                 <TopBar handleNetworkChange={handleNetworkChange} />
             </Section>

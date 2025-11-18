@@ -23,7 +23,7 @@ export const DialogBalloon = ({
 
     return (
         <ModalOverlay isOpen={isOpen} onClose={onClose}>
-            <div className="space-y-4 p-4 rounded-lg bg-primary-900 min-w-70">
+            <div className="space-y-4 p-4 rounded-lg bg-primary-900">
                 {/* Header */}
                 {title && (
                     <div className="mb-4">
@@ -36,7 +36,7 @@ export const DialogBalloon = ({
                 {/* Message/Content */}
                 {message && (
                     <div className="my-4">
-                        <p className="text-washed text-sm leading-relaxed">
+                        <p className="text-washed text-sm leading-relaxed max-w-3xl">
                             {message}
                         </p>
                     </div>

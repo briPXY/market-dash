@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Flex, TabPanelParent } from "../Layout/Layout";
 import MarketChart from "./MarketChart";
 
+import { PriceUpdater } from './PriceUpdater';
 import { useChartQuery } from "../queries/chartquery";
 import { LivePriceText } from "./Components/LivePriceText";
-import { useSourceStore, usePoolStore, usePriceInvertStore } from "../stores/stores";
+import { useSourceStore, usePoolStore } from "../stores/stores";
 import { Hour24Changes } from "./Components/Hour24Changes";
 import { PoolSelector } from "./Components/PoolSelector";
 import { NetworkSelection } from "./Components/NetworkSelection";
@@ -14,27 +15,18 @@ import { SwapHistory } from "./SwapHistory";
 import Swap from "../order/Swap";
 import { SourceConst } from "../constants/sourceConst";
 import { initData } from "../constants/initData";
-import { invertedHistoricalPrices } from "../utils/utils";
 import WalletList from "../order/WalletList";
 
 function Market({ handleNetworkChange }) {
     const [range, setRange] = useState("1h");
     const address = usePoolStore(state => state.address);
     const { src: network } = useSourceStore();
-    const invertedStatus = usePriceInvertStore((state) => state.priceInvert);
 
     const { data = initData, isError } = useChartQuery({
         address: address,
         interval: range,
         network: network,
     });
-
-    const invertedHistorical = useMemo(() => {
-        if (invertedStatus) {
-            return invertedHistoricalPrices(data.ohlc)
-        }
-    }
-        , [data, invertedStatus]);
 
     return (
         <div>
@@ -53,14 +45,14 @@ function Market({ handleNetworkChange }) {
                     <MarketChart
                         setRange={setRange}
                         range={range}
-                        OHLCData={invertedStatus ? invertedHistorical : data.ohlc}
+                        OHLCData={data.ohlc}
                         isError={isError}
                         network={SourceConst[network]}
                     />
-                    <TabPanelParent className="md:flex-1" style={{ display: SourceConst[network]?.isDex ? "block" : "none" }} tabClassName = "rounded-md px-3 py-2 text-xs font-medium" btnContainerClassName = "flex pt-4 justify-center items-center bg-primary-900">
+                    <TabPanelParent className="md:flex-1" style={{ display: SourceConst[network]?.isDex ? "block" : "none" }} tabClassName="rounded-md px-3 py-2 text-xs font-medium" btnContainerClassName="flex pt-4 justify-center items-center bg-primary-900">
                         <Swap
                             token0={SourceConst[network].info[address].token0}
-                            token1={SourceConst[network].info[address].token1} 
+                            token1={SourceConst[network].info[address].token1}
                             isDEX={SourceConst[network].isDex}
                             label="Swap"
                         />
@@ -72,7 +64,11 @@ function Market({ handleNetworkChange }) {
                 </div>
             </Flex>
             {/* Modals */}
-            <WalletList/>
+            <WalletList />
+
+            {/* Non display / non pure component*/}
+            <PriceUpdater type="trade" />  {/* ✅ Updates trade price */}
+            <PriceUpdater type="index" />  {/* ✅ Updates index price */}
         </div>
     );
 }

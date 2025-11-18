@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js';
 import { ethers } from "ethers";
-import { isTickPriceReversed } from './utils';
+// import { isTickPriceReversed } from './utils';
 import { SourceConst } from '../constants/sourceConst';
 
 /**
@@ -17,7 +17,7 @@ export function getPriceFromSqrtPriceX96(
     network,
     address
 ) {
-    const isPriceReversed = isTickPriceReversed(network, address);
+    // const isPriceReversed = isTickPriceReversed(network, address);
     const token0Decimals = SourceConst[network].info[address].token0.decimals;
     const token1Decimals = SourceConst[network].info[address].token1.decimals;
 
@@ -28,9 +28,9 @@ export function getPriceFromSqrtPriceX96(
     const scaleFactor = new Decimal(10).pow(Number(token0Decimals) - Number(token1Decimals));
     let adjustedPrice = price.mul(scaleFactor);
 
-    if (isPriceReversed) {
-        adjustedPrice = new Decimal(1).div(adjustedPrice);
-    }
+    // if (isPriceReversed) {
+    //     adjustedPrice = new Decimal(1).div(adjustedPrice);
+    // }
 
     const result = adjustedPrice.toFixed(16);
     return result;

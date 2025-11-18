@@ -22,7 +22,7 @@ const PriceUpdater = ({ type }) => {
     const src = useSourceStore(state => state.src);
     const ws = useRef(null);
     let reconnectTimer = useRef(null);
-
+    
     useEffect(() => {
 
         if (pool == "init" || src == "init") return; 
@@ -31,14 +31,14 @@ const PriceUpdater = ({ type }) => {
             if (ws.current !== null) {
                 closeWebSocket(ws); 
             } 
-             
+
             const network = SourceConst[src];
             const socket = new WebSocket(network.getPriceURL(pool));
             ws.current = socket;
 
             socket.onmessage = (event) => {
                 const message = JSON.parse(event.data);
-                const converted = SourceConst[src].priceConverter(message.p, src, pool);
+                const converted = network.priceConverter(message.p, src, pool);
                 setPrice(converted);
             };
 
