@@ -8,7 +8,7 @@ export const SymbolPair = ({ poolAddress, className = "" }) => {
 
     return (
         <div className={className}>{
-            invertedStatus ? `${SourceConst[src].info[poolAddress].token1.symbol} / ${SourceConst[src].info[poolAddress].token0.symbol}` :
+            invertedStatus ? `${SourceConst[src].info[poolAddress].token0.symbol} / ${SourceConst[src].info[poolAddress].token1.symbol}` :
                 `${SourceConst[src].info[poolAddress].token0.symbol} / ${SourceConst[src].info[poolAddress].token1.symbol}`
         }</div>
     );

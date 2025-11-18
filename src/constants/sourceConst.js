@@ -2,7 +2,7 @@ import { getPriceFromSqrtPriceX96 } from "../utils/price.math";
 import { binance_24h, UniswapV3_24h } from "../queries/fetch24hour";
 import { binance, UniswapV3 } from "../queries/fetchHistory";
 import { binanceTicker, UniswapV3BulkPrice } from "../queries/livePrice";
-import { binanceTicks } from "./binanceTicks";
+import { binanceInitialTicks } from "./binanceTicks";
 import { WSS_DOMAIN } from "./environment";
 import { initData, initToken } from "./initData";
 import { getUniswapQuoteFromContract, getUniswapQuoteQueryFn, initDummy } from "../queries/quotes";
@@ -55,7 +55,7 @@ SourceConst.binance = {
     network: "binance-smart-chain",
     isDex: false,
     intervals: ["1m", "5m", "15m", "1h", "4h", "1d", "1w", "1M"],
-    info: binanceTicks,
+    info: binanceInitialTicks,
     livePrice: binanceTicker,
     ohlcFetch: binance,
     h24Query: binance_24h,
