@@ -22,8 +22,14 @@ export const subIndHeight = {
 
 export const Grid = {
     dashes: "3 6",
-    color: "rgb(90,125,240,1)",
+    color: "rgb(98,135,220,1)",
     thickness: 0.2,
     text: "rgb(255,255,255,0.7)"
 }
 
+const rootStyles = getComputedStyle(document.documentElement); 
+
+export const Color = {
+    bullish: rootStyles.getPropertyValue('--c-accent').trim(),
+    bearish: rootStyles.getPropertyValue('--c-accent-negative').trim(),
+}

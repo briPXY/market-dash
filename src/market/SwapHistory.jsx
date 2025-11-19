@@ -30,7 +30,7 @@ export const SwapHistory = ({ swaps }) => {
     };
 
     return (
-        <div className="w-full md:w-260">
+        <div className="w-full md:w-230">
             <div className="mb-3 mt-4 text-xs md:text-lg">Transactions</div>
 
             {/* Column Labels */}
@@ -54,7 +54,7 @@ export const SwapHistory = ({ swaps }) => {
                 style={{ height: '32em', overflow: 'hidden', transition: 'height 0.3s ease' }}
                 className="border-secondary text-[11px] md:text-sm">
                 {swaps.map((trade, index) => (
-                    <div key={index} className="flex justify-between py-1 md:py-2.5 md:px-4 px-2">
+                    <div key={index} className="flex justify-between text-xs py-1 md:py-2.5 md:px-4 px-2">
                         <span className="w-1/6 text-left">{trade.date}</span>
 
                         {/* Price: force wrap with CSS */}

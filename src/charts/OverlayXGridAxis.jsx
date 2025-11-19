@@ -16,7 +16,7 @@ const OverlayXGridAxis = ({ bandXScale, innerWidth, range, parentRef, tooltipRef
             hoveredData.date = d3.timeFormat("%H:%M:%S")(tickData.d);
             tooltipRef.current.innerHTML = `<div> O:${data[tickData.i].open.toFixed(digits)} </div>
                  <div class="text-accent"> H:${data[tickData.i].high.toFixed(digits)} </div>
-                 <div class="text-negative-accent"> L:${data[tickData.i].low.toFixed(digits)} </div>
+                 <div class="text-accent-negative"> L:${data[tickData.i].low.toFixed(digits)} </div>
                  <div> C:${data[tickData.i].close.toFixed(digits)} </div>
                  <div> VOL:${data[tickData.i].volume.toFixed(2)} </div>`;
         }

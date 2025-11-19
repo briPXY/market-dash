@@ -25,7 +25,7 @@ export function addToolTipHandleOverlay(nodes, width, tooltipRef, bandXScale, in
                 .html(
                     `<div> O:${d.open.toFixed(4)} </div>
                  <div class="text-accent"> H:${d.high.toFixed(4)} </div>
-                 <div class="text-negative-accent"> L:${d.low.toFixed(4)} </div>
+                 <div class="text-accent-negative"> L:${d.low.toFixed(4)} </div>
                  <div> C:${d.close.toFixed(4)} </div>
                  <div> VOL:${d.volume.toFixed(2)} </div>`
                 )

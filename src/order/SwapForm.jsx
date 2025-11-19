@@ -64,8 +64,8 @@ function SwapForm({ currentTokenIn, currentTokenOut, handleSellChange, sellAmoun
                 </div>
             </div>
 
-            {!accountAddress && <button onClick={() => setModalVisibility("wallet", true)} className="bg-primary-500 p-3 rounded-md text-accent font-semibold">Login</button>}
-            {accountAddress && <button className="bg-accent p-3 rounded-md text-primary-900 font-semibold">Swap</button>}
+            {!accountAddress && <button onClick={() => setModalVisibility("wallet", true)} className="bg-primary-500 p-3 rounded-md text-primary font-semibold">Login</button>}
+            {accountAddress && <button className="bg-primary p-3 rounded-md text-primary-900 font-semibold">Swap</button>}
 
             {/* 
             {loginState &&

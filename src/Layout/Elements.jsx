@@ -101,7 +101,7 @@ const Text = ({ as = "p", className = "", children }) => {
 };
 
 const NumberSign = ({ num = 0, baseNum = 0, unit = '', className = "" }) => {
-    const textColor = Number(num) >= baseNum ? "text-accent" : "text-negative-accent";
+    const textColor = Number(num) >= baseNum ? "text-accent" : "text-accent-negative";
     return <div className={`${textColor} ${className}`}>{`${num}${unit}`}</div>;
 };
 

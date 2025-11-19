@@ -1,11 +1,12 @@
-import { chartSvgCleanup } from "../helper"; 
+import { Color } from "../config";
+import { chartSvgCleanup } from "../helper";
 
-export function candlestick(d3, svg, scale, tooltipRef, historicalData, bandXScale, innerHeight, bullishColor = "#2fb59c", bearishColor = "#e74c3c") {
+export function candlestick(d3, svg, scale, tooltipRef, historicalData, bandXScale) {
 
     const candleWidth = bandXScale.bandwidth(); // Use this consistent bandwidth
 
     // Clear previous drawings from other chart types too
-    chartSvgCleanup(svg); 
+    chartSvgCleanup(svg);
 
     const candles = svg.selectAll(".main")
         .data(historicalData)
@@ -17,9 +18,9 @@ export function candlestick(d3, svg, scale, tooltipRef, historicalData, bandXSca
         .attr("transform", d => `translate(${bandXScale(d.date) + candleWidth / 2}, 0)`);
 
     const colorMap = {
-        "-1": bearishColor,
+        "-1": Color.bearish,
         "0": "#999999",
-        "1": bullishColor
+        "1": Color.bullish
     };
 
     // Draw wicks

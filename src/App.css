@@ -1,14 +1,16 @@
-@import "tailwindcss"; 
+@import "tailwindcss";
 
 /* stylelint-disable at-rule-no-unknown */
 @theme {
     --font-mono: "IBMPlexMono", monospace;
-    --color-primary-100: #2a324b;
-    --color-primary-500: #151821;
-    --color-primary-900: #0e0e14;
-    --color-accent: #2fb59c;
-    --color-washed: #aec2ff75;
-    --color-washed-dim: #aec2ff35;
+    --color-primary: var(--c-primary);
+    --color-primary-100: var(--c-primary-100);
+    --color-primary-500: var(--c-primary-500);
+    --color-primary-900: var(--c-primary-900);
+    --color-accent: var(--c-accent);
+    --color-accent-negative: var(--c-accent-negative);
+    --color-washed: var(--c-washed);
+    --color-washed-dim: var(--c-washed-dim);
 }
 
 #root {
@@ -112,12 +114,12 @@ button:hover {
 /* Chrome, Safari, Edge, Opera */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 /* Firefox */
 input[type=number] {
-  appearance: textfield;
-  -moz-appearance: textfield;
+    appearance: textfield;
+    -moz-appearance: textfield;
 }

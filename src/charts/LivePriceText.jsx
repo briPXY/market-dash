@@ -6,7 +6,7 @@ const LivePriceText = ({ OHLCData }) => {
     const lastPrice = useMemo(() => OHLCData[OHLCData.length - 1].close, [OHLCData]);
  
     return (
-        <div className={`${livePrice >= lastPrice ? "bg-accent" : "bg-negative-accent"} rounded-md p-1 absolute right-0`}>
+        <div className={`${livePrice >= lastPrice ? "bg-accent" : "bg-accent-negative"} rounded-md p-1 absolute right-0`}>
 
         </div>
     );

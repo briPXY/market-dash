@@ -1,6 +1,7 @@
+import { Color } from "../config";
 import { chartSvgCleanup } from "../helper";
 
-export function line(d3, svg, scale, tooltipRef, historicalData, bandXScale, innerHeight, lineColor = "#2fb59c", fillColor = "#2fb59c26") {
+export function line(d3, svg, scale, tooltipRef, historicalData, bandXScale, innerHeight, fillColor = Color.bullish + "20") {
     const barWidth = bandXScale.bandwidth(); // Get the bandwidth for centering
 
     // IMPORTANT: Clearing logic relies on the ".main" class, as per your request.
@@ -25,8 +26,8 @@ export function line(d3, svg, scale, tooltipRef, historicalData, bandXScale, inn
         .attr("class", "line-chart-circle-specific")
         .attr("cx", d => bandXScale(d.date) + barWidth / 2)
         .attr("cy", d => scale.y(d.close))
-        .attr("r", 3)
-        .attr("fill", lineColor);
+        .attr("r", 2)
+        .attr("fill", Color.bullish);
 
     // Draw area
     svg.append("path")
@@ -40,7 +41,7 @@ export function line(d3, svg, scale, tooltipRef, historicalData, bandXScale, inn
         .datum(historicalData)
         .attr("class", "main line-chart-path-specific") // Added "main" for clearing, "line-chart-path-specific" for potential internal use
         .attr("fill", "none")
-        .attr("stroke", lineColor)
+        .attr("stroke", Color.bullish)
         .attr("stroke-width", 2)
         .attr("d", lineGenerator);
 }

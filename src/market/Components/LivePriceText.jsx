@@ -14,7 +14,7 @@ export const LivePriceText = ({ OHLCData }) => {
         return OHLCData[OHLCData.length - 1].close;
     }, [OHLCData]);
 
-    const textColor = useMemo(() => Number(tradePrice) >= lastClosePrice ? "text-accent" : "text-negative-accent", [lastClosePrice, tradePrice]);
+    const textColor = useMemo(() => Number(tradePrice) >= lastClosePrice ? "text-accent" : "text-accent-negative", [lastClosePrice, tradePrice]);
 
     return (
         <div className="flex gap-0.5">

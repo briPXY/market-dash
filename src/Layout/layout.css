@@ -1,166 +1,165 @@
 :root {
-  --border-radius: 0px;
-  /* Default border radius */
-  --padding: 5px;
-  --line-color: rgba(255, 255, 255, 0.1);
-  --border: 1px solid rgba(255, 255, 255, 0.1);
-  --gap: 8px;
-  --section-width: 95%;
+    --border-radius: 0px;
+    /* Default border radius */
+    --padding: 5px;
+    --line-color: rgba(255, 255, 255, 0.1);
+    --border: 1px solid rgba(255, 255, 255, 0.1);
+    --gap: 8px;
+    --section-width: 95%;
 
-  --display-family: 'Chillax-Regular';
-  --display-size: 64px;
-  --display-height: 1.2em;
-  font-weight: 400;
-  font-size: 18px;
-  --menu-size: 14px;
-  color: #cccccc;
-  --display-txt-color: #eee;
+    --display-family: 'Chillax-Regular';
+    --display-size: 64px;
+    --display-height: 1.2em;
+    font-weight: 400;
+    font-size: 18px;
+    --menu-size: 14px;
+    color: #dddddd;
+    --display-txt-color: #eee;
 
-  --panel-background: #0f0f14;
+    --panel-background: #0f0f14;
 
-  --acc-01: #2fb59c;
-  --color-accent: #2fb59c;
-  --bg-primary-900: #0e0e14;
-  --bg-mid: #151821;
-  --bg-light: #2a324b;
+    --c-primary: #5e81eb;
+    --c-primary-100: #2a324b;
+    --c-primary-500: #171a23;
+    --c-primary-900: #0f1016;
+    --c-accent: #46BA84;
+    --c-accent-negative: #C64455;
+    --c-washed: #b4c7ff9e;
+    --c-washed-dim: #aec2ff35;
 }
 
 
 @layer utilities {
-  .bg-accent {
-    background-color: var(--color-accent);
-  }
+    .bg-accent {
+        background-color: var(--color-accent);
+    }
 
-  .bg-negative-accent {
-    background-color: tomato;
-  }
+    .bg-negative-accent {
+        background-color: tomato;
+    }
 
-  .bg-transparent-blur {
-    background-color: #0f0f147e;
-    backdrop-filter: blur(5px);
-  } 
-  
-  .text-negative-accent {
-    color: tomato;
-  }
+    .bg-transparent-blur {
+        background-color: #0f0f147e;
+        backdrop-filter: blur(5px);
+    }
 
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
+    .text-negative-accent {
+        color: tomato;
+    }
 
-  .hide-scrollbar {
-    -ms-overflow-style: none;
-    /* IE/Edge */
-    scrollbar-width: none;
-    /* Firefox */
-  }
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
 
-  .border-secondary {
-    border: 1px solid var(--bg-mid);
-  }
+    .hide-scrollbar {
+        -ms-overflow-style: none;
+        /* IE/Edge */
+        scrollbar-width: none;
+        /* Firefox */
+    }
 
-  .border-active {
-    border: 1px solid var(--color-accent);
-  }
+    .border-active {
+        border: 1px solid var(--color-accent);
+    }
 }
 
 
 @font-face {
-  font-family: 'Manrope';
-  src: url('../assets/fonts/Manrope-VariableFont_wght.ttf') format('truetype');
-  font-weight: 100 700;
-  font-style: normal;
-  font-display: swap;
+    font-family: 'Manrope';
+    src: url('../assets/fonts/Manrope-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 700;
+    font-style: normal;
+    font-display: swap;
 }
 
 /* IBM Plex Mono Regular */
 @font-face {
-  font-family: 'IBMPlexMono';
-  src: url('../assets/fonts/IBMPlexMono-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
+    font-family: 'IBMPlexMono';
+    src: url('../assets/fonts/IBMPlexMono-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
 }
 
 /* IBM Plex Mono Medium */
 @font-face {
-  font-family: 'IBMPlexMono';
-  src: url('../assets/fonts/IBMPlexMono-Medium.ttf') format('truetype');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
+    font-family: 'IBMPlexMono';
+    src: url('../assets/fonts/IBMPlexMono-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
 }
 
 
 .flex-flex {
-  display: flex;
-  border-radius: var(--border-radius);
-  box-sizing: border-box;
-  flex-wrap: nowrap,
+    display: flex;
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+    flex-wrap: nowrap,
 }
 
 .f-wide {
-  width: 100%
+    width: 100%
 }
 
 .bullet-text {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .section-s {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .stacked-images {
-  position: relative;
-  display: flex;
-  width: 100%;
+    position: relative;
+    display: flex;
+    width: 100%;
 }
 
 .menu-text {
-  font-weight: 600;
-  font-size: var(--menu-size);
-  text-transform: uppercase;
-  line-height: 1;
+    font-weight: 600;
+    font-size: var(--menu-size);
+    text-transform: uppercase;
+    line-height: 1;
 }
 
 .panel {
-  padding: var(--padding);
-  background-color: var(--panel-background);
-  border-radius: var(--border-radius);
+    padding: var(--padding);
+    background-color: var(--panel-background);
+    border-radius: var(--border-radius);
 }
 
 .bordered {
-  border: var(--border);
+    border: var(--border);
 }
 
 .bordered-side {
-  border-right: var(--border);
-  border-left: var(--border);
+    border-right: var(--border);
+    border-left: var(--border);
 }
 
 .display-text-normal {
-  font-size: var(--display-size);
+    font-size: var(--display-size);
 }
 
 .display-text-small {
-  font-size: 56px !important;
+    font-size: 56px !important;
 }
 
 .floating-modal {
-  position: fixed;
-  /* Fixes the element in the viewport */
-  top: 50%;
-  /* Aligns the top edge to the middle of the viewport */
-  left: 50%;
-  /* Aligns the left edge to the middle of the viewport */
-  transform: translate(-50%, -50%);
-  /* Centers the element precisely */
-  z-index: 1000;
-  /* Ensures the modal is on top of other content */
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.19);
-  /* Soft shadow */
-  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-  /* Smooth transition for appearance */
+    position: fixed;
+    /* Fixes the element in the viewport */
+    top: 50%;
+    /* Aligns the top edge to the middle of the viewport */
+    left: 50%;
+    /* Aligns the left edge to the middle of the viewport */
+    transform: translate(-50%, -50%);
+    /* Centers the element precisely */
+    z-index: 1000;
+    /* Ensures the modal is on top of other content */
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.19);
+    /* Soft shadow */
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    /* Smooth transition for appearance */
 }
