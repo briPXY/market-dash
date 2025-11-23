@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePoolStore, usePriceStore, useSourceStore } from "../stores/stores";
 import SwapForm from "./SwapForm";
 import { formatPrice } from "../utils/utils";
 import { swapDecimalRule } from "../constants/constants";
-import SwapQuotesPanel from "./SwapQuotesPanel"; 
+import SwapQuotesPanel from "./SwapQuotesPanel";
 import { SourceConst } from "../constants/sourceConst";
 
 function removeNonNumeric(rawValue) {
@@ -32,7 +32,7 @@ export default function Swap({ token0, token1, isDEX }) {
     const [currentTokenIn, setcurrentTokenIn] = useState(token1);
     const [currentTokenOut, setcurrentTokenOut] = useState(token0);
     const [reversed, setReversed] = useState(false);
-    const currentRate = usePriceStore((state) => state.trade);
+    const queryOrient = useRef({});
 
     const handleChangeSymbols = (tokenIn, tokenOut, sell, buy, reverse = false) => {
         setcurrentTokenIn(tokenIn);
@@ -43,9 +43,12 @@ export default function Swap({ token0, token1, isDEX }) {
     };
 
     const handleSellChange = (value) => {
+
+        const currentRate = usePriceStore.getState().trade;
         let cleaned = removeNonNumeric(value);
         const numeric = parseFloat(cleaned.replace(',', '.'));
         setSellAmount(cleaned);
+
         if (!isNaN(numeric)) {
             const amount = reversed ? numeric / currentRate : numeric * currentRate;
             const formatted = formatPrice(amount.toFixed(24).toString(), false, swapDecimalRule);
@@ -53,12 +56,16 @@ export default function Swap({ token0, token1, isDEX }) {
         } else {
             setBuyAmount(0); // fallback
         }
+
+        queryOrient.current = { amount: cleaned, method: "quoteExactInputSingle" }; // Quote based on exact sell value
     };
 
     const handleBuyChange = (value) => {
+        const currentRate = usePriceStore.getState().trade;
         let cleaned = removeNonNumeric(value);
         const numeric = parseFloat(cleaned.replace(',', '.'));
         setBuyAmount(cleaned);
+
         if (!isNaN(numeric)) {
             const amount = reversed ? numeric * currentRate : numeric / currentRate;
             const formatted = formatPrice(amount.toFixed(24).toString(), false, swapDecimalRule);
@@ -66,6 +73,8 @@ export default function Swap({ token0, token1, isDEX }) {
         } else {
             setSellAmount(0); // fallback
         }
+
+        queryOrient.current = { amount: cleaned, method: "quoteExactOutputSingle" }; // Quote based on exact buy value
     };
 
     useEffect(() => { // Reset form when pool address changed
@@ -93,6 +102,7 @@ export default function Swap({ token0, token1, isDEX }) {
                 tokenIn={currentTokenIn}
                 tokenOut={currentTokenOut}
                 amount={sellAmount}
+                queryKeys={{ tokenIn: currentTokenIn, tokenOut: currentTokenOut, ...queryOrient.current }}
                 enabled={currentTokenIn.id != null && sellAmount > 0}
             />
         </div>

@@ -66,7 +66,7 @@ function Market({ handleNetworkChange }) {
                         isError={isError}
                         network={SourceConst[network]}
                     />
-                    <TabPanelParent className="md:flex-1" style={{ display: SourceConst[network]?.isDex ? "block" : "none" }} tabClassName="rounded-md px-3 py-2 text-xs font-medium" btnContainerClassName="flex pt-4 justify-center items-center bg-primary-900">
+                    <TabPanelParent className="md:flex-1" style={{ display: SourceConst[network]?.isDex ? "block" : "none" }} tabClassName="flex-1 rounded-t-lg px-3 py-2 bo text-sm font-semibold" btnContainerClassName="flex px-3 pt-4 justify-center items-center bg-primary-900">
                         <Swap
                             token0={SourceConst[network].info[address].token0}
                             token1={SourceConst[network].info[address].token1}

@@ -17,9 +17,9 @@ function SwapForm({ currentTokenIn, currentTokenOut, handleSellChange, sellAmoun
     if (!isDEX) return null;
 
     return (
-        <div className="flex flex-col p-3 gap-2 bg-primary-900 w-full h-full relative">
+        <div className="flex flex-col px-3 pb-3 gap-2 bg-primary-900 w-full h-full relative">
             <div className="flex gap-0 flex-col items-center">
-                <div className="flex flex-col items-start gap-2 rounded-lg p-4 bg-primary-500 hover:border-active w-full">
+                <div className="flex flex-col items-start gap-1 rounded-b-lg p-4 bg-primary-500 hover:border-active w-full">
                     <SwapTokenInfo label={"SELL"} tokenName={currentTokenIn.name} />
                     <div className="flex items-center w-full justify-between">
                         <input
@@ -28,7 +28,7 @@ function SwapForm({ currentTokenIn, currentTokenOut, handleSellChange, sellAmoun
                             pattern="[0-9]*[.,]?[0-9]*"
                             value={sellAmount}
                             onChange={(e) => handleSellChange(e.target.value)}
-                            className="px-0 py-2 focus-within:outline-1 text-white font-semibold w-full text-2xl"
+                            className="px-0 py-2 focus-within:outline-1 text-white font-medium w-full text-2xl"
                         />
                         <TokenIcon symbol={stdSymbol(currentTokenIn.symbol).toLowerCase()} size={36} color="#fff" variant="branded" />
                         <span className="ml-1 text-white">{currentTokenIn.symbol}</span>
@@ -46,7 +46,7 @@ function SwapForm({ currentTokenIn, currentTokenOut, handleSellChange, sellAmoun
                     </SvgMemo>
                 </button>
 
-                <div className="flex flex-col items-start gap-2 rounded-lg p-4 bg-primary-500 hover:border-active w-full">
+                <div className="flex flex-col items-start gap-1 rounded-lg p-4 bg-primary-500 hover:border-active w-full">
                     <SwapTokenInfo label={"BUY"} tokenName={currentTokenOut.name} />
                     <div className="flex items-center w-full justify-between">
                         <input
@@ -54,8 +54,8 @@ function SwapForm({ currentTokenIn, currentTokenOut, handleSellChange, sellAmoun
                             inputMode="decimal"
                             pattern="[0-9]*[.,]?[0-9]*"
                             value={buyAmount}
-                            onChange={(e) => handleBuyChange((e.target.value))}
-                            className="px-0 py-2 focus-within:outline-1 text-white font-semibold w-full text-2xl"
+                            onChange={(e) => handleBuyChange(e.target.value)}
+                            className="px-0 py-2 focus-within:outline-1 text-white font-medium w-full text-2xl"
                         />
                         <TokenIcon symbol={stdSymbol(currentTokenOut.symbol).toLowerCase()} size={36} color="#fff" variant="branded" />
                         <span className="ml-1 text-white">{currentTokenOut.symbol}</span>

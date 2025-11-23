@@ -106,7 +106,7 @@ const Section = ({ children, style = {}, className = "", ...props }) => {
 const BoxStretch = ({ className, style = {}, children, ...props }) => {
     return (
         <div
-            className={`border-[none] w-100 h-100 p-[var(--padding)] ${className}`}
+            className={`border-[none] w-100 h-100 p-(--padding) ${className}`}
             style={{
                 borderRadius: "var(--border-radius)",
                 boxSizing: "border-box",
@@ -287,7 +287,7 @@ BulletText.propTypes = {
     style: PropTypes.object,
 };
 
-export function TabPanelParent({ children, className = "w-full bg-primary-900 max-w-md mx-auto", tabClassName = "flex-1 py-2 text-sm font-medium ", activeTabClassName = "bg-primary-500", inactiveTabClassName = "bg-primary-500 hover:bg-primary-900", btnContainerClassName = "flex space-x-2", style = {} }) {
+export function TabPanelParent({ children, className = "w-full bg-primary-900 max-w-md mx-auto", tabClassName = "flex-1 py-2 text-sm font-medium ", activeTabClassName = "bg-primary-100 border-primary", inactiveTabClassName = "bg-primary-500 hover:bg-primary-900", btnContainerClassName = "flex w-full space-x-2", style = {} }) {
     const [activeTab, setActiveTab] = useState(0);
 
     return (
