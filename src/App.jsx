@@ -4,10 +4,12 @@ import { Section } from './Layout/Layout'
 import Market from './market/Market';
 import { TopBar } from './generic_components/TopBar';
 import "./idb/init.js";
-import { usePoolStore, useSourceStore } from './stores/stores';
+import { usePoolStore, useSourceStore, useWalletStore } from './stores/stores';
 import { useEffect } from 'react';
 import { isSavedStateExist, loadState } from './idb/stateDB';
 import { initPoolsInfo } from './idb/init.js';
+import { localStorageLoadDottedKeyAll } from './utils/utils';
+import { tryReconnectWallet } from './order/wallet';
 
 // eslint-disable-next-line no-unused-vars
 function BadComponentTest() {
@@ -27,6 +29,7 @@ function App() {
         }
     }
 
+    // Init handler
     useEffect(() => {
         async function init() {
             const savedNetworkExist = await isSavedStateExist(`savedNetwork`);
@@ -39,9 +42,31 @@ function App() {
             else {
                 setSaved(false);
             }
+
+            // Load saved wallet login
+            const savedWalletLogin = localStorageLoadDottedKeyAll("wallet.address");
+
+            if(savedWalletLogin){
+                const isConnected = await tryReconnectWallet(savedWalletLogin);
+                localStorage.setItem('wallet.isConnected', isConnected);
+                useWalletStore.getState().setWalletInfo(savedWalletLogin); 
+            }
         }
         init();
-    }, [setAddress, setSaved, setSrc])
+    }, [setAddress, setSaved, setSrc]);
+
+    // App on-close handler
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            // Browser wallet need connected again after app close
+            localStorage.setItem('wallet.isConnected', 'false');
+        }
+    
+        window.addEventListener('beforeunload', handleBeforeUnload)
+        return () => {
+          window.removeEventListener('beforeunload', handleBeforeUnload)
+        }
+      }, [])
 
     return (
         <>

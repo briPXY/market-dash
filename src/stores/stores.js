@@ -53,22 +53,78 @@ export const usePriceInvertStore = create((set) => ({
     },
 }));
 
-// User wallet login info
-export const useWalletStore = create((set) => ({
-    address: null,          // string | null
-    signature: null,        // string | null
-    message: null,          // string | null
+// User wallet login info 
+export const useWalletStore = create((set, get) => ({
+    // Common wallet info properties
+    address: null,          // string
+    signature: null,        // string
+    message: null,          // string (the signed message)
+    chainId: null,          // number | string
+    provider: null,         // "injected" | "walletconnect" | "ledger" | etc.
+    connector: null,        // MetaMask / Rabby / OKX / etc.
+    blockchain: null,
+    networkName: null,      // mainnet, polygon, arbitrum...
+    isConnected: false,     // boolean
 
-    setWalletInfo: ({ address, signature, message }) =>
-        set({ address, signature, message }),
+    /**
+     * Update multiple props at once.
+     * Only updates keys that exist in the store.
+     * Converts string booleans ("true"/"false") to real booleans.
+     */
+    setWalletInfo: (dataObj) => {
+      const validKeys = Object.keys(get());
+      const updateObj = {};
+    
+      for (const key in dataObj) {
+        if (validKeys.includes(key)) {
+          let value = dataObj[key];
+    
+          // detect boolean strings
+          if (value === 'true') value = true;
+          else if (value === 'false') value = false;
+    
+          updateObj[key] = value;
+        }
+      }
+    
+      set(updateObj);
+    },
 
-    clearWalletInfo: () =>
-        set({ address: null, signature: null, message: null }),
+    /**
+     * Set a single property safely.
+     * Ignores unknown props.
+     */
+    setWalletProp: (key, value) => {
+        const validKeys = Object.keys(get());
+
+        if (validKeys.includes(key)) {
+            set({ [key]: value });
+        }
+    },
+
+    /**
+     * Clears ALL wallet data — "log off"
+     */
+    logoutWallet: () => {
+        const validKeys = Object.keys(get());
+        const cleared = {};
+
+        validKeys.forEach((key) => {
+            // keep only functions unmodified
+            if (typeof get()[key] !== "function") {
+                cleared[key] = null;
+            }
+        });
+
+        set({ ...cleared, isConnected: false });
+    },
 }));
+
 
 // Modal overlay visibility
 export const useModalVisibilityStore = create((set) => ({
     wallet: false,
+    account: false,
     setModalVisibility: (modal, status) => set({ [modal]: status }),
 }));
 

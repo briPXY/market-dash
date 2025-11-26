@@ -4,7 +4,8 @@ import { ModalOverlay } from "../generic_components/ModalOverlay";
 import { useModalVisibilityStore, useWalletStore } from "../stores/stores";
 import LineTextLine from "../generic_components/LineTextLine";
 import { WalletIcon } from "@web3icons/react";
-import { walletLogin } from "./walletLogin";
+import { extensionWalletLogin } from "./wallet";
+import { localStorageSaveDottedKeyAll } from "../utils/utils";
 
 //Hash-map of provider flags to friendly names
 const walletObjects = {
@@ -24,13 +25,23 @@ export default function WalletList() {
     const { setModalVisibility } = useModalVisibilityStore();
     const [wallets, setWallets] = useState([]);
     const [hasProvider, setHasProvider] = useState(false);
-    const walletAddress = useWalletStore(state => state.address)
+    const walletAddress = useWalletStore(state => state.address);
+    const [loginText, setLoginText] = useState("");
 
     const handleLogin = async () => {
-        const { address, signature } = await walletLogin();
+        setLoginText("");
+        const loginInfo = await extensionWalletLogin(setLoginText);
 
-        if (address && signature) {
-            useWalletStore.getState().setWalletInfo({ address, signature, message: "" });
+        if (loginInfo) {
+            localStorageSaveDottedKeyAll("wallet", loginInfo)
+            useWalletStore.getState().setWalletInfo(loginInfo);
+            setTimeout(() => {
+                setModalVisibility("wallet", false);
+                setLoginText("");
+            }, 2000);
+        }
+        else {
+            setLoginText("Login cancelled");
         }
     };
 
@@ -72,11 +83,11 @@ export default function WalletList() {
 
     return (
         <ModalOverlay isOpen={visibility} closeFn={() => setModalVisibility("wallet", false)}>
-            <div className="shadow-lg shadow-black/40 bg-primary-900 rounded-lg w-80 p-5 text-white border-1 border-washed-dim">
-                {!walletAddress && <div>Connect a wallet</div>}
+            <div className="shadow-lg shadow-black/40 bg-primary-900 rounded-lg w-80 p-5 text-white border border-washed-dim">
+                {!walletAddress && <div className="text-lg">Connect a wallet</div>}
                 {walletAddress && <div className="text-accent">Wallet login success!</div>}
                 <div className="h-4"></div>
-                <LineTextLine>Installed Wallets</LineTextLine>
+                <LineTextLine>Detected Wallets</LineTextLine>
 
                 {!hasProvider && <p>No Ethereum wallet detected.</p>}
 
@@ -93,6 +104,8 @@ export default function WalletList() {
                         ))}
                     </ul>
                 )}
+
+                <div className="text-xs py-4">{loginText}</div>
             </div>
         </ModalOverlay>
     );

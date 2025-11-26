@@ -100,7 +100,7 @@ export async function getAvailableRPC(rpcUrls) {
             } else {
                 throw new Error("No block data received");
             }
-        } catch (error) { 
+        } catch (error) {
             console.warn(`❌ RPC failed [${url}]: ${error.message}`);
             // Continue to next URL
         }
@@ -110,3 +110,74 @@ export async function getAvailableRPC(rpcUrls) {
     console.error("⚠️ All RPC URLs failed.");
     throw new Error("⚠️ All RPC URLs failed.");
 }
+
+export function localStorageSaveDottedKeyAll(name, obj) {
+    if (!name || typeof obj !== "object" || obj === null) {
+        console.error("localStorageObjectSave: invalid arguments");
+        return false;
+    }
+
+    // Remove old stored keys with this prefix
+    const prefix = `${name}.`;
+
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(prefix)) {
+            localStorage.removeItem(key);
+        }
+    }
+
+    // Save new values
+    for (const prop in obj) {
+        if (!Object.hasOwn(obj, prop)) continue;      // ✔ ESLint-safe
+        if (typeof obj[prop] === "function") continue;
+
+        const storageKey = `${name}.${prop}`;
+        const value = obj[prop] === null ? "" : String(obj[prop]);
+
+        localStorage.setItem(storageKey, value);
+    }
+
+    return true;
+}
+
+export function localStorageLoadDottedKeyAll(keySample) {
+    if (!keySample.includes(".")) return null;
+
+    const [prefix] = keySample.split(".");
+    const result = {};
+    const prefixDot = prefix + ".";
+    let foundAny = false;
+
+    for (let i = 0; i < localStorage.length; i++) {
+        const fullKey = localStorage.key(i);
+        if (fullKey.startsWith(prefixDot)) {
+            const prop = fullKey.slice(prefixDot.length);
+            result[prop] = localStorage.getItem(fullKey);
+            foundAny = true;
+        }
+    }
+
+    return foundAny ? result : null;
+}
+
+
+export function localStorageDeleteDottedKeyAll(key) {
+    const prefixDot = key + ".";
+
+    // 1. Delete the exact key ("wallet.provider")
+    localStorage.removeItem(key);
+
+    // 2. Delete all "wallet.*" keys
+    const keysToDelete = [];
+
+    for (let i = 0; i < localStorage.length; i++) {
+        const fullKey = localStorage.key(i);
+        if (fullKey.startsWith(prefixDot)) {
+            keysToDelete.push(fullKey);
+        }
+    }
+
+    keysToDelete.forEach(k => localStorage.removeItem(k));
+}
+
