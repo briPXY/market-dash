@@ -18,6 +18,7 @@ import { initData } from "../constants/initData";
 import WalletList from "../order/WalletList";
 import { PriceSample } from "../utils/price.math";
 import { invertedHistoricalPrices } from "../utils/utils";
+import UserWalletSidebar from "../order/UserWalletSidebar";
 
 function Market({ handleNetworkChange }) {
     const [range, setRange] = useState("1h");
@@ -82,6 +83,7 @@ function Market({ handleNetworkChange }) {
             </Flex>
             {/* Modals */}
             <WalletList />
+            <UserWalletSidebar />
 
             {/* Non display / non pure component*/}
             <PriceUpdater type="trade" />  {/* ✅ Updates trade price */}

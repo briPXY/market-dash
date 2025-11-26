@@ -134,8 +134,8 @@ export const ExternalLinkIcon = React.memo(({
         strokeLinejoin="round"  // Rounded line joins
         className={`lucide lucide-external-link ${className}`} // Merging default and passed class names
         {...props} // Spread any additional props to the SVG element
-    > 
-        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /> 
+    >
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
         <path d="M15 3h6v6" />
         <path d="M10 14L21 3" />
     </svg>
@@ -143,3 +143,73 @@ export const ExternalLinkIcon = React.memo(({
 
 // Adding a display name for better debugging in React DevTools
 ExternalLinkIcon.displayName = 'ExternalLinkIcon';
+
+function getColor(addr, index) {
+    const clean = (addr || "").replace(/^0x/, "").padEnd(40, "0");
+    return "#" + clean.slice(index * 6, index * 6 + 6);
+}
+
+function getBits(addr, count) {
+    const clean = (addr || "").replace(/^0x/, "").padEnd(40, "0");
+    let bits = [];
+    for (let i = 0; i < count; i++) {
+        const char = clean[i];
+        const hexVal = parseInt(char, 16);
+        bits.push(hexVal % 2 === 1); // odd hex chars = filled, even = empty
+    }
+    return bits;
+}
+
+export const BlockyAvatar = React.memo(function BlockyAvatar({
+    address,
+    size = 64,
+    cells = 8,           // 8x8 block grid
+    className
+}) {
+    const px = 100 / cells; // each cell size in viewBox units
+
+    // create 4 colors from address (sliced)
+    const colors = [
+        getColor(address, 0),
+        getColor(address, 1),
+        getColor(address, 2),
+        getColor(address, 3),
+    ];
+
+    // produce cells*cells booleans from address
+    const bits = getBits(address, cells * cells);
+
+    return (
+        <svg
+            width={size}
+            height={size}
+            viewBox="0 0 100 100"
+            className={className}
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            {/* background */}
+            <rect width="100" height="100" fill={colors[0]} />
+
+            {bits.map((on, i) => {
+                if (!on) return null;
+
+                const x = i % cells;
+                const y = Math.floor(i / cells);
+
+                // choose one of 3 block colors based on the hex char index
+                const fill = colors[(i % 3) + 1];
+
+                return (
+                    <rect
+                        key={i}
+                        x={x * px}
+                        y={y * px}
+                        width={px}
+                        height={px}
+                        fill={fill}
+                    />
+                );
+            })}
+        </svg>
+    );
+});

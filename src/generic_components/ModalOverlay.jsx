@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-export const ModalOverlay = ({ children, isOpen, closeFn }) => {
+export const ModalOverlay = ({ children, isOpen, closeFn, justifyContent = "center", alignItems = "center" }) => {
     // 1. Handler for the close button
     const handleButtonClick = useCallback((event) => {
         // Stop propagation to prevent it from reaching the backdrop listener
@@ -37,10 +37,10 @@ export const ModalOverlay = ({ children, isOpen, closeFn }) => {
         <div
             // *** Use the dedicated backdrop handler here ***
             onClick={handleBackdropClick}
-            className="fixed inset-0 z-90 flex items-center justify-center p-4 transition-opacity duration-400"
+            className="fixed inset-0 z-90 flex p-4 transition-opacity duration-400"
             aria-modal="true"
             role="dialog"
-            style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)', backdropFilter: "blur(5px)" }}
+            style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)', backdropFilter: "blur(3px)", justifyContent: justifyContent, alignItems: alignItems }}
         >
             <button
                 // *** Use the dedicated button handler here ***

@@ -9,17 +9,17 @@ const LineTextLine = ({ children }) => {
     return (
         <div className="flex items-center w-full my-4">
             {/* Left Line */}
-            <div className="flex-grow border-t border-washed-dim h-0"
+            <div className="grow border-t border-washed-dim h-0"
                 style={{ borderTopWidth: '1px' }}>
             </div>
 
             {/* Text Content */}
-            <span className="flex-shrink-0 mx-2 text-washed text-sm">
+            <span className="shrink-0 mx-2 text-washed text-xs">
                 {children}
             </span>
 
             {/* Right Line */}
-            <div className="flex-grow border-t border-washed-dim h-0"
+            <div className="grow border-t border-washed-dim h-0"
                 style={{ borderTopWidth: '1px' }}>
             </div>
         </div>

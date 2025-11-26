@@ -83,3 +83,66 @@ RPC_URLS.default = [
     "https://1rpc.io/eth",                   // Free, decent for low-volume
     "https://cloudflare-eth.com"             // Operated by Cloudflare, can be slow or down
 ];
+
+export const NETWORKS_NAME = {
+    // -----------------------
+    // EVM (uses raw hex chainId)
+    // -----------------------
+    "0x1": "Mainnet",
+    "0x5": "Goerli Testnet",
+    "0xaa36a7": "Sepolia Testnet",
+
+    "0x38": "BNB Smart Chain",
+    "0x61": "BSC Testnet",
+
+    "0x89": "Polygon",
+    "0x13881": "Polygon Mumbai",
+
+    "0xa": "Optimism",
+    "0x1a4": "Optimism Goerli",
+
+    "0xa4b1": "Arbitrum One",
+    "0x66eed": "Arbitrum Goerli",
+
+    "0x2105": "Base",
+    "0x14a33": "Base Goerli",
+
+    // -----------------------
+    // BITCOIN (Unisat / Xverse / OKX wallet)
+    // no chainId → use wallet network string
+    // -----------------------
+    "btc:mainnet": "Bitcoin Mainnet",
+    "btc:livenet": "Bitcoin Mainnet",  // Unisat uses 'livenet'
+    "btc:testnet": "Bitcoin Testnet",
+    "btc:regtest": "Bitcoin Regtest",
+    "btc:signet": "Bitcoin Signet",
+
+    // -----------------------
+    // SOLANA (Phantom / Solflare wallets)
+    // no chainId → use RPC endpoint
+    // -----------------------
+    "sol:https://api.mainnet-beta.solana.com": "Solana Mainnet",
+    "sol:https://api.devnet.solana.com": "Solana Devnet",
+    "sol:https://api.testnet.solana.com": "Solana Testnet",
+
+    // -----------------------
+    // SUI Wallets
+    // -----------------------
+    "sui:mainnet": "Sui Mainnet",
+    "sui:testnet": "Sui Testnet",
+    "sui:devnet": "Sui Devnet",
+
+    // -----------------------
+    // APTOS Wallets
+    // -----------------------
+    "aptos:mainnet": "Aptos Mainnet",
+    "aptos:testnet": "Aptos Testnet",
+    "aptos:devnet": "Aptos Devnet",
+
+    // -----------------------
+    // COSMOS (Keplr)
+    // chainId is a string (not hex)
+    // -----------------------
+    "cosmoshub-4": "Cosmos Hub",
+    "osmosis-1": "Osmosis",
+};

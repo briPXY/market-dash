@@ -1,5 +1,5 @@
 import { useWalletStore } from "../stores/stores";
-import { walletLogin } from "./walletLogin";
+import { walletLogin } from "./wallet";
 
 export const WalletLogin = ({ setLogState, className = "bg-primary-500 p-3 rounded-md text-accent font-semibold", text = "Connect Wallet" }) => {
     const handleLogin = async () => {
