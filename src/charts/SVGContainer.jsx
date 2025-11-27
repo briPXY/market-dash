@@ -134,7 +134,7 @@ const SvgContainer = ({
                     })}
 
                     {/* x axis overlay-grid and labels */}
-                    <div className="w-1 h-[14px]"></div>
+                    <div className="w-1 h-3.5"></div>
                     <OverlayXGridAxis bandXScale={bandXScale} innerWidth={innerWidth} range={range} parentRef={chartContainerRef} tooltipRef={tooltipRef} data={OHLCData} />
 
                 </div>

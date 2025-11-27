@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 import { ActiveIndicatorButtons } from "./ActiveIndicatorButtons";
 import Button from "../../Layout/Elements";
 import { isSavedStateExist, loadState, saveState } from "../../idb/stateDB";
-import { drawIndicator } from "./draws"; 
+import { drawIndicator } from "./draws";
 import { subIndHeight, subIndicatorMargin } from "../config";
 
 const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList, innerWidth, setSubIndicators, dbId, init }) => {
@@ -28,7 +28,7 @@ const IndicatorSelector = ({ data, svg, scale, bandXScale, indicatorList, innerW
         // Draw sub indicator on other component
         if (setSubIndicators) {
             // Maximum numbers of subindicators on chart is reached
-            if (Object.keys(showedIndicators).length > Object.keys(subIndHeight).length){
+            if (Object.keys(showedIndicators).length > Object.keys(subIndHeight).length) {
                 return;
             }
 
@@ -103,13 +103,13 @@ const IndicatorItem = ({ abbreviation, name, fn, addNewIndicator }) => {
     return (
         <div key={abbreviation} className="flex flex-col text-xs p-1 md:p-2 gap-2 rounded-sm w-full items-start md:items-center py-2">
             <div className="flex gap-1 justify-between items-center w-full">
-                <div className="flex-col w-[55%] break-words">
+                <div className="flex-col w-[55%] wrap-break-word">
                     <div className="overflow-hidden text-sm font-semibold text-left">{abbreviation}</div>
                     <div className="text-xs text-washed font-light text-left"><i>{name}</i></div>
                 </div>
                 <div className="flex gap-1 h-full items-center">
                     <input className="w-5 h-4 border-none cursor-pointer" type="color" value={color} onChange={(e) => setColor(e.target.value)} name="colorPicker"></input>
-                    <button className="text-xs cursor-pointer rounded-sm h-full p-1.5 border-1 box-border border-washed-dim" onClick={() => setShowOpt(!showOpt)}>Options</button>
+                    <button className="text-xs cursor-pointer rounded-sm h-full p-1.5 border box-border border-washed-dim" onClick={() => setShowOpt(!showOpt)}>Options</button>
                     <button className="text-xs cursor-pointer rounded-sm bg-washed-dim p-1.5" onClick={() => addNewIndicator(abbreviation, { color: color, fn: fn, ...param })}>Insert</button>
                 </div>
             </div>
@@ -174,10 +174,16 @@ function updateSubIndicatorState(state, setSubIndicators, data, dimension, subIn
     for (const name in state) {
         const { color, fn, ...fnParams } = state[name];
         newSubIndicatorState[name] = state[name];
-        newSubIndicatorState[name].indicatorData = fn(data, ...Object.values(fnParams));
-        newSubIndicatorState[name].yScaler = subIndicatorList[name].yScaler(newSubIndicatorState[name].indicatorData, dimension);
         newSubIndicatorState[name].color = color;
-    } 
+        try {
+            newSubIndicatorState[name].indicatorData = fn(data, ...Object.values(fnParams));
+            newSubIndicatorState[name].yScaler = subIndicatorList[name].yScaler(newSubIndicatorState[name].indicatorData, dimension);
+        }
+        catch (e) {
+            newSubIndicatorState[name].indicatorData = { errorIndicatorData: e }
+            newSubIndicatorState[name].yScaler = null
+        }
+    }
     setSubIndicators(newSubIndicatorState);
 }
 

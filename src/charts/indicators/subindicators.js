@@ -1,5 +1,5 @@
 import { drawMACD, drawRSI } from "./draw/specials";
-
+ 
 // Improved EMA function with a stable initial seed
 function EMA(prices, period) {
     const k = 2 / (period + 1);
@@ -36,7 +36,7 @@ export function MACD(data, fast = 12, slow = 26, signal = 9) {
     const macdData = data.map((d, index) => ({
         date: d.date,
         MACD: macdLine[index],
-        signal: signalLineFull[index],
+        signal: signalLineFull[index] ?? 0,
         histogram: histogram[index] //macdLine[index] - (signalLineFull[index] ?? 0)
     }));
 
@@ -46,8 +46,8 @@ export function MACD(data, fast = 12, slow = 26, signal = 9) {
 MACD.draw = drawMACD;
 MACD.defaultCol = "#FF4444";
 
-export function RSI(ohlcData, period = 14) {
-    if (!Array.isArray(ohlcData) || ohlcData.length < period) {
+export function RSI(ohlcData, period = 14) { 
+    if (!Array.isArray(ohlcData) || ohlcData.length <= period) {
         throw new Error("Not enough data to calculate RSI");
     }
 
@@ -56,7 +56,7 @@ export function RSI(ohlcData, period = 14) {
     let gains = 0;
     let losses = 0;
 
-    // 1️⃣ First average gain/loss from the first `period`
+    // First average gain/loss from the first `period`
     for (let i = 1; i <= period; i++) {
         const diff = ohlcData[i].close - ohlcData[i - 1].close;
         if (diff >= 0) {
@@ -71,7 +71,7 @@ export function RSI(ohlcData, period = 14) {
     let rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
     rsiValues[period] = 100 - (100 / (1 + rs));
 
-    // 2️⃣ Subsequent RSI values
+    // Subsequent RSI values
     for (let i = period + 1; i < ohlcData.length; i++) {
         const diff = ohlcData[i].close - ohlcData[i - 1].close;
         let gain = diff > 0 ? diff : 0;
@@ -85,7 +85,7 @@ export function RSI(ohlcData, period = 14) {
         rsiValues[i] = 100 - (100 / (1 + rs));
     }
 
-    // 3️⃣ Fill first values with null for alignment
+    // Fill first values with null for alignment
     for (let i = 0; i < period; i++) {
         rsiValues[i] = null;
     }

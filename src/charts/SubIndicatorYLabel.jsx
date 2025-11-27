@@ -6,6 +6,10 @@ const SubIndicatorYLabels = ({ name, width, height, yScaler, data, color }) => {
     const subYLabelRef = useRef(null);
 
     useEffect(() => {
+        if (!yScaler){
+            return;
+        }
+        
         const subYLabelSvg = d3.select(subYLabelRef.current);
         subIndicatorList[name].yLabelDrawFn(subYLabelSvg, width, height, yScaler, data, color);
     }, [color, data, height, name, width, yScaler]);
