@@ -1,5 +1,5 @@
 import { BrowserProvider } from "ethers";
-import { NETWORKS_NAME } from "../constants/constants";
+import { BLOCKCHAINS_INFO } from "../constants/constants";
 
 export async function extensionWalletLogin(setState = () => { }, onSuccess = () => { }) {
     try {
@@ -78,7 +78,7 @@ Timestamp: ${Date.now()}`;
             connector,
             loginTime: Date.now(),
             approvedAccounts: accounts,
-            networkName: NETWORKS_NAME[chainId],
+            networkName: BLOCKCHAINS_INFO[chainId].name,
             blockchain: "Ethereum",
             isConnected: true,
         };

@@ -101,14 +101,14 @@ export async function getAvailableRPC(rpcUrls) {
                 throw new Error("No block data received");
             }
         } catch (error) {
-            console.warn(`❌ RPC failed [${url}]: ${error.message}`);
+            console.warn(`RPC failed [${url}]: ${error.message}`);
             // Continue to next URL
         }
     }
 
     // All RPCs failed
-    console.error("⚠️ All RPC URLs failed.");
-    throw new Error("⚠️ All RPC URLs failed.");
+    console.error("All RPC URLs failed.");
+    throw new Error("All RPC URLs failed.");
 }
 
 export function localStorageSaveDottedKeyAll(name, obj) {
@@ -161,7 +161,6 @@ export function localStorageLoadDottedKeyAll(keySample) {
     return foundAny ? result : null;
 }
 
-
 export function localStorageDeleteDottedKeyAll(key) {
     const prefixDot = key + ".";
 
@@ -180,4 +179,21 @@ export function localStorageDeleteDottedKeyAll(key) {
 
     keysToDelete.forEach(k => localStorage.removeItem(k));
 }
+
+export async function openLink(url) {
+    const isElectron =
+        typeof window !== 'undefined' &&
+        typeof window.process === 'object' &&
+        window.process.type === 'renderer';
+
+    if (isElectron) {
+        // dynamically import electron only when running in electron
+        // const { shell } = await import('electron');
+        // shell.openExternal(url);
+    } else {
+        window.open(url, '_blank', 'noopener,noreferrer');
+    }
+}
+
+
 

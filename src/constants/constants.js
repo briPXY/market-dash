@@ -84,65 +84,101 @@ RPC_URLS.default = [
     "https://cloudflare-eth.com"             // Operated by Cloudflare, can be slow or down
 ];
 
-export const NETWORKS_NAME = {
+export const BLOCKCHAINS_INFO = {
     // -----------------------
-    // EVM (uses raw hex chainId)
+    // EVM
     // -----------------------
-    "0x1": "Mainnet",
-    "0x5": "Goerli Testnet",
-    "0xaa36a7": "Sepolia Testnet",
+    "0x1": { name: "Mainnet", url: "https://etherscan.io/address/#" },
+    "0x5": { name: "Goerli Testnet", url: "https://goerli.etherscan.io/address/#" },
+    "0xaa36a7": { name: "Sepolia Testnet", url: "https://sepolia.etherscan.io/address/#" },
 
-    "0x38": "BNB Smart Chain",
-    "0x61": "BSC Testnet",
+    "0x38": { name: "BNB Smart Chain", url: "https://bscscan.com/address/#" },
+    "0x61": { name: "BSC Testnet", url: "https://testnet.bscscan.com/address/#" },
 
-    "0x89": "Polygon",
-    "0x13881": "Polygon Mumbai",
+    "0x89": { name: "Polygon", url: "https://polygonscan.com/address/#" },
+    "0x13881": { name: "Polygon Mumbai", url: "https://mumbai.polygonscan.com/address/#" },
 
-    "0xa": "Optimism",
-    "0x1a4": "Optimism Goerli",
+    "0xa": { name: "Optimism", url: "https://optimistic.etherscan.io/address/#" },
+    "0x1a4": { name: "Optimism Goerli", url: "https://goerli-optimism.etherscan.io/address/#" },
 
-    "0xa4b1": "Arbitrum One",
-    "0x66eed": "Arbitrum Goerli",
+    "0xa4b1": { name: "Arbitrum One", url: "https://arbiscan.io/address/#" },
+    "0x66eed": { name: "Arbitrum Goerli", url: "https://goerli.arbiscan.io/address/#" },
 
-    "0x2105": "Base",
-    "0x14a33": "Base Goerli",
-
-    // -----------------------
-    // BITCOIN (Unisat / Xverse / OKX wallet)
-    // no chainId → use wallet network string
-    // -----------------------
-    "btc:mainnet": "Bitcoin Mainnet",
-    "btc:livenet": "Bitcoin Mainnet",  // Unisat uses 'livenet'
-    "btc:testnet": "Bitcoin Testnet",
-    "btc:regtest": "Bitcoin Regtest",
-    "btc:signet": "Bitcoin Signet",
+    "0x2105": { name: "Base", url: "https://basescan.org/address/#" },
+    "0x14a33": { name: "Base Goerli", url: "https://goerli.basescan.org/address/#" },
 
     // -----------------------
-    // SOLANA (Phantom / Solflare wallets)
-    // no chainId → use RPC endpoint
+    // BITCOIN
     // -----------------------
-    "sol:https://api.mainnet-beta.solana.com": "Solana Mainnet",
-    "sol:https://api.devnet.solana.com": "Solana Devnet",
-    "sol:https://api.testnet.solana.com": "Solana Testnet",
+    "btc:mainnet": {
+        name: "Bitcoin Mainnet",
+        url: "https://www.blockchain.com/explorer/addresses/btc/#"
+    },
+    "btc:livenet": {
+        name: "Bitcoin Mainnet",
+        url: "https://www.blockchain.com/explorer/addresses/btc/#"
+    },
+    "btc:testnet": {
+        name: "Bitcoin Testnet",
+        url: "https://www.blockchain.com/explorer/addresses/tbtc/#"
+    },
+    "btc:regtest": {
+        name: "Bitcoin Regtest",
+        url: ""
+    }, // no public explorer
+    "btc:signet": {
+        name: "Bitcoin Signet",
+        url: "https://mempool.space/signet/address/#"
+    },
 
     // -----------------------
-    // SUI Wallets
+    // SOLANA
     // -----------------------
-    "sui:mainnet": "Sui Mainnet",
-    "sui:testnet": "Sui Testnet",
-    "sui:devnet": "Sui Devnet",
+    "sol:https://api.mainnet-beta.solana.com": {
+        name: "Solana Mainnet",
+        url: "https://explorer.solana.com/address/#"
+    },
+    "sol:https://api.devnet.solana.com": {
+        name: "Solana Devnet",
+        url: "https://explorer.solana.com/address/#?cluster=devnet"
+    },
+    "sol:https://api.testnet.solana.com": {
+        name: "Solana Testnet",
+        url: "https://explorer.solana.com/address/#?cluster=testnet"
+    },
 
     // -----------------------
-    // APTOS Wallets
+    // SUI
     // -----------------------
-    "aptos:mainnet": "Aptos Mainnet",
-    "aptos:testnet": "Aptos Testnet",
-    "aptos:devnet": "Aptos Devnet",
+    "sui:mainnet": { name: "Sui Mainnet", url: "https://suiscan.xyz/mainnet/account/#" },
+    "sui:testnet": { name: "Sui Testnet", url: "https://suiscan.xyz/testnet/account/#" },
+    "sui:devnet": { name: "Sui Devnet", url: "https://suiscan.xyz/devnet/account/#" },
 
     // -----------------------
-    // COSMOS (Keplr)
-    // chainId is a string (not hex)
+    // APTOS
     // -----------------------
-    "cosmoshub-4": "Cosmos Hub",
-    "osmosis-1": "Osmosis",
+    "aptos:mainnet": {
+        name: "Aptos Mainnet",
+        url: "https://explorer.aptoslabs.com/account/#"
+    },
+    "aptos:testnet": {
+        name: "Aptos Testnet",
+        url: "https://explorer.aptoslabs.com/account/#?network=testnet"
+    },
+    "aptos:devnet": {
+        name: "Aptos Devnet",
+        url: "https://explorer.aptoslabs.com/account/#?network=devnet"
+    },
+
+    // -----------------------
+    // COSMOS
+    // -----------------------
+    "cosmoshub-4": {
+        name: "Cosmos Hub",
+        url: "https://www.mintscan.io/cosmos/account/#"
+    },
+    "osmosis-1": {
+        name: "Osmosis",
+        url: "https://www.mintscan.io/osmosis/account/#"
+    },
 };
