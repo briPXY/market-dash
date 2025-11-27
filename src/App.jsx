@@ -10,6 +10,8 @@ import { isSavedStateExist, loadState } from './idb/stateDB';
 import { initPoolsInfo } from './idb/init.js';
 import { localStorageLoadDottedKeyAll } from './utils/utils';
 import { tryReconnectWallet } from './order/wallet';
+import WalletList from './order/WalletList';
+import UserWalletSidebar from './order/UserWalletSidebar';
 
 // eslint-disable-next-line no-unused-vars
 function BadComponentTest() {
@@ -78,6 +80,10 @@ function App() {
                 <Market handleNetworkChange={handleNetworkChange} />
             </Section>
             <Section ></Section>
+            
+            {/* Modals */}
+            <WalletList />
+            <UserWalletSidebar />
         </>
     )
 }

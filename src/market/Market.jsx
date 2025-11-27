@@ -15,10 +15,8 @@ import { SwapHistory } from "./SwapHistory";
 import Swap from "../order/Swap";
 import { SourceConst } from "../constants/sourceConst";
 import { initData } from "../constants/initData";
-import WalletList from "../order/WalletList";
 import { PriceSample } from "../utils/price.math";
-import { invertedHistoricalPrices } from "../utils/utils";
-import UserWalletSidebar from "../order/UserWalletSidebar";
+import { invertedHistoricalPrices } from "../utils/utils"; 
 
 function Market({ handleNetworkChange }) {
     const [range, setRange] = useState("1h");
@@ -81,9 +79,6 @@ function Market({ handleNetworkChange }) {
                     <SwapHistory swaps={data.swaps ? data.swaps : []} />
                 </div>
             </Flex>
-            {/* Modals */}
-            <WalletList />
-            <UserWalletSidebar />
 
             {/* Non display / non pure component*/}
             <PriceUpdater type="trade" />  {/* ✅ Updates trade price */}

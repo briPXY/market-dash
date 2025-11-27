@@ -37,10 +37,10 @@ export const ModalOverlay = ({ children, isOpen, closeFn, justifyContent = "cent
         <div
             // *** Use the dedicated backdrop handler here ***
             onClick={handleBackdropClick}
-            className="fixed inset-0 z-90 flex p-4 transition-opacity duration-400"
+            className="flex fixed inset-0 z-90 p-4 transition-opacity duration-400"
             aria-modal="true"
             role="dialog"
-            style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)', backdropFilter: "blur(3px)", justifyContent: justifyContent, alignItems: alignItems }}
+            style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)', backdropFilter: "blur(3px)", justifyContent: justifyContent, alignItems: alignItems, }}
         >
             <button
                 // *** Use the dedicated button handler here ***
@@ -50,10 +50,7 @@ export const ModalOverlay = ({ children, isOpen, closeFn, justifyContent = "cent
             >
                 {CloseIcon}
             </button>
-
-            <div className="relative">
-                {children}
-            </div>
+            {children}
         </div>
     );
 };
