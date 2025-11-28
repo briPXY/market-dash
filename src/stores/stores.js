@@ -65,6 +65,8 @@ export const useWalletStore = create((set, get) => ({
     blockchain: null,
     networkName: null,      // mainnet, polygon, arbitrum...
     isConnected: false,     // boolean
+    loginTime: null,
+    approvedAccounts: null,
 
     /**
      * Update multiple props at once.
@@ -72,22 +74,22 @@ export const useWalletStore = create((set, get) => ({
      * Converts string booleans ("true"/"false") to real booleans.
      */
     setWalletInfo: (dataObj) => {
-      const validKeys = Object.keys(get());
-      const updateObj = {};
-    
-      for (const key in dataObj) {
-        if (validKeys.includes(key)) {
-          let value = dataObj[key];
-    
-          // detect boolean strings
-          if (value === 'true') value = true;
-          else if (value === 'false') value = false;
-    
-          updateObj[key] = value;
+        const validKeys = Object.keys(get());
+        const updateObj = {};
+
+        for (const key in dataObj) {
+            if (validKeys.includes(key)) {
+                let value = dataObj[key];
+
+                // detect boolean strings
+                if (value === 'true') value = true;
+                else if (value === 'false') value = false;
+
+                updateObj[key] = value;
+            }
         }
-      }
-    
-      set(updateObj);
+
+        set(updateObj);
     },
 
     /**
@@ -99,6 +101,25 @@ export const useWalletStore = create((set, get) => ({
 
         if (validKeys.includes(key)) {
             set({ [key]: value });
+        }
+    },
+
+    deleteWalletValue: (key) => {
+        const validKeys = Object.keys(get());
+
+        if (validKeys.includes(key)) {
+            set({ [key]: null });
+        }
+    },
+
+    deleteWalletValues: (keys) => {
+        const keysArray = [...keys];
+        const validKeys = Object.keys(get());
+
+        for (const key of keysArray) {
+            if (validKeys.includes(key)) {
+                set({ [key]: null });
+            }
         }
     },
 

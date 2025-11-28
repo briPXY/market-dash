@@ -12,6 +12,7 @@ import { localStorageLoadDottedKeyAll } from './utils/utils';
 import { tryReconnectWallet } from './order/wallet';
 import WalletList from './order/WalletList';
 import UserWalletSidebar from './order/UserWalletSidebar';
+import WalletExtensionListener from './order/WalletExtensionListener';
 
 // eslint-disable-next-line no-unused-vars
 function BadComponentTest() {
@@ -48,10 +49,10 @@ function App() {
             // Load saved wallet login
             const savedWalletLogin = localStorageLoadDottedKeyAll("wallet.address");
 
-            if(savedWalletLogin){
+            if (savedWalletLogin) {
                 const isConnected = await tryReconnectWallet(savedWalletLogin);
                 localStorage.setItem('wallet.isConnected', isConnected);
-                useWalletStore.getState().setWalletInfo(savedWalletLogin); 
+                useWalletStore.getState().setWalletInfo(savedWalletLogin);
             }
         }
         init();
@@ -63,12 +64,12 @@ function App() {
             // Browser wallet need connected again after app close
             localStorage.setItem('wallet.isConnected', 'false');
         }
-    
+
         window.addEventListener('beforeunload', handleBeforeUnload)
         return () => {
-          window.removeEventListener('beforeunload', handleBeforeUnload)
+            window.removeEventListener('beforeunload', handleBeforeUnload)
         }
-      }, [])
+    }, [])
 
     return (
         <>
@@ -80,10 +81,13 @@ function App() {
                 <Market handleNetworkChange={handleNetworkChange} />
             </Section>
             <Section ></Section>
-            
+
             {/* Modals */}
             <WalletList />
             <UserWalletSidebar />
+
+            {/* Non pure components */}
+            <WalletExtensionListener onWalletEvent={(info) => console.log(info)} />
         </>
     )
 }
