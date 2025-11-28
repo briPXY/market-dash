@@ -8,7 +8,7 @@ import { usePoolStore, useSourceStore, useWalletStore } from './stores/stores';
 import { useEffect } from 'react';
 import { isSavedStateExist, loadState } from './idb/stateDB';
 import { initPoolsInfo } from './idb/init.js';
-import { localStorageLoadDottedKeyAll } from './utils/utils';
+import { localStorageDeleteDottedKeyAll, localStorageLoadDottedKeyAll } from './utils/utils';
 import { tryReconnectWallet } from './order/wallet';
 import WalletList from './order/WalletList';
 import UserWalletSidebar from './order/UserWalletSidebar';
@@ -46,15 +46,20 @@ function App() {
                 setSaved(false);
             }
 
-            // Load saved wallet login
+            // Load saved wallet login 
             const savedWalletLogin = localStorageLoadDottedKeyAll("wallet.address");
+            const isConnected = await tryReconnectWallet(savedWalletLogin);
 
-            if (savedWalletLogin) {
-                const isConnected = await tryReconnectWallet(savedWalletLogin);
+            if (isConnected) {
                 localStorage.setItem('wallet.isConnected', isConnected);
                 useWalletStore.getState().setWalletInfo(savedWalletLogin);
             }
+            else {
+                localStorageDeleteDottedKeyAll("wallet");
+                useWalletStore.getState().logoutWallet();
+            }
         }
+        
         init();
     }, [setAddress, setSaved, setSrc]);
 
