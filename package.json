@@ -17,6 +17,8 @@
     "@fastify/websocket": "^11.1.0",
     "@tailwindcss/vite": "^4.0.14",
     "@tanstack/react-query": "^5.67.1",
+    "@uniswap/sdk-core": "^7.9.0",
+    "@uniswap/v4-sdk": "^1.23.0",
     "@web3icons/core": "^4.0.10",
     "@web3icons/react": "^4.0.10",
     "axios": "^1.8.4",
