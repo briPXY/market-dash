@@ -1,5 +1,5 @@
 
-import { TokenIcon } from "@web3icons/react";
+import { TokenIcon } from "@web3icons/react/dynamic";
 import { SwapIcon } from "../Layout/svg";
 import FiatValue from "./FiatValue";
 import { SwapTokenInfo } from "./components/SwapTokenInfo";

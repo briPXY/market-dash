@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { TokenIcon } from "@web3icons/react"; // adjust import if needed
+import { TokenIcon } from "@web3icons/react/dynamic"; // adjust import if needed
 import { stdSymbol } from "../utils/utils";
 
 const PairIcon = ({

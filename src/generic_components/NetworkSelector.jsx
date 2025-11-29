@@ -1,4 +1,4 @@
-import { NetworkIcon } from "@web3icons/react";
+import { NetworkIcon } from "@web3icons/react/dynamic";
 import { useSourceStore } from "../stores/stores";
 import { PopoverButton } from "../Layout/Elements";
 import { Flex } from "../Layout/Layout";

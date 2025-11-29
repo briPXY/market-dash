@@ -1,7 +1,7 @@
 import { usePoolStore, useSourceStore } from "../stores/stores";
 import { SourceConst } from "../constants/sourceConst";
 import { PriceText } from "../generic_components/PriceText";
-import { TokenIcon } from "@web3icons/react";
+import { TokenIcon } from "@web3icons/react/dynamic";
 import { useRef } from "react";
 import { ToggleButton } from "../Layout/Elements";
 import { CopyIcon } from "../Layout/svg";

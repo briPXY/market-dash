@@ -2,7 +2,7 @@ import { useModalVisibilityStore, useWalletStore } from "../stores/stores";
 import { ModalOverlay } from "../generic_components/ModalOverlay";
 import { localStorageDeleteDottedKeyAll, openLink } from "../utils/utils";
 import { BlockyAvatar } from "../Layout/svg";
-import { NetworkIcon } from "@web3icons/react";
+import { NetworkIcon } from "@web3icons/react/dynamic";
 import { BLOCKCHAINS_INFO } from "../constants/constants";
 
 export default function UserWalletSidebar() {

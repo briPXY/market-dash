@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { ModalOverlay } from "../generic_components/ModalOverlay";
 import { useModalVisibilityStore, useWalletStore } from "../stores/stores";
 import LineTextLine from "../generic_components/LineTextLine";
-import { WalletIcon } from "@web3icons/react";
+import { WalletIcon } from "@web3icons/react/dynamic";
 import { extensionWalletLogin } from "./wallet";
 import { localStorageSaveDottedKeyAll } from "../utils/utils";
 

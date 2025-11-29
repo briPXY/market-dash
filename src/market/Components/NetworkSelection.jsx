@@ -1,4 +1,4 @@
-import { NetworkIcon } from "@web3icons/react";
+import { NetworkIcon } from "@web3icons/react/dynamic";
 import { SourceConst } from "../../constants/sourceConst";
 import { Flex, SvgMemo } from "../../Layout/Layout";
 import { useSourceStore } from "../../stores/stores";

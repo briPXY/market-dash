@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { SourceConst } from '../constants/sourceConst';
 import { usePoolStore, useSourceStore, useWalletStore } from '../stores/stores';
 import { ExternalLinkIcon } from '../Layout/svg';
-import { ExchangeIcon } from '@web3icons/react';
+import { ExchangeIcon } from '@web3icons/react/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
 
