@@ -195,5 +195,36 @@ export async function openLink(url) {
     }
 }
 
+export const sortByRelevance = (dataArray = [{}], propToSort = "", searchTerm = "") => {
+    if (!searchTerm) {
+        // If no search term, return a non-mutated, alphabetically sorted copy
+        return [...dataArray].sort((a, b) => a.symbol.localeCompare(b.symbol));
+    }
 
+    const lowerSearchTerm = searchTerm.toLowerCase();
 
+    // Create a copy to avoid mutating the original array
+    return [...dataArray].sort((a, b) => {
+        const symbolA = a[propToSort].toLowerCase();
+        const symbolB = b[propToSort].toLowerCase();
+
+        // --- Define a relevance score (lower score = higher priority) ---
+        const getScore = (symbol) => {
+            if (symbol === lowerSearchTerm) return 0; // Exact match
+            if (symbol.startsWith(lowerSearchTerm)) return 1; // Starts with
+            if (symbol.includes(lowerSearchTerm)) return 2; // Contains
+            return 3; // No relevance match
+        };
+
+        const scoreA = getScore(symbolA);
+        const scoreB = getScore(symbolB);
+
+        // Primary sort: by relevance score (lower score first)
+        if (scoreA !== scoreB) {
+            return scoreA - scoreB;
+        }
+
+        // Secondary sort: alphabetical (if scores are equal)
+        return symbolA.localeCompare(symbolB);
+    });
+};
