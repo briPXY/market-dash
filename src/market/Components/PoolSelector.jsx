@@ -8,7 +8,7 @@ import { LoadingIcon } from "../../Layout/svg";
 import { PriceText } from "../../generic_components/PriceText";
 import { SymbolPair } from "../../generic_components/SymbolPair";
 import PairIcon from "../../generic_components/PairIcon";
-import { TokenPairSearchForm } from "../TokenPairSearchForm";
+import { FormTokenSearch } from "../FormTokenSearch";
 
 export const PoolSelector = () => {
     const src = useSourceStore(state => state.src);
@@ -41,9 +41,9 @@ export const PoolSelector = () => {
             </div>
             <div className="flex flex-col py-2 gap-0">
                 <div className="flex px-2 items-center gap-1 mb-2 w-full">
-                    <TokenPairSearchForm className="flex-1" target={inverted ? "token0" : "token1"} />
+                    <FormTokenSearch className="flex-1" target={inverted ? "token0" : "token1"} />
                     <div className="text-washed">/</div>
-                    <TokenPairSearchForm className="flex-1" target={inverted ? "token1" : "token0"} />
+                    <FormTokenSearch className="flex-1" target={inverted ? "token1" : "token0"} />
                 </div>
                 <Flex className="justify-between text-washed text-xs px-2">
                     <div>Pool</div>
