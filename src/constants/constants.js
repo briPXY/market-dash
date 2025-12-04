@@ -182,3 +182,47 @@ export const BLOCKCHAINS_INFO = {
         url: "https://www.mintscan.io/osmosis/account/#"
     },
 };
+
+export const ChainId = {};
+
+ChainId.ethereum = {
+    // Layer 1 (L1) / Mainnets
+    1: "ethereum",
+    10: "optimism",
+    56: "bsc",
+    137: "polygon",
+    250: "fantom",
+    42161: "arbitrum",
+    43114: "avalanche",
+    8453: "base",
+    // Other Popular Chains
+    100: "gnosis", // Formerly xDai
+    // Testnets
+    5: "goerli",
+    11155111: "sepolia",
+    420: "optimism-goerli",
+    421613: "arbitrum-goerli",
+    80001: "polygon-mumbai",
+    97: "bsc-testnet",
+    4002: "fantom-testnet",
+    43113: "avalanche-fuji",
+    84531: "base-goerli",
+    // Less Common / Emerging EVM Chains
+    66: "velas",
+    128: "heco",
+    288: "boba",
+    592: "astar",
+    1284: "moonbeam",
+    1285: "moonriver",
+    2000: "dogechain",
+    8217: "klaytn",
+    1088: "metis",
+    1313161554: "aurora",
+    1666600000: "harmony-shard-0",
+    2020: "ronin",
+    42220: "celo",
+    59140: "lineagoerli",
+    59144: "linea",
+    1337: "local",
+    31337: "hardhat",
+};

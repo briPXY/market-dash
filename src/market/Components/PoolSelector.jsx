@@ -1,6 +1,6 @@
 import { SourceConst } from "../../constants/sourceConst";
 import { PopoverButton } from "../../Layout/Elements"
-import { useSourceStore, usePoolStore } from "../../stores/stores";
+import { useSourceStore, usePoolStore, usePriceInvertStore } from "../../stores/stores";
 import { Flex } from "../../Layout/Layout";
 import { useEffect, useState } from "react";
 import { saveState } from "../../idb/stateDB";
@@ -8,6 +8,7 @@ import { LoadingIcon } from "../../Layout/svg";
 import { PriceText } from "../../generic_components/PriceText";
 import { SymbolPair } from "../../generic_components/SymbolPair";
 import PairIcon from "../../generic_components/PairIcon";
+import { TokenPairSearchForm } from "../TokenPairSearchForm";
 
 export const PoolSelector = () => {
     const src = useSourceStore(state => state.src);
@@ -16,6 +17,7 @@ export const PoolSelector = () => {
     const [bulkPrices, setBulkPrices] = useState(null);
     const symbol0 = usePoolStore(state => state.symbol0);
     const symbol1 = usePoolStore(state => state.symbol1);
+    const inverted = usePriceInvertStore((state) => state.priceInvert);
 
     const setPool = async (selectedAddress) => {
         await saveState(`savedTick-${src}`, selectedAddress)
@@ -34,12 +36,18 @@ export const PoolSelector = () => {
         <PopoverButton onPopover={handlePopOver} showClass={"bg-primary-500 w-[75vw] md:w-80 h-fit top-[100%] p-2 left-0 z-65 rounded-md"}>
             <div className="flex cursor-pointer font-medium items-center gap-1 justify-start hover:brightness-125 rounded-md">
                 <SymbolPair poolAddress={address} className="inline-block text-base md:text-lg text-start text-nowrap" />
-                <PairIcon className="w-1/2 flex"  symbol0={symbol0} symbol1={symbol1} spacing="-100%" style={{width:"30px"}} style1={{ clipPath: "inset(0 0 0 50%)" }} />
+                <PairIcon className="w-1/2 flex" symbol0={symbol0} symbol1={symbol1} spacing="-100%" style={{ width: "30px" }} style1={{ clipPath: "inset(0 0 0 50%)" }} />
                 <div className="text-xs text-washed">▼</div>
             </div>
-            <div className="flex flex-col gap-0">
+            <div className="flex flex-col py-2 gap-0">
+                <div className="flex px-2 items-center gap-1 mb-2 w-full">
+                    <TokenPairSearchForm className="flex-1" target={inverted ? "token0" : "token1"} />
+                    <div className="text-washed">/</div>
+                    <TokenPairSearchForm className="flex-1" target={inverted ? "token1" : "token0"} />
+                </div>
                 <Flex className="justify-between text-washed text-xs px-2">
                     <div>Pool</div>
+
                     <div>Latest price/swap</div>
                 </Flex>
                 {Object.keys(SourceConst[src].info).map((poolAddress) => (

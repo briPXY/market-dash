@@ -6,6 +6,7 @@ import { binanceInitialTicks } from "./binanceTicks";
 import { WSS_DOMAIN } from "./environment";
 import { initData, initToken } from "./initData";
 import { getUniswapQuoteFromContract, getUniswapQuoteQueryFn, initDummy } from "../queries/quotes";
+import { checkBinanceSymbolAvailability } from "../queries/api_formatter";
 
 export const SourceConst = {};
 
@@ -26,6 +27,7 @@ SourceConst.UniswapV3 = {
     getPriceURL: (poolAddress) => `${WSS_DOMAIN}/liveprice/UniswapV3/${poolAddress}`,
     priceConverter: getPriceFromSqrtPriceX96,
     quoteFunction: getUniswapQuoteFromContract,
+    symbolCheck: () => null,
 };
 
 // uniswap Sepolia testnet
@@ -45,6 +47,7 @@ SourceConst.UniswapV3Sepolia = {
     priceConverter: getPriceFromSqrtPriceX96,
     getPriceURL: (poolAddress) => `${WSS_DOMAIN}/liveprice/UniswapV3Sepolia/${poolAddress}`,
     quoteFunction: getUniswapQuoteQueryFn,
+    symbolCheck: ()=>null,
 };
 
 // Binance (this is CEX network not L2 chain or BSC)
@@ -66,6 +69,7 @@ SourceConst.binance = {
     priceConverter: (p) => p,
     swappedSymbols: [],
     quoteFunction: initDummy,
+    symbolCheck: checkBinanceSymbolAvailability,
 };
 
 // Initial network
@@ -85,4 +89,5 @@ SourceConst.init = {
     priceConverter: () => "",
     getPriceURL: () => "init",
     quoteFunction: initDummy,
+    symbolCheck: checkBinanceSymbolAvailability,
 }
