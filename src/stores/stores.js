@@ -25,6 +25,8 @@ export const usePoolStore = create((set) => ({
     init: true,
     symbol0: "",
     symbol1: "",
+    token0:{},
+    token1:{},
 
     setAddress: (address) => {
         set({
@@ -33,6 +35,10 @@ export const usePoolStore = create((set) => ({
             symbol0: SourceConst[useSourceStore.getState().src].info[address].token0.symbol,
             symbol1: SourceConst[useSourceStore.getState().src].info[address].token1.symbol,
         });
+    },
+
+    setSingleSymbol: (target, value) => {
+        set({ [target]: value });
     },
 
     // internal symbol swapper, only called from setPriceInvert
