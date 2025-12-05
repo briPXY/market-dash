@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "fastify-server": "node fastify-server.js",
     "build-poolsinfo": "node server/data/build-poolinfo.mjs",
-    "download:tokenlist": "curl -L -o public/token-list/ethereum.json https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/tokenlist.json"
+    "download:tokenlist": "curl -L -o public/token-list/ethereum.json https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/tokenlist.json",
+    "download:pairlist":"curl -L -o public/pair-list/exchangeInfo.json https://api.binance.com/api/v3/exchangeInfo"
   },
   "dependencies": {
     "@fastify/cors": "^11.0.0",
