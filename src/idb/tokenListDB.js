@@ -9,13 +9,13 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
     const primaryKey = "address";        // must be uniform across sources
     const secondaryKey = "chainId";      // this is the one we dummy-fill if missing
 
-    // 1. DONE signature check
+    // done signature check
     if (localStorage.getItem("token-list:done") === "true") {
         console.log("Token list already imported. Skipping...");
         return false;
     }
 
-    // 2. Open DB with composite keyPath
+    // open DB with composite keyPath
     const db = await openDB("token-list", 1, {
         upgrade(db) {
             if (!db.objectStoreNames.contains("tokens")) {
@@ -31,7 +31,7 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
         }
     });
 
-    // 3. Import each source
+    // import each source
     for (const source of sources) {
         let json;
 
@@ -62,14 +62,18 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
         const store = tx.objectStore("tokens");
 
         for (const token of list) {
+            // IMPORTANT to standarize or will got double entry
+            token.address = token.address.toLowerCase(); 
 
             // ensure chainId key exists, or create dummy
             if (!(secondaryKey in token) || !token[secondaryKey]) {
                 token[secondaryKey] = source.chainId ?? "null";
             }
-            // obligatory additional field 
+            
+            token.chainId = token.chainId.toString();
+            // obligatory extra field 
             token.uniswap = source.uniswap ?? "false";
-            token.blockchain = source.blockchain ?? "null";
+            token.blockchain = source.blockchain ?? "null"; // blockchain not just L2 or sub-chain
 
             await store.put(token); // insert or replace
         }
@@ -77,57 +81,14 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
         await tx.done;
     }
 
-    // 4. DONE signature
+    // create DONE signature
     if (failures < sources.length) {
         localStorage.setItem("token-list:done", "true");
-        await fixDuplicateCompositeKeys(db);
         console.log("Token import completed successfully.");
     }
 
     return true;
 } // v4
-
-async function fixDuplicateCompositeKeys(db) {
-    const tx = db.transaction("tokens", "readwrite");
-    const store = tx.objectStore("tokens");
-
-    const all = await store.getAll();
-    const groups = new Map();
-
-    for (const token of all) {
-        const address = token.address;
-        const chainId = String(token.chainId);  // normalize to string for grouping
-
-        const key = `${address}::${chainId}`;
-
-        if (!groups.has(key)) groups.set(key, []);
-
-        groups.get(key).push(token);
-    }
-
-    // process groups that have duplicates
-    for (const [key, items] of groups) {
-        if (items.length > 1) {
-            console.log("Merging duplicates for:", key, items);
-
-            // create merged object by just combining fields
-            const merged = Object.assign({}, ...items);
-
-            // ensure key fields exist
-            merged.address = items[0].address;
-            merged.chainId = String(items[0].chainId);
-
-            // remove all duplicated raw PK entries
-            for (const old of items) {
-                await store.delete([old.address, old.chainId]);
-            }
-
-            await store.put(merged);
-        }
-    }
-
-    await tx.done;
-}
 
 export function loadRecentSearches() {
     let recent = [];
@@ -288,8 +249,8 @@ export async function searchTokensHybrid(query, chain = null, limit = 24) {
 }
 
 export async function installTokenLists() {
-    await importTokenLists([
+    await importTokenLists([ 
+        { url: "/token-list/uniswapv3ethereum.json", list: "tokens", chainId: 1, blockchain: "ethereum", uniswap: "true" },
         { url: "/token-list/ethereum.json", list: "tokens", chainId: 1, blockchain: "ethereum" },
-        { url: "/token-list/uniswapv3ethereum.json", list: "tokens", chainId: 1, blockchain: "ethereum", uniswap: "true" }
     ]);
 }
