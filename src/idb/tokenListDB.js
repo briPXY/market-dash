@@ -80,11 +80,54 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
     // 4. DONE signature
     if (failures < sources.length) {
         localStorage.setItem("token-list:done", "true");
+        await fixDuplicateCompositeKeys(db);
         console.log("Token import completed successfully.");
     }
 
     return true;
 } // v4
+
+async function fixDuplicateCompositeKeys(db) {
+    const tx = db.transaction("tokens", "readwrite");
+    const store = tx.objectStore("tokens");
+
+    const all = await store.getAll();
+    const groups = new Map();
+
+    for (const token of all) {
+        const address = token.address;
+        const chainId = String(token.chainId);  // normalize to string for grouping
+
+        const key = `${address}::${chainId}`;
+
+        if (!groups.has(key)) groups.set(key, []);
+
+        groups.get(key).push(token);
+    }
+
+    // process groups that have duplicates
+    for (const [key, items] of groups) {
+        if (items.length > 1) {
+            console.log("Merging duplicates for:", key, items);
+
+            // create merged object by just combining fields
+            const merged = Object.assign({}, ...items);
+
+            // ensure key fields exist
+            merged.address = items[0].address;
+            merged.chainId = String(items[0].chainId);
+
+            // remove all duplicated raw PK entries
+            for (const old of items) {
+                await store.delete([old.address, old.chainId]);
+            }
+
+            await store.put(merged);
+        }
+    }
+
+    await tx.done;
+}
 
 export function loadRecentSearches() {
     let recent = [];
@@ -96,7 +139,6 @@ export function loadRecentSearches() {
 
     return Array.isArray(recent) ? recent : [];
 }
-
 
 function saveRecentSearch(query) {
     const recent = loadRecentSearches();
