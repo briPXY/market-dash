@@ -3,7 +3,7 @@ import { openDB } from 'idb';
 const RECENT_CACHE_KEY = "token-search:recent";
 const RECENT_CACHE_LIMIT = 8; // how many recent queries to store
 
-export async function importTokenLists(sources = [{ url: null, list: null, chainId: null, blockchain: null, uniswap: null }]) {
+export async function importTokenLists(sources = [{ url: null, list: null, chainId: null, blockchain_CAIP2: null }]) {
     let failures = 0;
 
     const primaryKey = "address";        // must be uniform across sources
@@ -25,8 +25,6 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
 
                 store.createIndex("symbol", "symbol");
                 store.createIndex("name", "name");
-                store.createIndex("blockchain", "blockchain");
-                store.createIndex("uniswap", "uniswap");
                 store.createIndex("symbol_chain", ["symbol", "chainId"]);
             }
         }
@@ -68,12 +66,12 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
 
             // ensure chainId key exists, or create dummy
             if (!(secondaryKey in token) || !token[secondaryKey]) {
-                token[secondaryKey] = source.chainId ?? "null";
+                token[secondaryKey] = `${source.blockchain_CAIP2}:${source.chainId}`;
+            }
+            else {
+                token.chainId = `${source.blockchain_CAIP2}:${token.chainId}`;
             }
 
-            token.chainId = token.chainId.toString();
-            // obligatory extra field 
-            token.uniswap = source.uniswap ?? false;
             token.blockchain = source.blockchain ?? "null"; // blockchain not just L2 or sub-chain
 
             await store.put(token); // insert or replace
@@ -293,7 +291,7 @@ export async function searchTokensHybrid(query, chain = null, limit = 24) {
 
 export async function installTokenLists() {
     await importTokenLists([
-        { url: "/token-list/uniswapv3ethereum.json", list: "tokens", chainId: 1, blockchain: "ethereum", uniswap: true},
-        { url: "/token-list/ethereum.json", list: "tokens", chainId: 1, blockchain_CAIP: "ethereum" },
+        { url: "/token-list/uniswapv3ethereum.json", list: "tokens", chainId: 1, blockchain_CAIP2: "eip155" }, // eip155 = ethereum blockchain
+        { url: "/token-list/ethereum.json", list: "tokens", chainId: 1, blockchain_CAIP2: "eip155" },
     ]);
 }
