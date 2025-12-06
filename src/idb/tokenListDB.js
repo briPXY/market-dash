@@ -27,6 +27,7 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
                 store.createIndex("name", "name");
                 store.createIndex("blockchain", "blockchain");
                 store.createIndex("uniswap", "uniswap");
+                store.createIndex("symbol_chain", ["symbol", "chainId"]);
             }
         }
     });
@@ -63,16 +64,16 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
 
         for (const token of list) {
             // IMPORTANT to standarize or will got double entry
-            token.address = token.address.toLowerCase(); 
+            token.address = token.address.toLowerCase();
 
             // ensure chainId key exists, or create dummy
             if (!(secondaryKey in token) || !token[secondaryKey]) {
                 token[secondaryKey] = source.chainId ?? "null";
             }
-            
+
             token.chainId = token.chainId.toString();
             // obligatory extra field 
-            token.uniswap = source.uniswap ?? "false";
+            token.uniswap = source.uniswap ?? false;
             token.blockchain = source.blockchain ?? "null"; // blockchain not just L2 or sub-chain
 
             await store.put(token); // insert or replace
@@ -89,6 +90,48 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
 
     return true;
 } // v4
+
+export async function getTokenBySymbolChainId(symbol, chainId, filter = null) {
+    const db = await openDB("token-list", 1);
+    const tx = db.transaction("tokens", "readonly");
+    const store = tx.objectStore("tokens");
+
+    const idx = store.index("symbol_chain");
+    const token = await idx.get([symbol, chainId]);
+
+    if (!token) return null;
+
+    if (!filter) return token;
+
+    // extract filter index:value
+    const [filterIndex, filterValue] = Object.entries(filter)[0];
+
+    // If the found token already matches filter → done
+    if (token[filterIndex] === filterValue) {
+        return token;
+    }
+
+    const customIdx = store.index(filterIndex);
+    let cursor = await customIdx.openCursor(filterValue);
+
+    // walk the index results until symbol + chainId also match
+    while (cursor) {
+        const entry = cursor.value;
+
+        if (
+            entry.symbol === symbol &&
+            entry.chainId === chainId &&
+            entry[filterIndex] === filterValue
+        ) {
+            return entry;
+        }
+
+        cursor = await cursor.continue();
+    }
+
+    return null;
+}
+
 
 export function loadRecentSearches() {
     let recent = [];
@@ -249,8 +292,8 @@ export async function searchTokensHybrid(query, chain = null, limit = 24) {
 }
 
 export async function installTokenLists() {
-    await importTokenLists([ 
-        { url: "/token-list/uniswapv3ethereum.json", list: "tokens", chainId: 1, blockchain: "ethereum", uniswap: "true" },
-        { url: "/token-list/ethereum.json", list: "tokens", chainId: 1, blockchain: "ethereum" },
+    await importTokenLists([
+        { url: "/token-list/uniswapv3ethereum.json", list: "tokens", chainId: 1, blockchain: "ethereum", uniswap: true},
+        { url: "/token-list/ethereum.json", list: "tokens", chainId: 1, blockchain_CAIP: "ethereum" },
     ]);
 }
