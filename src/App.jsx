@@ -13,7 +13,8 @@ import { tryReconnectWallet } from './order/wallet';
 import WalletList from './order/WalletList';
 import UserWalletSidebar from './order/UserWalletSidebar';
 import WalletExtensionListener from './order/WalletExtensionListener';
-import { importTokenLists } from './idb/tokenListDB';
+import { installTokenLists } from './idb/tokenListDB';
+import { installPairLists } from './idb/pairListDB';
 
 // eslint-disable-next-line no-unused-vars
 function BadComponentTest() {
@@ -36,12 +37,12 @@ function App() {
     // Init handler
     useEffect(() => {
         async function init() {
-            await importTokenLists([
-                { url: "/token-list/ethereum.json", list: "tokens", chainId: 1, blockchain: "ethereum" },
-                { url: "/token-list/uniswapv3ethereum.json", list: "tokens", chainId: 1, compatibleExchange: "uniswap", blockchain: "ethereum" }
-            ]);
+            // Install token lists and pair lists from json into indexedDB, if not installed before
+            await installTokenLists();
+            await installPairLists();
 
             const savedNetworkExist = await isSavedStateExist(`savedNetwork`);
+            
             if (savedNetworkExist) {
                 const savedNetwork = await loadState("savedNetwork");
                 const poolAddress = await initPoolsInfo(savedNetwork);
