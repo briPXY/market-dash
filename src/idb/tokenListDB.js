@@ -3,7 +3,7 @@ import { openDB } from 'idb';
 const RECENT_CACHE_KEY = "token-search:recent";
 const RECENT_CACHE_LIMIT = 8; // how many recent queries to store
 
-export async function importTokenLists(sources = [{ url: null, list: null, chainId: null, blockchain: null }]) {
+export async function importTokenLists(sources = [{ url: null, list: null, chainId: null, blockchain: null, uniswap: null }]) {
     let failures = 0;
 
     const primaryKey = "address";        // must be uniform across sources
@@ -20,14 +20,13 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
         upgrade(db) {
             if (!db.objectStoreNames.contains("tokens")) {
                 const store = db.createObjectStore("tokens", {
-                    keyPath: ["address", "chainId"], // dynamic composite key
+                    keyPath: [primaryKey, secondaryKey], // dynamic composite key
                 });
 
-                store.createIndex("symbol_lower", "symbol_lower");
-                store.createIndex("name_lower", "name_lower");
+                store.createIndex("symbol", "symbol");
+                store.createIndex("name", "name");
                 store.createIndex("blockchain", "blockchain");
-                store.createIndex(primaryKey, primaryKey);
-                store.createIndex("compatible_exchange", "compatible_exchange");
+                store.createIndex("uniswap", "uniswap");
             }
         }
     });
@@ -35,8 +34,6 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
     // 3. Import each source
     for (const source of sources) {
         let json;
-
-        const compatible_exchange = source.compatibleExchange ? source.compatibleExchange : "";
 
         // fetch url
         try {
@@ -70,15 +67,11 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
             if (!(secondaryKey in token) || !token[secondaryKey]) {
                 token[secondaryKey] = source.chainId ?? "null";
             }
-
-            token.symbol_lower = token.symbol?.toLowerCase?.() ?? "";
-            token.name_lower = token.name?.toLowerCase?.() ?? "";
-            // obligatory chain field 
-            token.compatible_exchange = compatible_exchange;
+            // obligatory additional field 
+            token.uniswap = source.uniswap ?? "false";
             token.blockchain = source.blockchain ?? "null";
 
-
-            await store.put(token);
+            await store.put(token); // insert or replace
         }
 
         await tx.done;
@@ -91,7 +84,7 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
     }
 
     return true;
-} // v2
+} // v4
 
 export function loadRecentSearches() {
     let recent = [];
@@ -158,8 +151,8 @@ export async function searchTokensRegex(query, signal, chain = null, limit = 24)
         if (results.length >= limit) break;
         if (chain && token.chain !== chain) continue;
 
-        const sym = token.symbol_lower ?? "";
-        const nam = token.name_lower ?? "";
+        const sym = token.symbol ?? "";
+        const nam = token.name ?? "";
 
         // FULL REGEX MATCH ANYWHERE
         if (regex.test(sym) || regex.test(nam)) {
@@ -194,7 +187,7 @@ export async function searchTokensHybrid(query, chain = null, limit = 24) {
     // 1a. prefix match SYMBOL
     {
         const tx = db.transaction("tokens", "readonly");
-        const idx = tx.store.index("symbol_lower");
+        const idx = tx.store.index("lower");
         let cursor = await idx.openCursor(IDBKeyRange.bound(q, q + "\uffff"));
 
         while (cursor && count < limit) {
@@ -211,7 +204,7 @@ export async function searchTokensHybrid(query, chain = null, limit = 24) {
     // 1b. prefix match NAME
     {
         const tx = db.transaction("tokens", "readonly");
-        const idx = tx.store.index("name_lower");
+        const idx = tx.store.index("name");
         let cursor = await idx.openCursor(IDBKeyRange.bound(q, q + "\uffff"));
 
         while (cursor && count < limit) {
@@ -233,8 +226,8 @@ export async function searchTokensHybrid(query, chain = null, limit = 24) {
         if (count >= limit) break;
         if (chain && token.chain !== chain) continue;
 
-        const sym = token.symbol_lower ?? "";
-        const nam = token.name_lower ?? "";
+        const sym = token.symbol ?? "";
+        const nam = token.name ?? "";
 
         if (sym.includes(q)) {
             add(token, 3);
@@ -252,3 +245,9 @@ export async function searchTokensHybrid(query, chain = null, limit = 24) {
         .map(t => { delete t._p; return t; });
 }
 
+export async function installTokenLists() {
+    await importTokenLists([
+        { url: "/token-list/ethereum.json", list: "tokens", chainId: 1, blockchain: "ethereum" },
+        { url: "/token-list/uniswapv3ethereum.json", list: "tokens", chainId: 1, blockchain: "ethereum", uniswap: "true" }
+    ]);
+}
