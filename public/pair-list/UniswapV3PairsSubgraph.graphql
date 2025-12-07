@@ -1,0 +1,28 @@
+query GetPoolsWithTokenDetails {
+  pools(
+    first: 1000
+    orderBy: totalValueLockedUSD
+    orderDirection: desc
+  ) {
+    # Pool Information
+    id 
+    feeTier
+    liquidity
+    
+    # Token 0 Details
+    token0 {
+      id # Token Address
+      symbol
+      name
+      decimals
+    }
+    
+    # Token 1 Details
+    token1 {
+      id # Token Address
+      symbol
+      name
+      decimals
+    }
+  }
+}
