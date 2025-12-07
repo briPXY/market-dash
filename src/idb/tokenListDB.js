@@ -3,7 +3,7 @@ import { openDB } from 'idb';
 const RECENT_CACHE_KEY = "token-search:recent";
 const RECENT_CACHE_LIMIT = 8; // how many recent queries to store
 
-export async function importTokenLists(sources = [{ url: null, list: null, chainId: null, blockchain_CAIP2: null }]) {
+export async function importTokenLists(sources = [{ url: null, list: null, chainId: null, blockchain: null }]) {
     let failures = 0;
 
     const primaryKey = "address";        // must be uniform across sources
@@ -66,10 +66,10 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
 
             // ensure chainId key exists, or create dummy
             if (!(secondaryKey in token) || !token[secondaryKey]) {
-                token[secondaryKey] = `${source.blockchain_CAIP2}:${source.chainId}`;
+                token[secondaryKey] = `${source.blockchain}:${source.chainId}`;
             }
             else {
-                token.chainId = `${source.blockchain_CAIP2}:${token.chainId}`;
+                token.chainId = `${source.blockchain}:${token.chainId}`;
             }
 
             token.blockchain = source.blockchain ?? "null"; // blockchain not just L2 or sub-chain
@@ -291,7 +291,7 @@ export async function searchTokensHybrid(query, chain = null, limit = 24) {
 
 export async function installTokenLists() {
     await importTokenLists([
-        { url: "/token-list/uniswapv3ethereum.json", list: "tokens", chainId: 1, blockchain_CAIP2: "eip155" }, // eip155 = ethereum blockchain
-        { url: "/token-list/ethereum.json", list: "tokens", chainId: 1, blockchain_CAIP2: "eip155" },
+        { url: "/token-list/uniswapv3ethereum.json", list: "tokens", chainId: 1, blockchain: "ethereum" },
+        { url: "/token-list/ethereum.json", list: "tokens", chainId: 1, blockchain: "ethereum" },
     ]);
 }
