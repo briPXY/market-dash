@@ -1,6 +1,39 @@
 import { openDB } from 'idb';
 
-export async function createPaiListsDB(arrayNameInResponse, sourceURL, exchange = "") {
+function getNestedValue(obj, path) {
+    return path.reduce((currentObj, key) => {
+        if (currentObj === null || currentObj === undefined) {
+            return undefined;
+        }
+        return currentObj[key];
+    }, obj);
+}
+
+function binanceEntryMethod(info) {
+    const obj = {};
+    obj.symbols = info.symbol;
+    obj.symbols_rev = info.quoteAsset + info.baseAsset;//reversed symbol pair
+    obj.symbol0 = info.baseAsset;
+    obj.symbol1 = info.quoteAsset;
+    return obj;
+}
+
+function subgraphEntryMethod(info) {
+    const obj = {};
+    obj.symbols = info.token0.symbol + info.token1.symbol;
+    obj.symbols_rev = info.token1.symbol + info.token0.symbol; // reversed symbols
+    obj.symbol0 = info.token0.symbol;
+    obj.symbol1 = info.token1.symbol;
+    // additional infos
+    obj.token0 = info.token0;
+    obj.token1 = info.token1;
+    obj.address = info.id; // pool address
+    obj.liquidity = info.liquidity;
+    obj.fee_tier = info.feeTier;
+    return obj;
+}
+
+export async function createPaiListsDB(pathToDive, sourceURL, exchange = "", entryMethod) {
     // 1. DONE signature check
     if (localStorage.getItem(`pair-list:${exchange}`) === "true") {
         return false;
@@ -11,11 +44,12 @@ export async function createPaiListsDB(arrayNameInResponse, sourceURL, exchange 
         upgrade(db) {
             if (!db.objectStoreNames.contains("pair-list")) {
                 const store = db.createObjectStore("pair-list", {
-                    keyPath: ['exchange', 'baseAsset', 'quoteAsset']
+                    keyPath: ['exchange', 'symbol0', 'symbol1']
                 });
 
                 store.createIndex("byExchange", "exchange");
-                store.createIndex("bySymbol", "symbol");
+                store.createIndex("bySymbols", "symbols");
+                store.createIndex("bySymbolsReversed", "symbols_rev");
             }
         }
     });
@@ -35,7 +69,7 @@ export async function createPaiListsDB(arrayNameInResponse, sourceURL, exchange 
         return null;
     }
 
-    const list = json[arrayNameInResponse];
+    const list = getNestedValue(json, pathToDive);
 
     if (!Array.isArray(list)) {
         console.warn(`Skipping: ${sourceURL}, invalid list structure`);
@@ -46,12 +80,9 @@ export async function createPaiListsDB(arrayNameInResponse, sourceURL, exchange 
     const store = tx.objectStore("pair-list");
 
     for (const info of list) {
-        const obj = {};
-        obj.symbol = info.symbol;
+        const obj = entryMethod(info);
         obj.exchange = exchange;
-        obj.baseAsset = info.baseAsset;
-        obj.quoteAsset = info.quoteAsset;
-        await store.put(obj);
+        await store.put(obj)
     }
 
     await tx.done;
@@ -75,7 +106,7 @@ export async function searchPairList(
 
     //  Try FAST SEARCH using bySymbol index 
 
-    const index = store.index("bySymbol");
+    const index = store.index("bySymbols");
     const fastRange = IDBKeyRange.bound(keyword, keyword + "\uffff");
     let cursor = await index.openCursor(fastRange);
 
@@ -137,6 +168,8 @@ export async function searchPairList(
 }
 
 
-export async function installPairLists() {
-    await createPaiListsDB("symbols", "/pair-list/exchangeInfo.json", "binance");
+export async function installPairLists(callback = () => { }) {
+    await createPaiListsDB(["symbols"], "/pair-list/exchangeInfo.json", "binance", binanceEntryMethod);
+    await createPaiListsDB(["data", "pools"], "/pair-list/UniswapV3Pairs.json", "uniswap:1", subgraphEntryMethod);
+    callback();
 }
