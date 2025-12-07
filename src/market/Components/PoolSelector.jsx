@@ -9,6 +9,7 @@ import { PriceText } from "../../generic_components/PriceText";
 import { SymbolPair } from "../../generic_components/SymbolPair";
 import PairIcon from "../../generic_components/PairIcon";
 import { FormTokenSearch } from "../FormTokenSearch";
+import { FormPairSearch } from "../FormPairSearch";
 
 export const PoolSelector = () => {
     const src = useSourceStore(state => state.src);
@@ -33,34 +34,37 @@ export const PoolSelector = () => {
     }
 
     return (
-        <PopoverButton onPopover={handlePopOver} showClass={"bg-primary-500 w-[75vw] md:w-80 h-fit top-[100%] p-2 left-0 z-65 rounded-md"}>
+        <PopoverButton onPopover={handlePopOver} showClass={"bg-primary-500 w-[85vw] md:w-90 h-fit top-[100%] p-1 py-2 left-0 z-65 rounded-md"}>
             <div className="flex cursor-pointer font-medium items-center gap-1 justify-start hover:brightness-125 rounded-md">
                 <SymbolPair poolAddress={address} className="inline-block text-base md:text-lg text-start text-nowrap" />
                 <PairIcon className="w-1/2 flex" symbol0={symbol0} symbol1={symbol1} spacing="-100%" style={{ width: "30px" }} style1={{ clipPath: "inset(0 0 0 50%)" }} />
                 <div className="text-xs text-washed">▼</div>
             </div>
-            <div className="flex flex-col py-2 gap-0">
-                <div className="flex px-2 items-center gap-1 mb-2 w-full">
+            <div className="flex flex-col p-1 gap-0">
+                <div className="flex items-center mb-1 gap-1 w-full">
                     <FormTokenSearch className="flex-1" target={inverted ? "token0" : "token1"} />
-                    <div className="text-washed">/</div>
+                    <div className="text-washed-dim font-light">/</div>
                     <FormTokenSearch className="flex-1" target={inverted ? "token1" : "token0"} />
                 </div>
-                <Flex className="justify-between text-washed text-xs px-2">
-                    <div>Pool</div>
-
-                    <div>Latest price/swap</div>
-                </Flex>
-                {Object.keys(SourceConst[src].info).map((poolAddress) => (
-                    <SymbolSelectorItem
-                        key={poolAddress}
-                        setPool={setPool}
-                        poolAddress={poolAddress}
-                        network={SourceConst[src]}
-                        preloadPrice={bulkPrices ? bulkPrices[poolAddress] : null}
-                        symbol0={SourceConst[src].info[poolAddress].token0.symbol}
-                        symbol1={SourceConst[src].info[poolAddress].token1.symbol}
-                    />
-                ))}
+                <FormPairSearch className="w-full h-full" />
+                <div className="border border-primary-100 rounded-md mt-3">
+                    <div className="text-xs text-washed px-3 pt-2 text-left rounded-t-md">Highlights</div>
+                    <Flex className="justify-between px-3 py-2 border-b border-primary-100 text-xs">
+                        <div>Pool</div>
+                        <div>Latest price/swap</div>
+                    </Flex>
+                    {Object.keys(SourceConst[src].info).map((poolAddress) => (
+                        <SymbolSelectorItem
+                            key={poolAddress}
+                            setPool={setPool}
+                            poolAddress={poolAddress}
+                            network={SourceConst[src]}
+                            preloadPrice={bulkPrices ? bulkPrices[poolAddress] : null}
+                            symbol0={SourceConst[src].info[poolAddress].token0.symbol}
+                            symbol1={SourceConst[src].info[poolAddress].token1.symbol}
+                        />
+                    ))}
+                </div>
             </div>
         </PopoverButton>
     )
@@ -85,9 +89,9 @@ const SymbolSelectorItem = ({ poolAddress, setPool, network = SourceConst.Uniswa
     }, [poolAddress, network, preloadPrice]);
 
     return (
-        <button onClick={() => setPool(poolAddress)} className="flex w-full p-2 hover:brightness-125 rounded-sm bg-primary-500 text-sm justify-between">
+        <button onClick={() => setPool(poolAddress)} className="flex w-full px-3 py-2 hover:brightness-125 rounded-sm bg-primary-500 text-sm items-center justify-between">
             <div className="flex gap-2">
-                <SymbolPair poolAddress={poolAddress} />
+                <SymbolPair poolAddress={poolAddress} className = "text-sm" />
                 <PairIcon symbol0={symbol0} symbol1={symbol1} size={18} spacing="2px" />
             </div>
             <PriceText className="font-medium text-xs" input={price} />
