@@ -2,16 +2,15 @@ import { getPriceFromSqrtPriceX96 } from "../utils/price.math";
 import { binance_24h, UniswapV3_24h } from "../queries/fetch24hour";
 import { binance, UniswapV3 } from "../queries/fetchHistory";
 import { binanceTicker, UniswapV3BulkPrice } from "../queries/livePrice";
-import { binanceInitialTicks } from "./binanceTicks";
+import { binanceHighlights, uniswapV3EtherumHighlights, uniswapV3SepoilaStarterPairs } from "./starterPairs";
 import { WSS_DOMAIN } from "./environment";
 import { initData, initToken } from "./initData";
 import { getUniswapQuoteFromContract, getUniswapQuoteQueryFn, initDummy } from "../queries/quotes";
-import { checkBinanceSymbolAvailability } from "../queries/api_formatter";
 
 export const SourceConst = {};
 
 // uniswap v3
-SourceConst.UniswapV3 = {
+SourceConst["uniswap:1"] = { // name must resemble indexeDB's pair-list
     name: "UniswapV3",
     desc: "Uniswap V3 Ethereum",
     exchangeIcon: "uniswap",
@@ -19,7 +18,7 @@ SourceConst.UniswapV3 = {
     isDex: true,
     poolURL: "https://app.uniswap.org/explore/pools/ethereum/",
     intervals: ["1h", "1d"],
-    info: null,
+    initPairs: uniswapV3EtherumHighlights,
     bulkPrices: UniswapV3BulkPrice,
     livePrice: UniswapV3BulkPrice,
     ohlcFetch: UniswapV3,
@@ -27,11 +26,10 @@ SourceConst.UniswapV3 = {
     getPriceURL: (poolAddress) => `${WSS_DOMAIN}/liveprice/UniswapV3/${poolAddress}`,
     priceConverter: getPriceFromSqrtPriceX96,
     quoteFunction: getUniswapQuoteFromContract,
-    symbolCheck: () => null,
 };
 
 // uniswap Sepolia testnet
-SourceConst.UniswapV3Sepolia = {
+SourceConst["uniswap:11155111"] = {
     name: "UniswapV3Sepolia",
     desc: "Uniswap V3 Sepolia (Testnet)",
     exchangeIcon: "uniswap",
@@ -39,7 +37,7 @@ SourceConst.UniswapV3Sepolia = {
     isDex: true,
     poolURL: "https://app.uniswap.org/explore/pools/ethereum_sepolia/",
     intervals: ["1h", "1d"],
-    info: null,
+    initPairs: uniswapV3SepoilaStarterPairs,
     bulkPrices: UniswapV3BulkPrice,
     livePrice: UniswapV3BulkPrice,
     ohlcFetch: UniswapV3,
@@ -47,10 +45,9 @@ SourceConst.UniswapV3Sepolia = {
     priceConverter: getPriceFromSqrtPriceX96,
     getPriceURL: (poolAddress) => `${WSS_DOMAIN}/liveprice/UniswapV3Sepolia/${poolAddress}`,
     quoteFunction: getUniswapQuoteQueryFn,
-    symbolCheck: ()=>null,
 };
 
-// Binance (this is CEX network not L2 chain or BSC)
+// Binance (this is CEX price source not L2 chain like BSC)
 SourceConst.binance = {
     name: "binance",
     desc: "Binance CEX",
@@ -58,7 +55,7 @@ SourceConst.binance = {
     network: "binance-smart-chain",
     isDex: false,
     intervals: ["1m", "5m", "15m", "1h", "4h", "1d", "1w", "1M"],
-    info: binanceInitialTicks,
+    initPairs: binanceHighlights,
     livePrice: binanceTicker,
     ohlcFetch: binance,
     h24Query: binance_24h,
@@ -69,10 +66,9 @@ SourceConst.binance = {
     priceConverter: (p) => p,
     swappedSymbols: [],
     quoteFunction: initDummy,
-    symbolCheck: checkBinanceSymbolAvailability,
 };
 
-// Initial network
+// Initial (dummy) network
 SourceConst.init = {
     name: "init",
     desc: "Loading Network",
@@ -81,7 +77,7 @@ SourceConst.init = {
     isDex: false,
     poolURL: "/",
     intervals: ["1h", "1d"],
-    info: initToken,
+    initPairs: initToken,
     bulkPrices: () => "",
     livePrice: () => "0",
     ohlcFetch: async () => initData,
@@ -89,5 +85,4 @@ SourceConst.init = {
     priceConverter: () => "",
     getPriceURL: () => "init",
     quoteFunction: initDummy,
-    symbolCheck: checkBinanceSymbolAvailability,
 }
