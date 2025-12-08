@@ -46,48 +46,48 @@ export const API_DOMAIN = import.meta.env.VITE_API_DOMAIN;
  * @param {string} base The second asset (e.g., 'USDT').
  * @returns {Promise<boolean>} True if either pair permutation is available, false otherwise.
  */
-export async function checkBinanceSymbolAvailability(symbol, base) {
-    const API_BASE = 'https://api.binance.com/api/v3/klines';
+// export async function checkBinanceSymbolAvailability(symbol, base) {
+//     const API_BASE = 'https://api.binance.com/api/v3/klines';
 
-    // Define the two possible symbol permutations
-    const symbolA = `${symbol.toUpperCase()}${base.toUpperCase()}`; // e.g., BTCUSDT
-    const symbolB = `${base.toUpperCase()}${symbol.toUpperCase()}`; // e.g., USDTBTC
+//     // Define the two possible symbol permutations
+//     const symbolA = `${symbol.toUpperCase()}${base.toUpperCase()}`; // e.g., BTCUSDT
+//     const symbolB = `${base.toUpperCase()}${symbol.toUpperCase()}`; // e.g., USDTBTC
 
-    async function checkSymbol(currentSymbol) {
-        const url = `${API_BASE}?symbol=${currentSymbol}&interval=1h&limit=1`;
+//     async function checkSymbol(currentSymbol) {
+//         const url = `${API_BASE}?symbol=${currentSymbol}&interval=1h&limit=1`;
 
-        try {
-            const response = await fetch(url);
+//         try {
+//             const response = await fetch(url);
 
-            const data = await response.json();
+//             const data = await response.json();
 
-            if (Array.isArray(data)) {
-                return true;
-            }
+//             if (Array.isArray(data)) {
+//                 return true;
+//             }
 
-            // Error case: The response is an error object like {"code":-1121,"msg":"Invalid symbol."}
-            if (data.code === -1121) {
-                return false; // Invalid symbol
-            }
+//             // Error case: The response is an error object like {"code":-1121,"msg":"Invalid symbol."}
+//             if (data.code === -1121) {
+//                 return false; // Invalid symbol
+//             }
 
-            return false;
+//             return false;
 
-        } catch (error) {
-            error;
-            return false;
-        }
-    }
+//         } catch (error) {
+//             error;
+//             return false;
+//         }
+//     }
 
-    // Check the first permutation (e.g., BTCUSDT)
-    if (await checkSymbol(symbolA)) {
-        return true;
-    }
+//     // Check the first permutation (e.g., BTCUSDT)
+//     if (await checkSymbol(symbolA)) {
+//         return true;
+//     }
 
-    // Check the reversed permutation (e.g., USDTBTC)
-    if (await checkSymbol(symbolB)) {
-        return true;
-    }
+//     // Check the reversed permutation (e.g., USDTBTC)
+//     if (await checkSymbol(symbolB)) {
+//         return true;
+//     }
 
-    // If neither permutation is available
-    return false;
-}
+//     // If neither permutation is available
+//     return false;
+// }
