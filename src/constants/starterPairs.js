@@ -2,196 +2,242 @@ export const binanceHighlights = [
     {
         "symbols": "BTCUSDT",
         "token1": {
-            "decimals": 8,
-            "name": "Bitcoin",
-            "symbol": "BTC"
+            // Note: BTC is Wrapped Bitcoin (WBTC) on Ethereum
+            "decimals": "8",
+            "name": "Wrapped Bitcoin",
+            "symbol": "WBTC",
+            "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"
         },
         "token0": {
-            "decimals": 6,
+            "decimals": "6",
             "name": "USD Tether",
-            "symbol": "USDT"
+            "symbol": "USDT",
+            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         }
     },
     {
         "symbols": "ETHUSDT",
         "token1": {
-            "decimals": 18,
-            "name": "Ethereum",
-            "symbol": "ETH"
+            // Note: ETH itself is the native coin, but is often WETH (Wrapped Ether) for pools
+            "decimals": "18",
+            "name": "Wrapped Ether",
+            "symbol": "WETH",
+            "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
         },
         "token0": {
-            "decimals": 6,
+            "decimals": "6",
             "name": "USD Tether",
-            "symbol": "USDT"
+            "symbol": "USDT",
+            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         }
     },
     {
         "symbols": "BNBUSDT",
         "token1": {
-            "decimals": 18,
-            "name": "BNB",
-            "symbol": "BNB"
+            // Note: BNB on Ethereum is a bridged/wrapped ERC-20 token (usually an all-caps BNB or WBNB, using the same Binance-issued contract)
+            "decimals": "18",
+            "name": "Binance Coin",
+            "symbol": "BNB",
+            // The contract address can vary based on the bridging solution. This is one common contract for BNB on Ethereum.
+            "address": "0xB8c77482e45F1F44dE1745F52C74426C631bAA52"
         },
         "token0": {
-            "decimals": 6,
+            "decimals": "6",
             "name": "USD Tether",
-            "symbol": "USDT"
+            "symbol": "USDT",
+            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         }
     },
     {
         "symbols": "XRPUSDT",
         "token1": {
-            "decimals": 6,
-            "name": "XRP",
-            "symbol": "XRP"
+            // Note: XRP on Ethereum is a wrapped/bridged token (e.g., wXRP). This is a placeholder as the canonical address can vary based on the bridge.
+            "decimals": "6",
+            "name": "Wrapped XRP",
+            "symbol": "wXRP",
+            "address": "0x1D2F17dE01e233C2f3c0519E16c52b2253816223" // Example Placeholder
         },
         "token0": {
-            "decimals": 6,
+            "decimals": "6",
             "name": "USD Tether",
-            "symbol": "USDT"
+            "symbol": "USDT",
+            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         }
     },
     {
         "symbols": "DOGEUSDT",
         "token1": {
-            "decimals": 8,
-            "name": "Dogecoin",
-            "symbol": "DOGE"
+            // Note: DOGE on Ethereum is a wrapped/bridged token (e.g., wDOGE). This is a placeholder.
+            "decimals": "8",
+            "name": "Wrapped Dogecoin",
+            "symbol": "wDOGE",
+            "address": "0xBA5C2bC684534484E4324f4e24694469a5382D4d" // Example Placeholder
         },
         "token0": {
-            "decimals": 6,
+            "decimals": "6",
             "name": "USD Tether",
-            "symbol": "USDT"
+            "symbol": "USDT",
+            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         }
     },
     {
         "symbols": "ADAUSDT",
         "token1": {
-            "decimals": 6,
-            "name": "Cardano",
-            "symbol": "ADA"
+            // Note: ADA on Ethereum is a wrapped/bridged token (e.g., wADA). This is a placeholder.
+            "decimals": "6",
+            "name": "Wrapped Cardano",
+            "symbol": "wADA",
+            "address": "0x97a3aE8c6B99b11b5167b579124E5649fD04e222" // Example Placeholder
         },
         "token0": {
-            "decimals": 6,
+            "decimals": "6",
             "name": "USD Tether",
-            "symbol": "USDT"
+            "symbol": "USDT",
+            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         }
     },
     {
         "symbols": "SOLUSDT",
         "token1": {
-            "decimals": 9,
-            "name": "Solana",
-            "symbol": "SOL"
+            // Note: SOL on Ethereum is a wrapped/bridged token (e.g., wSOL). This is a placeholder.
+            "decimals": "9",
+            "name": "Wrapped Solana",
+            "symbol": "wSOL",
+            "address": "0xd31a89c3755c3c0b05b382098693c4e365D65A46" // Example Placeholder
         },
         "token0": {
-            "decimals": 6,
+            "decimals": "6",
             "name": "USD Tether",
-            "symbol": "USDT"
+            "symbol": "USDT",
+            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         }
     },
     {
         "symbols": "DOTUSDT",
         "token1": {
-            "decimals": 10,
-            "name": "Polkadot",
-            "symbol": "DOT"
+            // Note: DOT on Ethereum is a wrapped/bridged token (e.g., wDOT). This is a placeholder.
+            "decimals": "10",
+            "name": "Wrapped Polkadot",
+            "symbol": "wDOT",
+            "address": "0x789b9809F0854c868172c723f05354F9D46199a5" // Example Placeholder
         },
         "token0": {
-            "decimals": 6,
+            "decimals": "6",
             "name": "USD Tether",
-            "symbol": "USDT"
+            "symbol": "USDT",
+            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         }
     },
     {
         "symbols": "MATICUSDT",
         "token1": {
-            "decimals": 18,
-            "name": "Polygon",
-            "symbol": "MATIC"
+            // Note: MATIC is an ERC-20 token on the Ethereum Mainnet.
+            "decimals": "18",
+            "name": "Polygon Token",
+            "symbol": "MATIC",
+            "address": "0x7D1AfA7B718a9010AEB9bA488095f9C3D52bB0BE"
         },
         "token0": {
-            "decimals": 6,
+            "decimals": "6",
             "name": "USD Tether",
-            "symbol": "USDT"
+            "symbol": "USDT",
+            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         }
     },
     {
         "symbols": "LTCUSDT",
         "token1": {
-            "decimals": 8,
-            "name": "Litecoin",
-            "symbol": "LTC"
+            // Note: LTC on Ethereum is a wrapped/bridged token (e.g., wLTC). This is a placeholder.
+            "decimals": "8",
+            "name": "Wrapped Litecoin",
+            "symbol": "wLTC",
+            "address": "0x5d9b5e5D450702f2389d4289873d6118D602f347" // Example Placeholder
         },
         "token0": {
-            "decimals": 6,
+            "decimals": "6",
             "name": "USD Tether",
-            "symbol": "USDT"
+            "symbol": "USDT",
+            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         }
     },
     {
         "symbols": "TRXUSDT",
         "token1": {
-            "decimals": 6,
-            "name": "TRON",
-            "symbol": "TRX"
+            // Note: TRX on Ethereum is a wrapped/bridged token (e.g., wTRX). This is a placeholder.
+            "decimals": "6",
+            "name": "Wrapped TRON",
+            "symbol": "wTRX",
+            "address": "0xf266d6d74E8640726d48807F63D995779c17C5a0" // Example Placeholder
         },
         "token0": {
-            "decimals": 6,
+            "decimals": "6",
             "name": "USD Tether",
-            "symbol": "USDT"
+            "symbol": "USDT",
+            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         }
     },
     {
         "symbols": "SHIBUSDT",
         "token1": {
-            "decimals": 18,
+            // Note: SHIB is a native ERC-20 token on the Ethereum Mainnet.
+            "decimals": "18",
             "name": "Shiba Inu",
-            "symbol": "SHIB"
+            "symbol": "SHIB",
+            "address": "0x95aD61b0a150d79219dCEE49262d98a645bC254c"
         },
         "token0": {
-            "decimals": 6,
+            "decimals": "6",
             "name": "USD Tether",
-            "symbol": "USDT"
+            "symbol": "USDT",
+            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         }
     },
     {
         "symbols": "AVAXUSDT",
         "token1": {
-            "decimals": 18,
-            "name": "Avalanche",
-            "symbol": "AVAX"
+            // Note: AVAX on Ethereum is a wrapped/bridged token (e.g., AVAX on the C-Chain is wrapped to be an ERC-20 on Ethereum). This is a placeholder.
+            "decimals": "18",
+            "name": "Wrapped Avalanche",
+            "symbol": "WAVAX",
+            "address": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7" // This is the address of WAVAX on the Avalanche C-Chain, not Ethereum. The actual ERC-20 bridged token contract on Ethereum varies by bridge.
         },
         "token0": {
-            "decimals": 6,
+            "decimals": "6",
             "name": "USD Tether",
-            "symbol": "USDT"
+            "symbol": "USDT",
+            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         }
     },
     {
         "symbols": "LINKUSDT",
         "token1": {
-            "decimals": 18,
+            // Note: LINK is a native ERC-20 token on the Ethereum Mainnet.
+            "decimals": "18",
             "name": "Chainlink",
-            "symbol": "LINK"
+            "symbol": "LINK",
+            "address": "0x514910771AF9Ca656af840dff83E8264dC6fA922"
         },
         "token0": {
-            "decimals": 6,
+            "decimals": "6",
             "name": "USD Tether",
-            "symbol": "USDT"
+            "symbol": "USDT",
+            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         }
     },
     {
         "symbols": "ATOMUSDT",
         "token1": {
-            "decimals": 6,
-            "name": "Cosmos",
-            "symbol": "ATOM"
+            // Note: ATOM on Ethereum is a wrapped/bridged token (e.g., wATOM). This is the common contract for ATOM as an ERC-20 on Ethereum.
+            "decimals": "6",
+            "name": "Cosmos Token",
+            "symbol": "ATOM",
+            "address": "0x8D983cb9388EaC77af0474fA441C4815500Cb7BB"
         },
         "token0": {
-            "decimals": 6,
+            "decimals": "6",
             "name": "USD Tether",
-            "symbol": "USDT"
+            "symbol": "USDT",
+            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         }
     }
 ]
