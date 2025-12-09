@@ -4,11 +4,11 @@ import { Flex, SvgMemo } from "../../Layout/Layout";
 import { useSourceStore } from "../../stores/stores";
 import { LoadingIcon } from "../../Layout/svg";
 
-export const NetworkSelection = ({ handleNetworkChange }) => {
-    const { init, saved } = useSourceStore();
+export const NetworkSelection = () => {
+    const setSrc = useSourceStore(state => state.setSrc);
 
     const setNetwork = async (network) => {
-        handleNetworkChange(network);
+        setSrc(network);
     }
 
     const unselected = {
@@ -18,7 +18,7 @@ export const NetworkSelection = ({ handleNetworkChange }) => {
     }
 
     return (
-        <div className="w-full bg-primary-900 h-screen floating-modal" style={unselected[init]}>
+        <div className="w-full bg-primary-900 h-screen floating-modal" style={unselected[useSourceStore.getState().src == "init"]}>
             <div className="h-14"></div>
             <div className="flex flex-col gap-3 border-washed items-center rounded-lg mx-auto max-w-100 p-10">
 
@@ -27,14 +27,14 @@ export const NetworkSelection = ({ handleNetworkChange }) => {
                     <div className="text-sm mb-4 mt-4">Select Exchange Network:</div>
                 </div>
                 {
-                    saved && <div className="flex items-center">
+                    !useSourceStore.getState().src == "init" && <div className="flex items-center">
                         <div>Loading network</div>
                         <SvgMemo>
                             <LoadingIcon className="w-12 h-12" />
                         </SvgMemo>
                     </div>
                 }
-                {!saved && Object.keys(SourceConst).slice(0, -1).map((network) => (
+                {useSourceStore.getState().src == "init" && Object.keys(SourceConst).slice(0, -1).map((network) => (
                     <Flex
                         key={network}
                         onClick={() => setNetwork(network)}

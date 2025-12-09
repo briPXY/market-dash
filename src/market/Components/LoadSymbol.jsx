@@ -3,7 +3,7 @@ import { LoadingIcon } from "../../Layout/svg";
 import { SvgMemo } from "../../Layout/Layout";
 
 export const LoadSymbol = () => {
-    const { init } = usePoolStore();
+    const { address } = usePoolStore();
     const symbolUndefined = {
         true: { zIndex: "999" },
         false: { display: "none" },
@@ -11,7 +11,7 @@ export const LoadSymbol = () => {
     }
 
     return (
-        <div className="bg-primary-500 floating-modal" style={symbolUndefined[init]}>
+        <div className="bg-primary-500 floating-modal" style={symbolUndefined[address == "init"]}>
             <div className="flex items-center rounded-lg pr-2 pl-8">
                 <div className="text-xs md:text-sm">Loading pools information</div>
                 <SvgMemo>

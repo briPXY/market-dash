@@ -1,23 +1,23 @@
-import { DOMAIN } from "../constants/environment";
+// import { DOMAIN } from "../constants/environment";
 import { SourceConst } from "../constants/sourceConst";
 import { isSavedStateExist, loadState } from "./stateDB";
 
 export async function initPoolsInfo(network) {
     try {
-        if (SourceConst[network].isDex) {
-            let res = await fetch(`${DOMAIN}/api/poolinfo/${network}`);
-            let obj = await res.json();
-            SourceConst[network].info = {};
-            Object.assign(SourceConst[network].info, obj.data);
+        // if (SourceConst[network].isDex) {
+        //     let res = await fetch(`${DOMAIN}/api/poolinfo/${network}`);
+        //     let obj = await res.json();
+        //     SourceConst[network].info = {};
+        //     Object.assign(SourceConst[network].info, obj.data);
 
-            // For swapped token
-            SourceConst[network].swappedSymbols?.forEach((address) => {
-                const temp = SourceConst[network].info[address].token0;
-                SourceConst[network].info[address].token0 = SourceConst[network].info[address].token1;
-                SourceConst[network].info[address].token1 = temp;
+        //     // For swapped token
+        //     SourceConst[network].swappedSymbols?.forEach((address) => {
+        //         const temp = SourceConst[network].info[address].token0;
+        //         SourceConst[network].info[address].token0 = SourceConst[network].info[address].token1;
+        //         SourceConst[network].info[address].token1 = temp;
 
-            })
-        }
+        //     })
+        // }
 
         const savedTickExist = await isSavedStateExist(`savedTick-${network}`);
 

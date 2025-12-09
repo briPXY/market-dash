@@ -59,10 +59,7 @@ SourceConst.binance = {
     livePrice: binanceTicker,
     ohlcFetch: binance,
     h24Query: binance_24h,
-    getPriceURL: (poolAddress) => {
-        const [token0, token1] = poolAddress.split('-');
-        return `wss://stream.binance.com:9443/ws/${token0.toLowerCase()}${token1.toLowerCase()}@trade`
-    },
+    getPriceURL: (symbols) => `wss://stream.binance.com:9443/ws/${symbols.toLowerCase()}@trade`,
     priceConverter: (p) => p,
     swappedSymbols: [],
     quoteFunction: initDummy,

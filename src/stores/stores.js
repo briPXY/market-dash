@@ -1,3 +1,4 @@
+import { getTokenBySymbolChainId } from "../idb/tokenListDB";
 import { SourceConst } from "../constants/sourceConst";
 import { saveState } from "../idb/stateDB";
 import { create } from "zustand";
@@ -9,36 +10,79 @@ export const usePriceStore = create((set) => ({
     setIndexPrice: (price) => set({ index: price }),
 }));
 
-export const useSourceStore = create((set) => ({
-    src: "init",
-    init: true,
-    saved: true,
-    setSaved: (bool) => { set({ saved: bool }) },
-    setSrc: async (value) => {
-        set({ src: value, init: false, saved: true });
-        await saveState(`savedNetwork`, value);
+export const useNetworkStore = create((set) => ({
+    chain: "ethereum", // blockchain 
+    chainId: "1", // network (L2 etc)
+    setNetwork: async (chain, chainId) => {
+        set({ chain: chain, chainId: chainId });
+        await saveState(`savedNetwork.chain`, chain);
+        await saveState(`savedNetwork.chainId`, chainId);
     },
 }));
 
-export const usePoolStore = create((set) => ({
-    address: "init",
-    init: true,
-    symbol0: "",
-    symbol1: "",
-    token0:{},
-    token1:{},
+export const useSourceStore = create((set) => ({
+    src: "binance",
+    saved: true,
+    data: SourceConst.binance,
+    setSaved: (bool) => { set({ saved: bool }) },
+    setSrc: async (value) => {
+        set({ src: value, init: false, saved: true, data: SourceConst[value] });
+        usePoolStore.getState().onSourceChange(value);
+        await saveState(`savedSource`, value);
+        await saveState(`savedSource.data`, SourceConst[value]);
+    },
+}));
 
-    setAddress: (address) => {
-        set({
-            address,
-            init: false,
-            symbol0: SourceConst[useSourceStore.getState().src].info[address].token0.symbol,
-            symbol1: SourceConst[useSourceStore.getState().src].info[address].token1.symbol,
-        });
+export const useTradingPlatformStore = create((set) => ({
+    platform: "uniswap",
+    setPlatform: async (value) => {
+        set({ platform: value });
+        await saveState(`savedTradingPlatform`, value);
+    },
+}));
+
+export const usePoolStore = create((set, get) => ({
+    address: "0x", // address of pool (case like uniswap) not each symbol
+    symbols: "BTCUSDT",
+    token0: SourceConst.binance.initPairs[0].token0,
+    token1: SourceConst.binance.initPairs[0].token1,
+    feeTier: "",
+
+    setPairFromPairObj: (obj) => {
+        set(obj);
     },
 
     setSingleSymbol: (target, value) => {
         set({ [target]: value });
+    },
+
+    onSourceChange: async(priceSourceName) => {
+        const savedPairData = localStorage.getItem(`savedPairStore-${priceSourceName}`);
+
+        if (savedPairData) {
+            set(JSON.parse(savedPairData));
+        }
+        else { // not pair data saved
+            set(SourceConst[priceSourceName].initPairs[0]);
+        }
+    },
+
+    setPairFromListDB: async (info, notFoundCallback = function () { }) => {
+        if (info.token0) { // pair entry have additional info 
+            set(info);
+        }
+        else {
+            const network = useNetworkStore.getState().chain + useNetworkStore.getState().chainId;
+            const tokenInfo0 = await getTokenBySymbolChainId(info.symbol0.toUppserCase(), network);
+            const tokenInfo1 = await getTokenBySymbolChainId(info.symbol1.toUppserCase(), network);
+            set({ symbols: info.symbols, address: null, feeTier: null, token0: tokenInfo0, token1: tokenInfo1 });
+
+            if (!tokenInfo0 || !tokenInfo1) {
+                notFoundCallback({ tokenInfo0, tokenInfo1 });
+            }
+        }
+
+        await saveState(`savedPairStore-${useSourceStore.getState().src}`, JSON.stringify(get()));
     },
 
     // internal symbol swapper, only called from setPriceInvert

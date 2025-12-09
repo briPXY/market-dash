@@ -7,7 +7,6 @@ import "./idb/init.js";
 import { usePoolStore, useSourceStore, useWalletStore } from './stores/stores';
 import { useEffect } from 'react';
 import { isSavedStateExist, loadState } from './idb/stateDB';
-import { initPoolsInfo } from './idb/init.js';
 import { localStorageDeleteDottedKeyAll, localStorageLoadDottedKeyAll } from './utils/utils';
 import { tryReconnectWallet } from './order/wallet';
 import WalletList from './order/WalletList';
@@ -22,17 +21,8 @@ function BadComponentTest() {
 }
 
 function App() {
-    const { setSrc, setSaved } = useSourceStore();
+    const { setSrc } = useSourceStore();
     const { setAddress } = usePoolStore();
-
-    async function handleNetworkChange(selectedNetwork) {
-        const poolAddress = await initPoolsInfo(selectedNetwork);
-
-        if (poolAddress) {
-            setSrc(selectedNetwork);
-            setAddress(poolAddress);
-        }
-    }
 
     // Init handler
     useEffect(() => {
@@ -41,16 +31,14 @@ function App() {
             await installTokenLists();
             await installPairLists();
 
-            const savedNetworkExist = await isSavedStateExist(`savedNetwork`);
-            
+            const savedNetworkExist = await isSavedStateExist(`savedSource`);
+
             if (savedNetworkExist) {
-                const savedNetwork = await loadState("savedNetwork");
-                const poolAddress = await initPoolsInfo(savedNetwork);
+                const savedNetwork = await loadState("savedSource");
                 setSrc(savedNetwork);
-                setAddress(poolAddress);
             }
             else {
-                setSaved(false);
+                setSrc("binance");
             }
 
             // Load saved wallet login 
@@ -68,7 +56,7 @@ function App() {
         }
 
         init();
-    }, [setAddress, setSaved, setSrc]);
+    }, [setAddress, setSrc]);
 
     // App on-close handler
     useEffect(() => {
@@ -87,10 +75,10 @@ function App() {
         <>
             {/* <BadComponentTest /> */}
             <Section className="overflow-visible w-full mb-1">
-                <TopBar handleNetworkChange={handleNetworkChange} />
+                <TopBar />
             </Section>
             <Section className="overflow-visible w-full">
-                <Market handleNetworkChange={handleNetworkChange} />
+                <Market />
             </Section>
             <Section ></Section>
 

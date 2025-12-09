@@ -7,10 +7,9 @@ import { DOMAIN } from "../constants/environment";
 
 // BINANCE
 
-const binance = async function (address, interval) {
+const binance = async function (pairSymbols, interval) {
     try {
-        const [symbolIn, symbolOut] = address.split('-');
-        const dataUrl = formatAPI.binance(symbolOut, symbolIn, interval).historical;
+        const dataUrl = formatAPI.binance(pairSymbols, interval).historical;
 
         const response = await axios.get(dataUrl);
         const data = response.data; // Extracting data properly 
@@ -48,7 +47,7 @@ async function UniswapV3(address, interval, network = "UniswapV3") {
         if (!timeframes[interval]) {
             interval = "1h";
         }
- 
+
         const response = await fetch(`${DOMAIN}/historical/${network}/${address}/${interval}`);
         const data = await response.json();
 

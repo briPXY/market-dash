@@ -1,7 +1,6 @@
 import Decimal from 'decimal.js';
 import { ethers } from "ethers";
-// import { isTickPriceReversed } from './utils';
-import { SourceConst } from '../constants/sourceConst';
+// import { isTickPriceReversed } from './utils'; 
 
 export const PriceSample = { historical: 0 };
 /**
@@ -15,12 +14,12 @@ export const PriceSample = { historical: 0 };
  */
 export function getPriceFromSqrtPriceX96(
     sqrtPriceX96,
-    network,
-    address
+    token0,
+    token1
 ) {
     // const isPriceReversed = isTickPriceReversed(network, address);
-    const token0Decimals = SourceConst[network].info[address].token0.decimals;
-    const token1Decimals = SourceConst[network].info[address].token1.decimals;
+    const token0Decimals = token0.decimals;
+    const token1Decimals = token1.decimals;
 
     const sqrt = new Decimal(sqrtPriceX96.toString());
     const price = sqrt.pow(2).div(new Decimal(2).pow(192));

@@ -1,5 +1,4 @@
 import { usePoolStore, useSourceStore } from "../stores/stores";
-import { SourceConst } from "../constants/sourceConst";
 import { PriceText } from "../generic_components/PriceText";
 import { TokenIcon } from "@web3icons/react/dynamic";
 import { useRef } from "react";
@@ -19,8 +18,9 @@ const toggleHeight = (ref) => {
 };
 
 export const SwapHistory = ({ swaps }) => {
-    const { address } = usePoolStore();
-    const { src } = useSourceStore();
+    // eslint-disable-next-line no-unused-vars
+    const address = usePoolStore(state => state.address);
+    const src = useSourceStore(state => state.src);
     const listBoxRef = useRef(null);
 
     if (!swaps || !src) return;
@@ -38,12 +38,12 @@ export const SwapHistory = ({ swaps }) => {
                 <span className="w-1/6 text-left text-white">Date</span>
                 <span className="w-1/6 text-center text-white">Price</span>
                 <div className="flex gap-0.5 text-[0.8em] justify-center items-center w-1/6 text-center text-white">
-                    <TokenIcon size={18} variant="mono" color="#fff" symbol={SourceConst[src].info[address].token0.symbol.toLowerCase()} />
-                    <span >{SourceConst[src].info[address].token0.symbol}</span>
+                    <TokenIcon size={18} variant="mono" color="#fff" symbol={usePoolStore.getState().token0.symbol.toLowerCase()} />
+                    <span >{usePoolStore.getState().token0.symbol}</span>
                 </div>
                 <div className="flex gap-0.5 text-[0.8em] justify-center items-center w-1/6 text-center text-white">
-                    <TokenIcon size={18} variant="mono" color="#fff" symbol={SourceConst[src].info[address].token1.symbol.toLowerCase()} />
-                    <span >{SourceConst[src].info[address].token1.symbol}</span>
+                    <TokenIcon size={18} variant="mono" color="#fff" symbol={usePoolStore.getState().token1.symbol.toLowerCase()} />
+                    <span >{usePoolStore.getState().token1.symbol}</span>
                 </div>
                 <span className="w-1/6 text-right text-white">Address</span>
             </div>

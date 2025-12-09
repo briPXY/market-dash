@@ -3,19 +3,20 @@ export const initData = {
     swaps: [{ date: 16000, price: 0, total: 0, amount: 0, recipient: "0x0000" }],
 };
 
-export const initToken = {
-    "init": {
-        "token0": {
-            "decimals": 1,
-            "name": "loading",
-            "symbol": "...",
-            "id":null,
-        },
-        "token1": {
-            "decimals": 1,
-            "name": "loading",
-            "symbol": "...",
-            "id":null,
-        }
+export const initToken = [{
+    "symbols": "xxxx",
+    "address":"0x",
+    "token0": {
+        "decimals": 1,
+        "name": "loading",
+        "symbol": "...",
+        "id": null,
     },
-};
+    "token1": {
+        "decimals": 1,
+        "name": "loading",
+        "symbol": "...",
+        "id": null,
+    }
+},
+];

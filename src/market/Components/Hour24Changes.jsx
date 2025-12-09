@@ -7,9 +7,9 @@ import { LoadingIcon } from "../../Layout/svg";
 import { usePriceInvertStore } from "../../stores/stores";
 import { formatPrice, invertedHistoricalPrices } from "../../utils/utils";
 
-export const Hour24Changes = ({ address, src }) => {
+export const Hour24Changes = ({ symbols, src }) => {
     const { data: hour24data, isLoading: hour24Loading } = use24HourQuery({
-        poolAddress: address,
+        symbols: symbols,
         network: src,
     });
 

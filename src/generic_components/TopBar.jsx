@@ -4,14 +4,14 @@ import { Flex } from "../Layout/Layout"
 import { useModalVisibilityStore, useWalletStore } from "../stores/stores";
 import { NetworkSelector } from "./NetworkSelector";
 
-export const TopBar = ({ handleNetworkChange }) => {
+export const TopBar = ( ) => {
     const { setModalVisibility } = useModalVisibilityStore();
     const address = useWalletStore(state => state.address);
     const addressText = address ? `${address.slice(0, 6)}...${address.slice(address.length - 5)}` : "Not logged-in";
 
     return (
         <Flex className="justify-between items-center w-full max-h-21 bg-primary-900 py-4 p-2 md:p-4">
-            <NetworkSelector handleNetworkChange={handleNetworkChange} />
+            <NetworkSelector  />
             <Flex className="justify-end">
                 {!address && <button onClick={() => setModalVisibility("wallet", true)} className="text-xs p-2 bg-primary-500 rounded-sm text-white" >Login</button>}
                 {address &&

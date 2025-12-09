@@ -24,9 +24,13 @@ function removeNonNumeric(rawValue) {
     return cleaned;
 }
 
-export default function Swap({ token0, token1, isDEX }) {
+export default function Swap({ isDEX }) {
+    const token0 = usePoolStore(state => state.token0);
+    const token1 = usePoolStore(state => state.token1);
+
     const source = useSourceStore(state => state.src);
     const poolAddress = usePoolStore(state => state.address);
+
     const [sellAmount, setSellAmount] = useState('');
     const [buyAmount, setBuyAmount] = useState(0);
     const [currentTokenIn, setcurrentTokenIn] = useState(token1);

@@ -9,12 +9,10 @@ import { stdSymbol } from "../utils/utils";
 // import { useState } from "react";
 
 
-function SwapForm({ currentTokenIn, currentTokenOut, handleSellChange, sellAmount, buyAmount, handleBuyChange, handleChangeSymbols, reversed, isDEX }) {
+function SwapForm({ currentTokenIn, currentTokenOut, handleSellChange, sellAmount, buyAmount, handleBuyChange, handleChangeSymbols, reversed }) {
     const accountAddress = useWalletStore(state => state.address); // Real logged-in/off state  
     // const [loginState, setloginState] = useState(null);
     const { setModalVisibility } = useModalVisibilityStore();
-
-    if (!isDEX) return null;
 
     return (
         <div className="flex flex-col px-3 pb-3 gap-2 bg-primary-900 w-full h-full relative">

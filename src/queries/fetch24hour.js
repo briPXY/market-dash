@@ -2,14 +2,13 @@ import axios from "axios";
 import { formatAPI } from "./api_formatter";
 import * as history from "./fetchHistory";
 
-export const binance_24h = async function (address) {
-    try {
-        const [symbolIn, symbolOut] = address.split('-');
-        const dataUrl = formatAPI.binance(symbolOut, symbolIn).hour24; 
+export const binance_24h = async function (symbols) {
+    try { 
+        const dataUrl = formatAPI.binance(symbols).hour24;
 
         const response = await axios.get(dataUrl);
         const data = response.data; // Extracting data properly
- 
+
         return data.map((candle) => ({
             date: +(candle[0]),
             open: +candle[1],
@@ -17,7 +16,7 @@ export const binance_24h = async function (address) {
             low: +candle[3],
             close: +candle[4],
             volume: +candle[5],
-            trades:+candle[8],
+            trades: +candle[8],
         }));
     } catch (error) {
         console.error("Error fetching Binance data:", error);
@@ -25,7 +24,7 @@ export const binance_24h = async function (address) {
     }
 };
 
-export const UniswapV3_24h = async function(poolAddress, network) {
+export const UniswapV3_24h = async function (poolAddress, network) {
     const result = await history.UniswapV3(poolAddress, "1h", network);
     return result.ohlc ? result.ohlc.slice(-24) : result;
 }

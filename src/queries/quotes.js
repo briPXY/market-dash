@@ -1,4 +1,6 @@
 import { ethers, parseUnits } from "ethers";
+// import { PoolManager } from '@uniswap/v4-sdk';
+// import { Token } from '@uniswap/sdk-core';
 import { formatPrice, getAvailableRPC } from "../utils/utils";
 import { RPC_URLS, swapDecimalRule } from "../constants/constants";
 const workingRPC = {};
@@ -196,3 +198,64 @@ export async function getUniswapQuoteFromContract({ queryKey }) {
 
 export function initDummy() { return null }
 initDummy.props = ["Loading Network", "Loading Pool"]
+
+// const ONE_DAY = 24 * 60 * 60 * 1000
+// const CACHE_NAME = 'uniswap-pool-exists'
+
+/**
+ * Check if Uniswap v4 pool exists and cache the result for 24 hours.
+ * @param {object} provider - ethers provider instance
+ * @param {string} tokenAAddr - token A contract address
+ * @param {string} tokenBAddr - token B contract address
+ * @param {number} fee - fee tier (default: 3000)
+ * @param {number} decimalsA - token A decimals
+ * @param {number} decimalsB - token B decimals
+ */
+// export async function poolExists(provider, tokenAAddr, tokenBAddr, decimalsA = 18, decimalsB = 18, fee = 3000) {
+//     const cacheKey = `${tokenAAddr}-${tokenBAddr}-${fee}`.toLowerCase()
+
+//     // 1) Try cache
+//     const cache = await caches.open(CACHE_NAME)
+//     const cached = await cache.match(cacheKey)
+
+//     if (cached) {
+//         const data = await cached.json()
+//         if (Date.now() - data.timestamp < ONE_DAY) {
+//             return data.exists // return cached result
+//         }
+//         // expired cache → delete entry
+//         await cache.delete(cacheKey)
+//     }
+
+//     // 2) Run Uniswap SDK check
+//     const tokenA = new Token(1, tokenAAddr, decimalsA)
+//     const tokenB = new Token(1, tokenBAddr, decimalsB)
+
+//     const poolManager = new PoolManager(provider)
+
+//     let exists = false
+//     try {
+//         const poolId = await poolManager.getPoolId({
+//             currency0: tokenA,
+//             currency1: tokenB,
+//             fee,
+//             tickSpacing: 60,
+//             hooks: ethers.ZeroAddress
+//         })
+
+//         const liquidity = await poolManager.getLiquidity(poolId)
+//         exists = liquidity > 0n // bigint compare
+//     } catch {
+//         exists = false
+//     }
+
+//     // 3) Save to cache
+//     await cache.put(
+//         cacheKey,
+//         new Response(JSON.stringify({ exists, timestamp: Date.now() }), {
+//             headers: { 'Content-Type': 'application/json' }
+//         })
+//     )
+
+//     return exists
+// }

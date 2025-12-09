@@ -1,12 +1,12 @@
 import { WSS_DOMAIN } from "../constants/environment";
 
-function binance(base = "USDT", symbol = "ETH", range = "50") {
+function binance(symbols, range = "50") {
     const result = {}
-    result.hour24 = `https://api.binance.com/api/v3/klines?symbol=${symbol.toUpperCase()}${base.toUpperCase()}&interval=5m&limit=288`
-    result.historical = `https://api.binance.com/api/v3/klines?symbol=${symbol.toUpperCase()}${base.toUpperCase()}&interval=${range}&limit=500`;
-    result.index = `wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}${base.toLowerCase()}@indexPrice`;
-    result.mark = `wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}${base.toLowerCase()}@markPrice`;
-    result.trade = `wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}${base.toLowerCase()}@trade`;
+    result.hour24 = `https://api.binance.com/api/v3/klines?symbol=${symbols}&interval=5m&limit=288`
+    result.historical = `https://api.binance.com/api/v3/klines?symbol=${symbols}&interval=${range}&limit=500`;
+    result.index = `wss://stream.binance.com:9443/ws/${symbols.toLowerCase()}@indexPrice`;
+    result.mark = `wss://stream.binance.com:9443/ws/${symbols.toLowerCase()}@markPrice`;
+    result.trade = `wss://stream.binance.com:9443/ws/${symbols.toLowerCase()}@trade`;
     return result;
 }
 
@@ -50,7 +50,7 @@ export const API_DOMAIN = import.meta.env.VITE_API_DOMAIN;
 //     const API_BASE = 'https://api.binance.com/api/v3/klines';
 
 //     // Define the two possible symbol permutations
-//     const symbolA = `${symbol.toUpperCase()}${base.toUpperCase()}`; // e.g., BTCUSDT
+//     const symbolA = `${symbols}`; // e.g., BTCUSDT
 //     const symbolB = `${base.toUpperCase()}${symbol.toUpperCase()}`; // e.g., USDTBTC
 
 //     async function checkSymbol(currentSymbol) {

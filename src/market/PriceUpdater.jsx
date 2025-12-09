@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
-import usePriceStore, { useSourceStore, usePoolStore } from "../stores/stores";
-import { SourceConst } from "../constants/sourceConst";
+import usePriceStore, { useSourceStore, usePoolStore } from "../stores/stores"; 
 
 const closeWebSocket = (ws) => {
     if (!ws.current) return;
@@ -18,27 +17,26 @@ const closeWebSocket = (ws) => {
 
 const PriceUpdater = ({ type }) => {
     const setPrice = usePriceStore((state) => type == "trade" ? state.setTradePrice : state.setIndexPrice);
-    const pool = usePoolStore(state => state.address); 
-    const src = useSourceStore(state => state.src);
+    const symbols = usePoolStore(state => state.symbols); 
+    const priceSource = useSourceStore(state => state.data);
     const ws = useRef(null);
     let reconnectTimer = useRef(null);
     
-    useEffect(() => {
+    useEffect(() => { 
 
-        if (pool == "init" || src == "init") return; 
+        if (symbols == "init" || useSourceStore.getState().src == "init") return; 
  
         const connectWebSocket = () => {
             if (ws.current !== null) {
                 closeWebSocket(ws); 
             } 
-
-            const network = SourceConst[src];
-            const socket = new WebSocket(network.getPriceURL(pool));
+ 
+            const socket = new WebSocket(priceSource.getPriceURL(symbols));
             ws.current = socket;
 
             socket.onmessage = (event) => {
                 const message = JSON.parse(event.data);
-                const converted = network.priceConverter(message.p, src, pool);
+                const converted = priceSource.priceConverter(message.p, usePoolStore.getState().token0, usePoolStore.getState().token1);
                 setPrice(converted);
             };
 
@@ -70,7 +68,7 @@ const PriceUpdater = ({ type }) => {
             if (updateTicker) clearInterval(updateTicker);
         };
 
-    }, [setPrice, src, pool, type]);
+    }, [setPrice, type, symbols, priceSource]);
 
     return null; // ✅ No UI needed, only updates Zustand
 };

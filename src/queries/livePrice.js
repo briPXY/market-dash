@@ -18,9 +18,8 @@ export const UniswapV3BulkPrice = async (provider) => {
 }
 
 
-export const binanceTicker = async (pool) => {
-    const [symbolIn, symbolOut] = pool.split('-');
-    const apiUrl = `https://api.binance.com/api/v3/ticker/price?symbol=${symbolIn.toUpperCase()}${symbolOut.toUpperCase()}`;
+export const binanceTicker = async (symbols) => { 
+    const apiUrl = `https://api.binance.com/api/v3/ticker/price?symbol=${symbols}`;
     try {
         const response = await fetch(apiUrl);
         const data = await response.json();

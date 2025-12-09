@@ -12,14 +12,14 @@ const PairIcon = ({
     spacing = "-0.7rem",
     style0 = {},
     style1 = {},
-    className="flex justify-center items-center",
+    className = "flex justify-center items-center",
     ...rest
 }) => {
     return (
         <div className={className} {...rest}>
             <div style={style0} >
                 <TokenIcon
-                    symbol={stdSymbol(symbol0).toLowerCase()}
+                    symbol={stdSymbol(symbol0 ?? "?").toLowerCase()}
                     size={size}
                     variant={variant}
                     className={className0}
@@ -27,7 +27,7 @@ const PairIcon = ({
             </div>
             <div style={{ marginLeft: spacing, ...style1 }} >
                 <TokenIcon
-                    symbol={stdSymbol(symbol1).toLowerCase()}
+                    symbol={stdSymbol(symbol1 ?? "?").toLowerCase()}
                     size={size}
                     variant={variant}
                     className={className1}
