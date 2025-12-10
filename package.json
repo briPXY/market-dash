@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "fastify-server": "node fastify-server.js",
     "build-poolsinfo": "node server/data/build-poolinfo.mjs",
-    "download:tokenlist": "curl -L -o public/token-list/ethereum.json https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/tokenlist.json",
+    "download:tokenlist": "curl -L -o public/token-list/ethereum.json https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/tokenlist.json && curl -L -o public/token-list/UniswapMainnet.json https://raw.githubusercontent.com/Uniswap/default-token-list/refs/heads/main/src/tokens/mainnet.json",
     "download:pairlist":"curl -L -o public/pair-list/exchangeInfo.json https://api.binance.com/api/v3/exchangeInfo"
   },
   "dependencies": {

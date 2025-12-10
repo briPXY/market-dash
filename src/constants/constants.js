@@ -1,3 +1,5 @@
+import { getTokenBySymbolChainId } from "../idb/tokenListDB";
+
 export const timeFrameToMs = {
     "1s": 1000,       // 1 second
     "5s": 5000,       // 5 seconds
@@ -47,6 +49,20 @@ export const wrappedTokenMap = {
     WCELO: "CELO",        // Celo
     WHT: "HT",            // Huobi Token
     WXDAI: "XDAI",        // xDai (now Gnosis)
+};
+
+export const standardToWrappedTokenMap = {
+    BTC: "WBTC",     // Bitcoin (The most common version) 
+    ETH: "WETH",
+    // Other Major Chains
+    BNB: "WBNB",     // BNB Coin
+    SOL: "WSOL",     // Solana
+    FIL: "WFIL",     // Filecoin
+    ZEC: "WZEC",     // Zcash (or renZEC)
+    DOGE: "WDOGE",   // Dogecoin (or renDOGE)
+    LTC: "WLTC",     // Litecoin
+    XMR: "WXMR",     // Monero 
+    DOT: "wDOT",
 };
 
 // Charts related constants
@@ -226,3 +242,11 @@ ChainId.ethereum = {
     1337: "local",
     31337: "hardhat",
 };
+
+
+export const Trader = {};
+
+Trader.Uniswap = {
+    tokenInfoGetter: getTokenBySymbolChainId,
+    wrappedMap: standardToWrappedTokenMap,
+}

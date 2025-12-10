@@ -56,7 +56,7 @@ export function formatPrice(str, isRaw = false, rule = defaultDecimalRule) {
 }
 
 export function stdSymbol(symbol) {
-    return wrappedTokenMap[symbol] || symbol;
+    return wrappedTokenMap[symbol] ?? symbol.replace(/^w/, "");
 }
 
 export function invertedHistoricalPrices(array) {

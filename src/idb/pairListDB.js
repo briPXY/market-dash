@@ -92,7 +92,15 @@ export async function createPaiListsDB(pathToDive, sourceURL, exchange = "", ent
     return true;
 } // v1
 
-export async function searchPairList(
+/**
+ * Searches the IndexedDB 'pair-list' object store for trading pairs based on a keyword. 
+ * @param {string} exchangeName The name of the exchange to filter by.
+ * @param {string} keyword The search keyword (prefix for fast search, substring for slow search).
+ * @param {number} limit The maximum number of results to return.
+ * @param {object} signal An object with an 'aborted' property for early termination.
+ * @returns {Promise<Array<Object>>} An array of matching pair records.
+ */
+export async function searchPairListDoubleIndex(
     exchangeName,
     keyword,
     limit = 20,
@@ -104,39 +112,44 @@ export async function searchPairList(
 
     keyword = keyword.replace(/[- ]/g, '');
 
-    //  Try FAST SEARCH using bySymbol index 
-
-    const index = store.index("bySymbols");
-    const fastRange = IDBKeyRange.bound(keyword, keyword + "\uffff");
-    let cursor = await index.openCursor(fastRange);
-
     const fastResults = [];
     let count = 0;
 
-    while (cursor) {
-        if (signal.aborted) throw new DOMException("Aborted", "AbortError");
+    const fastRange = IDBKeyRange.bound(keyword, keyword + "\uffff");
 
-        const record = cursor.value;
-        if (record.exchange === exchangeName) {
-            fastResults.push(record);
-            count++;
+    // helper function to run the search on a specific index
+    const runFastSearch = async (indexName) => {
+        const index = store.index(indexName);
+        let cursor = await index.openCursor(fastRange);
 
-            if (count >= limit) {
-                await tx.done;
-                return fastResults;
+        while (cursor) {
+            if (signal.aborted) throw new DOMException("Aborted", "AbortError");
+
+            const record = cursor.value;
+            // check for both exchange and uniqueness before pushing
+            if (record.exchange === exchangeName) {
+                fastResults.push(record);
+                count++;
+
+                if (count >= limit) {
+                    return;
+                }
             }
+
+            cursor = await cursor.continue();
         }
+    };
 
-        cursor = await cursor.continue();
-    }
+    // FAST SEARCH using bySymbol and bySymbolsReversed 
+    await runFastSearch("bySymbols");
+    await runFastSearch("bySymbolsReversed");
 
-    // If fast search found results → return immediately
     if (fastResults.length > 0) {
         await tx.done;
-        return fastResults;
+        return fastResults.slice(0, limit * 2);
     }
 
-    //  SLOW SEARCH using composite key scanning 
+    // sLOW SEARCH using composite key scanning to fill up to limit 
 
     const keyRange = IDBKeyRange.bound(
         [exchangeName],
@@ -167,6 +180,53 @@ export async function searchPairList(
     return slowResults;
 }
 
+export async function searchPairListSingleIndex(
+    exchangeName,
+    keyword,
+    limit = 20,
+    signal = { aborted: false },
+    indexName = "bySymbols"
+) {
+    const db = await openDB("pair-list", 1);
+    const tx = db.transaction("pair-list", "readonly");
+    const store = tx.objectStore("pair-list");
+
+    keyword = keyword.replace(/[- ]/g, '');
+
+    //  Try FAST SEARCH using bySymbol index 
+
+    const index = store.index(indexName);
+    const keyRange = IDBKeyRange.bound(keyword, keyword + "\uffff");
+    let cursor = await index.openCursor(keyRange);
+
+    const fastResults = [];
+    let count = 0;
+
+    while (cursor) {
+        if (signal.aborted) throw new DOMException("Aborted", "AbortError");
+
+        const record = cursor.value;
+        if (record.exchange === exchangeName) {
+            fastResults.push(record);
+            count++;
+
+            if (count >= limit) {
+                await tx.done;
+                return fastResults;
+            }
+        }
+
+        cursor = await cursor.continue();
+    }
+
+    // If fast search found results → return immediately
+    if (fastResults.length > 0) {
+        await tx.done;
+        return fastResults;
+    }
+
+    return []; // no result
+}
 
 export async function installPairLists(callback = () => { }) {
     await createPaiListsDB(["symbols"], "/pair-list/exchangeInfo.json", "binance", binanceEntryMethod);
