@@ -8,6 +8,7 @@ import { SymbolPair } from "../../generic_components/SymbolPair";
 import PairIcon from "../../generic_components/PairIcon";
 import { FormTokenSearch } from "../FormTokenSearch";
 import { FormPairSearch } from "../FormPairSearch";
+import { stdSymbol } from "../../utils/utils";
 
 export const PoolSelector = () => {
     const priceSrcData = useSourceStore(state => state.data);
@@ -22,13 +23,22 @@ export const PoolSelector = () => {
             setBulkPrices(prices);
         }
         return;
-    }
-    
+    };
+
     return (
         <PopoverButton onPopover={handlePopOver} showClass={"bg-primary-500 w-[85vw] md:w-90 h-fit top-[100%] p-1 py-2 left-0 z-65 rounded-md"}>
             <div className="flex cursor-pointer font-medium items-center gap-1 justify-start hover:brightness-125 rounded-md">
-                <SymbolPair symbol0={usePoolStore.getState().token0.symbol} symbol1={usePoolStore.getState().token1.symbol} className="inline-block text-base md:text-lg text-start text-nowrap" />
-                <PairIcon className="w-1/2 flex" symbol0={usePoolStore.getState().token0.symbol} symbol1={usePoolStore.getState().token1.symbol} spacing="-100%" style={{ width: "30px" }} style1={{ clipPath: "inset(0 0 0 50%)" }} />
+                <SymbolPair
+                    symbol0={stdSymbol(usePoolStore.getState().token0.symbol)}
+                    symbol1={stdSymbol(usePoolStore.getState().token1.symbol)}
+                    className="inline-block text-base md:text-lg text-start text-nowrap"
+                />
+                <PairIcon className="w-1/2 flex"
+                    symbol0={stdSymbol(usePoolStore.getState().token0.symbol)}
+                    symbol1={stdSymbol(usePoolStore.getState().token1.symbol)} spacing="-100%"
+                    style={{ width: "30px" }}
+                    style1={{ clipPath: "inset(0 0 0 50%)" }}
+                />
                 <div className="text-xs text-washed">▼</div>
             </div>
             <div className="flex flex-col p-1 gap-0">
@@ -83,8 +93,8 @@ const SymbolSelectorItem = ({ pairObj, preloadPrice, }) => {
     return (
         <button onClick={() => setPairFromPairObj(pairObj)} className="flex w-full px-3 py-2 hover:brightness-125 rounded-sm bg-primary-500 text-sm items-center justify-between">
             <div className="flex gap-2">
-                <SymbolPair symbol0={pairObj.token0.symbol} symbol1={pairObj.token1.symbol} className="text-sm" />
-                <PairIcon symbol0={pairObj.token0.symbol} symbol1={pairObj.token1.symbol} size={18} spacing="2px" />
+                <SymbolPair symbol0={stdSymbol(pairObj.token0.symbol)} symbol1={stdSymbol(pairObj.token1.symbol)} className="text-sm" />
+                <PairIcon symbol0={stdSymbol(pairObj.token0.symbol)} symbol1={stdSymbol(pairObj.token1.symbol)} size={18} spacing="2px" />
             </div>
             <PriceText className="font-medium text-xs" input={price} />
             {!price && <LoadingIcon className="w-10 h-10" />}

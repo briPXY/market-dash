@@ -23,6 +23,7 @@ const PairIcon = ({
                     size={size}
                     variant={variant}
                     className={className0}
+                    fallback={"/icon-fallback.jpg"}
                 />
             </div>
             <div style={{ marginLeft: spacing, ...style1 }} >
@@ -31,6 +32,7 @@ const PairIcon = ({
                     size={size}
                     variant={variant}
                     className={className1}
+                    fallback={"/icon-fallback.jpg"}
                 />
             </div>
         </div>
