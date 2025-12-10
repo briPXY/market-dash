@@ -2,15 +2,24 @@ import { useMemo } from "react";
 import { Flex, SvgMemo } from "../../Layout/Layout"
 import { CardValueChange } from "./CardValueChange"
 import { calculateHistoricalChange } from "../../utils/price.math";
-import { use24HourQuery } from "../../queries/24hourQuery";
 import { LoadingIcon } from "../../Layout/svg";
-import { usePriceInvertStore } from "../../stores/stores";
+import { usePoolStore, usePriceInvertStore, useSourceStore } from "../../stores/stores";
 import { formatPrice, invertedHistoricalPrices } from "../../utils/utils";
+import { useQuery } from "@tanstack/react-query";
 
-export const Hour24Changes = ({ symbols, src }) => {
-    const { data: hour24data, isLoading: hour24Loading } = use24HourQuery({
-        symbols: symbols,
-        network: src,
+export const Hour24Changes = () => {
+    const pairSymbols = usePoolStore(state => state.symbols);
+    const priceSource = useSourceStore(state => state.data)
+
+    const { data: hour24data, isLoading: hour24Loading } = useQuery({
+        queryKey: [priceSource, pairSymbols],
+        queryFn: async () => {
+            const data = await priceSource.h24Query(pairSymbols, useSourceStore.getState().src);
+            return data; // Apply transformation if provided
+        },
+        refetchInterval: 310000, // Fetch every 5 minutes + secs
+        staleTime: 310000, // Default: Cache data for 1 min
+        enabled: pairSymbols !== "init"
     });
 
     const invertedStatus = usePriceInvertStore((state) => state.priceInvert);

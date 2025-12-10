@@ -21,10 +21,10 @@ import { invertedHistoricalPrices } from "../utils/utils";
 function Market() {
     const [range, setRange] = useState("1h");
     const symbols = usePoolStore(state => state.symbols);
-    const src = useSourceStore(state=>state.src);
+    const src = useSourceStore(state => state.src);
     const invertedStatus = usePriceInvertStore((state) => state.priceInvert);
 
-    const { data = initData, isError } = useChartQuery({ symbols, interval: range, network:src, });
+    const { data = initData, isError } = useChartQuery({ symbols, interval: range, network: src, enabled: symbols != "init" });
 
     useEffect(() => {
         if (!isError && data) {
@@ -51,7 +51,7 @@ function Market() {
                         <LivePriceText OHLCData={invertedStatus ? invertedHistorical : data.ohlc} />
                         <PoolAddressView src={src} />
                     </Flex>
-                    <Hour24Changes symbols={symbols} src={src} />
+                    <Hour24Changes />
                 </Flex>
                 <Flex className="flex flex-col md:flex-row gap-1">
                     <MarketChart

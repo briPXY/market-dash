@@ -9,7 +9,7 @@ import { SourceConst } from "../constants/sourceConst.js";
  * @param {Function} transformFn - data transform function
  * @returns {Object} - Query result from React Query.
  */
-const useChartQuery = ({ symbols, interval, network }) => {
+const useChartQuery = ({ symbols, interval, network, enabled }) => {
 
     const queryKey = useMemo(() => ["historical", symbols, interval, network], [symbols, interval, network]);
     const initialData = useMemo(() => { return initData }, [])
@@ -26,6 +26,7 @@ const useChartQuery = ({ symbols, interval, network }) => {
         refetchOnWindowFocus: false,
         cacheTime: timeFrameToMs[interval],
         initialData,
+        enabled: enabled
     });
 };
 
