@@ -1,7 +1,7 @@
 import { getPriceFromSqrtPriceX96 } from "../utils/price.math";
 import { binance_24h, UniswapV3_24h } from "../queries/fetch24hour";
 import { binance, UniswapV3 } from "../queries/fetchHistory";
-import { binanceTicker, UniswapV3BulkPrice } from "../queries/livePrice";
+import { binanceTicker, livePriceWebSocket, UniswapV3BulkPrice } from "../queries/livePrice";
 import { binanceHighlights, uniswapV3EtherumHighlights, uniswapV3SepoilaStarterPairs } from "./starterPairs";
 import { WSS_DOMAIN } from "./environment";
 import { initData, initToken } from "./initData";
@@ -20,10 +20,10 @@ SourceConst["uniswap:1"] = { // name must resemble indexeDB's pair-list
     intervals: ["1h", "1d"],
     initPairs: uniswapV3EtherumHighlights,
     bulkPrices: UniswapV3BulkPrice,
-    livePrice: UniswapV3BulkPrice,
+    fetchPrice: UniswapV3BulkPrice,
     ohlcFetch: UniswapV3,
     h24Query: UniswapV3_24h,
-    getPriceURL: (poolAddress) => `${WSS_DOMAIN}/liveprice/UniswapV3/${poolAddress}`,
+    getLivePriceURL: (poolAddress) => `${WSS_DOMAIN}/liveprice/UniswapV3/${poolAddress}`,
     priceConverter: getPriceFromSqrtPriceX96,
     quoteFunction: getUniswapQuoteFromContract,
 };
@@ -39,11 +39,11 @@ SourceConst["uniswap:11155111"] = {
     intervals: ["1h", "1d"],
     initPairs: uniswapV3SepoilaStarterPairs,
     bulkPrices: UniswapV3BulkPrice,
-    livePrice: UniswapV3BulkPrice,
+    fetchPrice: UniswapV3BulkPrice,
     ohlcFetch: UniswapV3,
     h24Query: UniswapV3_24h,
     priceConverter: getPriceFromSqrtPriceX96,
-    getPriceURL: (poolAddress) => `${WSS_DOMAIN}/liveprice/UniswapV3Sepolia/${poolAddress}`,
+    getLivePriceURL: (poolAddress) => `${WSS_DOMAIN}/liveprice/UniswapV3Sepolia/${poolAddress}`,
     quoteFunction: getUniswapQuoteQueryFn,
 };
 
@@ -56,11 +56,11 @@ SourceConst.binance = {
     isDex: false,
     intervals: ["1m", "5m", "15m", "1h", "4h", "1d", "1w", "1M"],
     initPairs: binanceHighlights,
-    livePrice: binanceTicker,
+    fetchPrice: binanceTicker,
+    livePrice: livePriceWebSocket,
     ohlcFetch: binance,
     h24Query: binance_24h,
-    getPriceURL: (symbols) => `wss://stream.binance.com:9443/ws/${symbols.toLowerCase()}@trade`,
-    priceConverter: (p) => p,
+    getLivePriceURL: (symbols) => `wss://stream.binance.com:9443/ws/${symbols.toLowerCase()}@trade`, 
     swappedSymbols: [],
     quoteFunction: initDummy,
 };
@@ -76,10 +76,10 @@ SourceConst.init = {
     intervals: ["1h", "1d"],
     initPairs: initToken,
     bulkPrices: () => "",
-    livePrice: () => "0",
+    fetchPrice: () => "0",
     ohlcFetch: async () => initData,
     h24Query: async () => initData.ohlc,
     priceConverter: () => "",
-    getPriceURL: () => "init",
+    getLivePriceURL: () => "init",
     quoteFunction: initDummy,
 }

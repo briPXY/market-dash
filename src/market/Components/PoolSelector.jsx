@@ -77,7 +77,7 @@ const SymbolSelectorItem = ({ pairObj, preloadPrice, }) => {
 
     useEffect(() => {
         const liveUpdate = async () => {
-            const livePrice = await priceSrcData.livePrice(pairObj.symbols);
+            const livePrice = await priceSrcData.fetchPrice(pairObj.symbols);
             setPrice(isNaN(livePrice) ? '-' : livePrice.toString());
         }
 

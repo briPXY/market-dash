@@ -59,8 +59,8 @@ export const usePoolStore = create((set, get) => ({
     },
 
     onSourceChange: async (priceSourceName) => {
-        const savedPairData = await loadState(`savedPairStore-${priceSourceName}`);
-        console.log(savedPairData)
+        const savedPairData = await loadState(`savedPairStore-${priceSourceName}`); 
+        
         if (savedPairData) {
             set(JSON.parse(savedPairData));
         }

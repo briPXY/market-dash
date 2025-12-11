@@ -75,8 +75,7 @@ function Market() {
             </Flex>
 
             {/* Non display / non pure component*/}
-            <PriceUpdater type="trade" />  {/* ✅ Updates trade price */}
-            <PriceUpdater type="index" />  {/* ✅ Updates index price */}
+            <PriceUpdater type="trade" />
         </div>
     );
 }
