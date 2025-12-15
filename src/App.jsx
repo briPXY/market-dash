@@ -14,6 +14,7 @@ import UserWalletSidebar from './order/UserWalletSidebar';
 import WalletExtensionListener from './order/WalletExtensionListener';
 import { installTokenLists } from './idb/tokenListDB';
 import { installPairLists } from './idb/pairListDB';
+import { UserSetting } from './generic_components/UserSetting';
 
 // eslint-disable-next-line no-unused-vars
 function BadComponentTest() {
@@ -85,6 +86,7 @@ function App() {
             {/* Modals */}
             <WalletList />
             <UserWalletSidebar />
+            <UserSetting/>
 
             {/* Non pure components */}
             <WalletExtensionListener onWalletEvent={(info) => console.log(info)} />
