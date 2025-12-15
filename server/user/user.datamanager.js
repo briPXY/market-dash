@@ -97,7 +97,7 @@ export async function setUserSecret(keyName, walletAddress, apiKey, signature) {
 }
 
 export async function getUserSecret(keyName, walletAddress, signature) {
-    if (!fsSync.existsSync(userDataFIleName(walletAddress))) throw new Error("user data with this wallet address not found");
+    if (!fsSync.existsSync(userDataFIleName(walletAddress))) throw new Error("User data with this wallet address not found");
 
     const data = await _loadData(walletAddress);
     const masterKey = _deriveMasterKey(walletAddress, signature);
@@ -108,6 +108,18 @@ export async function getUserSecret(keyName, walletAddress, signature) {
     data.last_used_at = new Date().toISOString();
     await _saveData(walletAddress, data);
     return decrypted;
+}
+
+export async function deletUserSecretKey(keyName, walletAddress) {
+    if (!fsSync.existsSync(userDataFIleName(walletAddress))) throw new Error("User data with this wallet address not found");
+
+    const data = await _loadData(walletAddress);
+
+    if (!data[keyName]) throw new Error("key name is missing");
+
+    delete data[keyName];
+    await _saveData(walletAddress, data);
+    return true;
 }
 
 export async function deleteUserSecret(walletAddress) {

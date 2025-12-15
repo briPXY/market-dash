@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getUserSecret, setUserSecret } from "../user/user.datamanager.js"
+import { deletUserSecretKey, getUserSecret, setUserSecret } from "../user/user.datamanager.js"
 import { ethers } from "ethers";
 
 const walletSchema = {
@@ -42,6 +42,18 @@ async function validateSubgraphApiKey(apiKey) {
     }
 }
 
+function validateEtherWalletInfo(message, signature, walletAddress) {
+    if (!message || !signature || !walletAddress) {
+        throw new Error("Missing required parameters for validation.");
+    }
+    // validate signature
+    const recoveredAddress = ethers.verifyMessage(message, signature);
+    const normalizedExpectedAddress = ethers.getAddress(walletAddress);
+    if (recoveredAddress.toLowerCase() !== normalizedExpectedAddress.toLowerCase()) throw new Error("Wallet signature failed to validate");
+
+    return true;
+}
+
 export default async function userHttp(fastify) {
     fastify.post("/user/evm-wallet/submit-subgraph-key", walletSchema, async (request, reply) => {
         try {
@@ -73,15 +85,7 @@ export default async function userHttp(fastify) {
     fastify.post("/user/evm-wallet/check-saved-key", walletSchema, async (request, reply) => {
         try {
             const { walletAddress, signature, message, keyName } = request.body;
-
-            if (!message || !signature || !walletAddress) {
-                throw new Error("Missing required parameters for validation.");
-            }
-            // validate signature
-            const recoveredAddress = ethers.verifyMessage(message, signature);
-            const normalizedExpectedAddress = ethers.getAddress(walletAddress);
-            if (recoveredAddress.toLowerCase() !== normalizedExpectedAddress.toLowerCase()) throw new Error("Wallet signature failed to validate");
-
+            validateEtherWalletInfo(message, signature, walletAddress);
             const secret = await getUserSecret(keyName, walletAddress, signature);
 
             if (secret) {
@@ -94,6 +98,21 @@ export default async function userHttp(fastify) {
             console.error(error);
             return reply.code(400).send({ success: false, error });
         }
-    }
-    );
+    });
+
+    fastify.post("/user/evm-wallet/delete-saved-key", walletSchema, async (request, reply) => {
+        try {
+            const { walletAddress, signature, message, keyName } = request.body;
+            validateEtherWalletInfo(message, signature, walletAddress);
+            const deleteSuccess = await deletUserSecretKey(keyName, walletAddress);
+
+            if (deleteSuccess) {
+                return reply.code(200).send({ deleted: true, success: true });
+            }
+
+        } catch (error) {
+            console.error(error);
+            return reply.code(400).send({ success: false, error });
+        }
+    });
 }

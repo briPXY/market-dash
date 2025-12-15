@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DOMAIN } from "../constants/environment";
 import { openLink } from "../utils/utils";
 import { useWalletStore } from "../stores/stores";
@@ -8,47 +8,63 @@ export function FormSubgraphAPIKey() {
     const [subgraphSubmitted, setSubgraphSubmitted] = useState(false);
     const [apiKey, setApiKey] = useState("");
     const [status, setStatus] = useState(null);
+    const [loading, setLoading] = useState(false);
     const walletAddress = useWalletStore(state => state.address);
+    const requiredWalletInfo = useMemo(() => ({
+        walletAddress: walletAddress,
+        signature: useWalletStore.getState().signature,
+        message: useWalletStore.getState().message,
+    }), [walletAddress])
 
     const subGraphSetHandler = () => {
-        const requiredWalletInfo = {
-            walletAddress: walletAddress,
-            signature: useWalletStore.getState().signature,
-            message: useWalletStore.getState().message,
-        };
-        requiredWalletInfo.apiKey = apiKey;
-
+        setLoading(true);
         fetch(`${DOMAIN}/user/evm-wallet/submit-subgraph-key`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json' // Essential header for sending JSON
-            },
-            body: JSON.stringify(requiredWalletInfo)
-        }).then(res => {
-            if (!res.ok) { 
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...requiredWalletInfo, apiKey: apiKey })
+        }).then(async (res) => {
+            if (!res.ok) {
                 return res.json().then(errorData => {
                     const error = new Error("Bad Request from Server");
                     error.status = res.status;
                     error.data = errorData;
-                    throw error; // 👈 We throw an error
+                    throw error;
                 });
             }
             return res.json();
         }).then(data => {
-            if(data.success){
+            console.log(data)
+            if (data.success) {
                 setStatus("Subraph API key succesfully saved");
-                setSubgraphSubmitted(false);
+                setSubgraphSubmitted(true);
             }
         }).catch(e => {
             setSubgraphSubmitted(false);
             setStatus(e.data.message ?? "Error when saving API key");
             console.error(e);
-        });
+        }).finally(() => setLoading(false));
     }
 
     const deleteAPIKey = async () => {
-        //
-    }
+        try {
+            setLoading(true);
+            const res = await fetch(`${DOMAIN}/user/evm-wallet/delete-saved-key`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...requiredWalletInfo, keyName: "subgraph_api_key" })
+            });
+            if (!res.ok) {
+                setLoading(false);
+                setSubgraphSubmitted(false)
+                setStatus("Failed at deleting key");
+            }
+            const data = await res.json();
+            if (data.deleted) {
+                setSubgraphSubmitted(false);
+                setLoading(false);
+                setStatus("Key sucesfully deleted");
+            }
+        } catch (e) {
+            setLoading(false);
+            setStatus(e.message);
+        }
+    };
 
     useEffect(() => {
         if (!walletAddress) return;
@@ -59,7 +75,6 @@ export function FormSubgraphAPIKey() {
             message: useWalletStore.getState().message,
         };
         requiredWalletInfo.keyName = "subgraph_api_key";
-
 
         fetch(`${DOMAIN}/user/evm-wallet/check-saved-key`, {
             method: 'POST',
@@ -80,7 +95,8 @@ export function FormSubgraphAPIKey() {
     return (
         <>
             <div className="flex justify-between items-center">
-                <div className="text-left text-sm font-semibold">Subgraph API Key<span className="ml-2 text-xs rounded-sm px-1 font-normal border border-accent text-accent">{subgraphSubmitted ? "Saved" : ""}</span></div>
+                <div className="text-left text-sm font-semibold">Subgraph API Key</div>
+                {subgraphSubmitted && <div className="ml-2 text-xs rounded-sm px-1 font-semibold border bg-accent text-primary-900">Saved</div>}
                 {status && <div className="text-sm text-washed"><i>{status}</i></div>}
             </div>
             <input
@@ -92,8 +108,8 @@ export function FormSubgraphAPIKey() {
                 className="rounded-sm border border-primary-100 bg-primary-500 p-2 mt-2 w-full"
             />
             <div className="flex text-xs font-semibold text-washed gap-1.5 w-full mt-3">
-                {subgraphSubmitted && <button className="px-2 bg-washed text-primary-900 py-1.5 rounded-sm" onClick={() => deleteAPIKey()}>Delete API Key</button>}
-                {!subgraphSubmitted && <button className="px-2 bg-washed text-primary-900 py-1.5 rounded-sm" onClick={() => subGraphSetHandler()}>Save API Key</button>}
+                {subgraphSubmitted && <button className="px-2 bg-washed text-primary-900 py-1.5 rounded-sm" onClick={() => deleteAPIKey()}>{loading ? "Loading..." : "Delete API Key"}</button>}
+                {!subgraphSubmitted && <button className="px-2 bg-washed text-primary-900 py-1.5 rounded-sm" onClick={() => subGraphSetHandler()}>{loading ? "Loading..." : "Save API Key"}</button>}
                 {!subgraphSubmitted && <button className="px-2 border border-primary-100 py-1.5 rounded-sm" onClick={() => openLink("https://thegraph.com/studio/apikeys/")}>Get Subgraph API Key</button>}
             </div>
         </>
