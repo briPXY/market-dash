@@ -39,7 +39,6 @@ export function FormSubgraphAPIKey() {
         }).catch(e => {
             setSubgraphSubmitted(false);
             setStatus(e.data.message ?? "Error when saving API key");
-            console.error(e);
         }).finally(() => setLoading(false));
     }
 

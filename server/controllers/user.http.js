@@ -19,7 +19,7 @@ const walletSchema = {
 };
 
 async function validateSubgraphApiKey(apiKey) {
-    const subgraphUrl = `https://gateway-arbitrum.network.thegraph.com/api/${apiKey}/subgraphs/id/$DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp`;
+    const subgraphUrl = `https://gateway.thegraph.com/api/${apiKey}/subgraphs/id/DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp`;
     const minimalQuery = `
         query {
             _meta {
@@ -31,14 +31,15 @@ async function validateSubgraphApiKey(apiKey) {
     try {
         const response = await axios.post(subgraphUrl, { query: minimalQuery, }, { headers: { 'Content-Type': 'application/json', }, timeout: 5000, });
 
-        if (response.status === 200 && response.data) {
+        if (response.status === 200 && response.data && response.data.data && response.data.data._meta) {
             return true;
         }
 
-        throw new Error(`subgraph key is invalid`);
+        throw new Error(`Subgraph API key is invalid`);
 
     } catch (error) {
-        throw new Error(`subgraph key is invalid: ${error}`);
+        console.error('validateSubgraphApiKey error', error && (error.response || error.message || error));
+        throw new Error(`Subgraph API key is invalid`);
     }
 }
 
