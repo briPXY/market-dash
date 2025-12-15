@@ -35,11 +35,12 @@ export default function UserWalletSidebar() {
                         {!isConnected && <div className="box-content bg-accent-negative rounded-full w-1 h-1 mx-1.5 border-3 border-primary-500/70"></div>}
                         <div className="leading-1">{BLOCKCHAINS_INFO[chainId]?.name}</div>
                     </div>
-                    <div className="flex text-xs text-washed gap-1.5 w-full">
+                    <div className="flex text-xs text-washed gap-1.5 w-full mb-2">
                         <button className="px-1.5 flex-1 bg-primary-100 py-0.5 rounded-sm" onClick={() => navigator.clipboard.writeText(walletAddress)}>Copy</button>
                         <button className="px-1.5 flex-1 bg-primary-100 py-0.5 rounded-sm" onClick={() => openLink(BLOCKCHAINS_INFO[chainId]?.url.replace("#", walletAddress))}>Explorer</button>
                     </div>
-                    <button className="px-1.5 py-1 w-full text-accent-negative border border-accent-negative rounded-sm text-sm" onClick={logoutHandler}>Logout</button>
+                    <button className="w-full py-1 text-washed border border-washed rounded-sm text-sm" onClick={() => setModalVisibility("userSetting", true)}>Settings</button>
+                    <button className="w-full py-1 text-accent-negative border border-accent-negative rounded-sm text-sm" onClick={logoutHandler}>Logout</button>
                 </div>
             </div>
         </ModalOverlay>

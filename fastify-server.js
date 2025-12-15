@@ -4,7 +4,7 @@ const fastify = Fastify({ logger: true });
 import dotenv from "dotenv";
 dotenv.config();
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';  
+import { fileURLToPath } from 'node:url';
 
 // Convert __dirname to work with ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -17,17 +17,15 @@ fastify.register(await import("@fastify/cors"), {
     origin: "*"
 });
 fastify.register(await import("@fastify/websocket"));
- 
+
 // Source modules
-import "./server/services/subgraph.query.js";
-import "./server/services/livePrices.query.js";
 import ohlc from "./server/controllers/ohlc.js";
-import constantsAPI from "./server/controllers/constantsAPI.js";
 import livePriceWebSocket from "./server/ws/livePrice.websocket.js";
+import userHttp from "./server/controllers/user.http.js"
 
 await fastify.register(ohlc);
-await fastify.register(constantsAPI);
 await fastify.register(livePriceWebSocket);
+await fastify.register(userHttp);
 
 fastify.get('/', function (req, reply) {
     reply.header('Cache-Control', 'public, max-age=300');
