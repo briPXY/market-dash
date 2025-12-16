@@ -25,6 +25,7 @@ export const UniswapV3BulkPrice = async (provider) => {
 }
 
 export const binanceTicker = async (pairObj) => {
+    if (!pairObj.symbols) return;
     const apiUrl = `https://api.binance.com/api/v3/ticker/price?symbol=${pairObj.symbols}`;
     try {
         const response = await fetch(apiUrl);

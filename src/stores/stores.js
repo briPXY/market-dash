@@ -22,15 +22,15 @@ export const useNetworkStore = create((set) => ({
 }));
 
 export const useSourceStore = create((set) => ({
-    src: "binance",
-    saved: true,
+    src: "binance", 
     data: SourceConst.binance,
     setSaved: (bool) => { set({ saved: bool }) },
     setSrc: async (value) => {
-        set({ src: value, init: false, saved: true, data: SourceConst[value] });
         await saveState(`savedSource`, value);
         await saveState(`savedSource.data`, SourceConst[value]);
-        usePoolStore.getState().onSourceChange(value);
+        const savedPairData = await loadState(`savedPairStore-${value}`);
+        usePoolStore.getState().onSourceChange(value, savedPairData);
+        set({ src: value, init: false, saved: true, data: SourceConst[value] });
     },
 }));
 
@@ -58,9 +58,7 @@ export const usePoolStore = create((set, get) => ({
         set({ [target]: value });
     },
 
-    onSourceChange: async (priceSourceName) => {
-        const savedPairData = await loadState(`savedPairStore-${priceSourceName}`);
-
+    onSourceChange: (priceSourceName, savedPairData) => {
         if (savedPairData) {
             set(JSON.parse(savedPairData));
         }

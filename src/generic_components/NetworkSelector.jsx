@@ -5,9 +5,9 @@ import { Flex } from "../Layout/Layout";
 import { SourceConst } from "../constants/sourceConst";
 
 export const NetworkSelector = () => {
-    const setSrc = useSourceStore(state => state.setSrc);
+    const srcName = useSourceStore(state => state.src);
 
-    if (!useSourceStore.getState().src) {
+    if (!srcName) {
         return <div className="text-sm">Network Unselected</div>
     }
 
@@ -23,7 +23,7 @@ export const NetworkSelector = () => {
             </div>
             <div className="flex flex-col p-4 gap-3 w-max">
                 {Object.keys(SourceConst).slice(0, -1).map((network) => (
-                    <Flex key={network} onClick={() => setSrc(network)} className="cursor-pointer gap-2 hover:brightness-125">
+                    <Flex key={network} onClick={() => useSourceStore.getState().setSrc(network)} className="cursor-pointer gap-2 hover:brightness-125">
                         <NetworkIcon id={SourceConst[network]?.network} size={24} variant="branded" />
                         <div className="text-sm">{SourceConst[network].desc}</div>
                     </Flex>

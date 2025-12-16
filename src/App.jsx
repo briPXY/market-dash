@@ -4,7 +4,7 @@ import { Section } from './Layout/Layout'
 import Market from './market/Market';
 import { TopBar } from './generic_components/TopBar';
 import "./idb/init.js";
-import { usePoolStore, useSourceStore, useWalletStore } from './stores/stores';
+import { useSourceStore, useWalletStore } from './stores/stores';
 import { useEffect } from 'react';
 import { isSavedStateExist, loadState } from './idb/stateDB';
 import { localStorageDeleteDottedKeyAll, localStorageLoadDottedKeyAll } from './utils/utils';
@@ -22,8 +22,7 @@ function BadComponentTest() {
 }
 
 function App() {
-    const { setSrc } = useSourceStore();
-    const { setAddress } = usePoolStore();
+    const setSrc = useSourceStore(state => state.setSrc);
 
     // Init handler
     useEffect(() => {
@@ -57,7 +56,7 @@ function App() {
         }
 
         init();
-    }, [setAddress, setSrc]);
+    }, [setSrc]);
 
     // App on-close handler
     useEffect(() => {
@@ -86,7 +85,7 @@ function App() {
             {/* Modals */}
             <WalletList />
             <UserWalletSidebar />
-            <UserSetting/>
+            <UserSetting />
 
             {/* Non pure components */}
             <WalletExtensionListener onWalletEvent={(info) => console.log(info)} />
