@@ -1,13 +1,15 @@
 import dotenv from "dotenv";
 dotenv.config();
 import tokenList from '../data/tokenList.json' with { type: 'json' };
+import { subgraphHistoricalPriceQuery } from "../services/subgraph.query.js";
 
 const Subgraphs = {}
 
 // Order: token0/token1
-Subgraphs.UniswapV3 = {
+Subgraphs["uniswap:1"] = {
     id: "5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV",
     list: tokenList.UniswapV3,
+    queryOHLC: subgraphHistoricalPriceQuery,
     RPC: [
         "https://eth.llamarpc.com",
         "https://rpc.ankr.com/eth",
@@ -18,9 +20,10 @@ Subgraphs.UniswapV3 = {
     }).then(mod => mod.default),
 }
 
-Subgraphs.UniswapV3Sepolia = {
+Subgraphs["uniswap:11155111"] = {
     id: "EDJCBpDBGBajTP1x3qLGLg3ZaVR5Q2TkNxyNHdCuryex",
     list: tokenList.UniswapV3Sepolia,
+    queryOHLC: subgraphHistoricalPriceQuery,
     RPC: [process.env.SEPOLIA_RPC, "https://ethereum-sepolia-rpc.publicnode.com"],
     info: await import('../data/UniswapV3Sepolia.poolinfo.json', {
         with: { type: 'json' }

@@ -83,21 +83,19 @@ export const d3TimeFormats = {
 
 export const RPC_URLS = {};
 
-RPC_URLS.default = [
-    // 🔝 Highly reliable public RPCs
-    "https://rpc.ankr.com/eth",              // Very stable, widely used
+RPC_URLS.default = [ 
     "https://ethereum.publicnode.com",       // Fast, reliable public RPC
     "https://eth.llamarpc.com",              // Solid fallback, community-backed
     "https://cloudflare-eth.com",
-
-    // 🧪 Less battle-tested or newer
+ 
     "https://rpc.payload.de/eth",            // Community maintained, Germany-based
     "https://ethereum.blockpi.network/v1/rpc/public", // Public offering by BlockPI
     "https://rpc.flashbots.net",             // MEV-aware RPC, may not always be ideal for general use
-
-    // 🧾 Extra fallbacks (less stable or slower)
+ 
     "https://1rpc.io/eth",                   // Free, decent for low-volume
-    "https://cloudflare-eth.com"             // Operated by Cloudflare, can be slow or down
+    "https://cloudflare-eth.com",             // Operated by Cloudflare, can be slow or down
+    
+    "https://rpc.ankr.com/eth",              // probably need api key
 ];
 
 export const BLOCKCHAINS_INFO = {

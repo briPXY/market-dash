@@ -40,14 +40,14 @@ async function setProvider(network, url, idx) {
     // destroy old one if any
     if (Providers[network]) {
         Providers[network].destroy?.();
-        console.log(`🛑 Destroyed old provider for ${network}`);
+        console.log(`Destroyed old provider for ${network}`);
     }
 
     const provider = new ethers.JsonRpcProvider(url);
     RPC[network] = url;
     rpcIndex[network] = idx;
     Providers[network] = provider;
-    console.log(`✅ Active provider for ${network}: ${url}`);
+    console.log(`Active provider for ${network}: ${url}`);
 }
 
 async function selectWorkingRpc(network) {
@@ -57,7 +57,7 @@ async function selectWorkingRpc(network) {
             await setProvider(network, urls[i], i);
             return urls[i];
         } catch (err) {
-            console.warn(`⚠️ RPC failed for ${network}: ${urls[i]} (${err.message})`);
+            console.warn(`RPC failed for ${network}: ${urls[i]} (${err.message})`);
         }
     }
     throw new Error(`No working RPC found for ${network}`);
@@ -72,10 +72,10 @@ async function rotateRpc(network) {
         const idx = (start + i) % urls.length;
         try {
             await setProvider(network, urls[idx], idx);
-            console.log(`🔄 Switched RPC for ${network} → ${urls[idx]}`);
+            console.log(`SSwitched RPC for ${network} → ${urls[idx]}`);
             return urls[idx];
         } catch {
-            console.warn(`❌ RPC unavailable for ${network}: ${urls[idx]}`);
+            console.warn(`RPC unavailable for ${network}: ${urls[idx]}`);
         }
     }
     throw new Error(`All RPC endpoints failed for ${network}`);
@@ -144,7 +144,7 @@ async function loopFetch(network) {
             await delay(seconds);
         }
     } catch (err) {
-        console.error(`⛔ Loop for ${network} stopped:`, err.message);
+        console.error(`Loop for ${network} stopped:`, err.message);
     }
 }
 
@@ -155,7 +155,7 @@ async function loopFetch(network) {
             await selectWorkingRpc(network); // pick initial RPC
             loopFetch(network);
         } catch (err) {
-            console.error(`❌ No RPC available for ${network}:`, err.message);
+            console.error(`No RPC available for ${network}:`, err.message);
         }
     }
 })();

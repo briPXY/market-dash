@@ -1,9 +1,6 @@
 import axios from "axios";
 import dotenv from "dotenv";
 
-import { historicalData } from "../memory/prices.memory.js";
-import Subgraphs from "../constants/subgraph.adapter.js";
-
 dotenv.config(); // Load .env variables
 
 const timeframeMapping = {
@@ -11,12 +8,12 @@ const timeframeMapping = {
     "1d": { type: "poolDayDatas", timeField: "date" }
 };
 
-async function uniswapQuery(network, poolAddress, timeframe, count, pairString, subGraphAddress) {
+export async function subgraphHistoricalPriceQuery(poolAddress, timeframe, API_KEY, subGraphId) {
     const { type, timeField } = timeframeMapping[timeframe];
 
     const query = `{
             ${type}(
-                first: ${count},
+                first: 500,
                 orderBy: ${timeField},
                 orderDirection: desc,
                 where: { 
@@ -56,7 +53,7 @@ async function uniswapQuery(network, poolAddress, timeframe, count, pairString, 
 
     try {
         const response = await axios.post(
-            `https://gateway.thegraph.com/api/${process.env.SUBGRAPH_API_KEY}/subgraphs/id/${subGraphAddress}`,
+            `https://gateway.thegraph.com/api/${API_KEY}/subgraphs/id/${subGraphId}`,
             { query },
             {
                 headers: {
@@ -65,40 +62,10 @@ async function uniswapQuery(network, poolAddress, timeframe, count, pairString, 
             }
         );
 
-        historicalData[network][timeframe][poolAddress] = response.data.data;
-        historicalData[network][timeframe][pairString] = historicalData[network][timeframe][poolAddress];
+        return response.data.data;
     } catch (error) {
         console.error("\x1b[31m Subgraph historical graphQL querying error:\x1b[0m", error);
         throw new Error(error);
     }
-}
-
-const networks = Object.keys(Subgraphs);
-
-for (const network of networks) {
-    historicalData[network] = {
-        "1h": {},
-        "1d": {}
-    };
-
-    const subgraphID = Subgraphs[network].id;
-    const poolAddresses = Object.keys(Subgraphs[network].info);
-
-    // Initial data
-    poolAddresses.forEach((poolAdress) => {
-        const token0 = Subgraphs[network].info[poolAdress].token0.symbol;
-        const token1 = Subgraphs[network].info[poolAdress].token0.symbol;
-        uniswapQuery(network, poolAdress, "1d", 500, `${token0}-${token1}`, subgraphID);
-        uniswapQuery(network, poolAdress, "1h", 500, `${token0}-${token1}`, subgraphID);
-    });
-
-    setInterval(() => {
-        poolAddresses.forEach((poolAdress) => {
-            const token0 = Subgraphs[network].info[poolAdress].token0.symbol;
-            const token1 = Subgraphs[network].info[poolAdress].token0.symbol;
-            uniswapQuery(network, poolAdress, "1d", 500, `${token0}-${token1}`, subgraphID);
-            uniswapQuery(network, poolAdress, "1h", 500, `${token0}-${token1}`, subgraphID);
-        });
-    }, 3600000) // Both day and hour fetched each hour because it's unknown when TheGraph cycle it's indexing the uniswap.
 }
 

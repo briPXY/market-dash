@@ -28,9 +28,9 @@ export const useSourceStore = create((set) => ({
     setSaved: (bool) => { set({ saved: bool }) },
     setSrc: async (value) => {
         set({ src: value, init: false, saved: true, data: SourceConst[value] });
-        usePoolStore.getState().onSourceChange(value);
         await saveState(`savedSource`, value);
         await saveState(`savedSource.data`, SourceConst[value]);
+        usePoolStore.getState().onSourceChange(value);
     },
 }));
 

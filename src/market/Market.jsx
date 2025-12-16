@@ -24,7 +24,7 @@ function Market() {
     const src = useSourceStore(state => state.src);
     const invertedStatus = usePriceInvertStore((state) => state.priceInvert);
 
-    const { data = initData, isError } = useChartQuery({ symbols, interval: range, network: src, enabled: symbols != "init" });
+    const { data = initData, isError } = useChartQuery({ symbols, symbolStoreObj: usePoolStore.getState(), interval: range, network: src, enabled: symbols != "init" });
 
     useEffect(() => {
         if (!isError && data) {

@@ -1,12 +1,7 @@
 import { useEffect } from "react";
 import usePriceStore, { useSourceStore, usePoolStore } from "../stores/stores";
-import { closeLivePriceWebSocket } from "../queries/livePrice";
+import { closeLivePriceWebSocket, killAllLivePriceLoops } from "../queries/livePrice";
 
-/**
- * Ticking live price with websocket or REST
- * @param {type} param0 
- * @returns 
- */
 
 const PriceUpdater = ({ type }) => {
     const setPrice = usePriceStore((state) => type == "trade" ? state.setTradePrice : state.setIndexPrice);
@@ -20,6 +15,7 @@ const PriceUpdater = ({ type }) => {
 
         return () => {
             closeLivePriceWebSocket();
+            killAllLivePriceLoops();
         };
 
     }, [setPrice, type, symbols, priceSource]);

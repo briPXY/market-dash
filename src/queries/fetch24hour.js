@@ -2,9 +2,9 @@ import axios from "axios";
 import { formatAPI } from "./api_formatter";
 import * as history from "./fetchHistory";
 
-export const binance_24h = async function (symbols) { 
+export const binance_24h = async function (symbolObj) { 
     try {
-        const dataUrl = formatAPI.binance(symbols).hour24;
+        const dataUrl = formatAPI.binance(symbolObj.symbols).hour24;
 
         const response = await axios.get(dataUrl);
         const data = response.data; // Extracting data properly
@@ -25,6 +25,6 @@ export const binance_24h = async function (symbols) {
 };
 
 export const UniswapV3_24h = async function (symbols, network) {
-    const result = await history.UniswapV3(symbols, "1h", network);
+    const result = await history.UniswapV3Historical(symbols, "1h", network);
     return result.ohlc ? result.ohlc.slice(-24) : result;
 }

@@ -14,12 +14,16 @@ export const Hour24Changes = () => {
     const { data: hour24data, isLoading: hour24Loading } = useQuery({
         queryKey: [priceSource, pairSymbols],
         queryFn: async () => {
-            const data = await priceSource.h24Query(pairSymbols, useSourceStore.getState().src);
-            return data; // Apply transformation if provided
+            try {
+                const data = await priceSource.h24Query(usePoolStore.getState(), useSourceStore.getState().src);
+                return data; // Apply transformation if provided
+            } catch (e) {
+                console.error(e);
+            }
         },
         refetchInterval: 310000, // Fetch every 5 minutes + secs
         staleTime: 310000, // Default: Cache data for 1 min
-        enabled: pairSymbols !== "init"
+        enabled: pairSymbols !== "init",
     });
 
     const invertedStatus = usePriceInvertStore((state) => state.priceInvert);
@@ -35,9 +39,9 @@ export const Hour24Changes = () => {
     if (hour24Loading) {
         return (
             <Flex className="items-center justify-center">
-                <div>Loading 24 hours data</div>
+                <div className="mr-2">Loading 24 hours data</div>
                 <SvgMemo>
-                    <LoadingIcon className="w-12 h-12" />
+                    <LoadingIcon className="w-4 h-4" />
                 </SvgMemo>
             </Flex>
         )

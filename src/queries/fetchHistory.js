@@ -4,12 +4,14 @@ import { formatAPI } from "./api_formatter";
 import { formatSwapData } from "../utils/utils";
 import { initData } from "../constants/initData";
 import { DOMAIN } from "../constants/environment";
+import { decryptAndLoadUserSecret } from "../utils/user";
+import { useWalletStore } from "../stores/stores";
 
 // BINANCE
 
-const binance = async function (pairSymbols, interval) {
+export const binanceHistorical = async function (symbolStoreObj, interval) {
     try {
-        const dataUrl = formatAPI.binance(pairSymbols, interval).historical;
+        const dataUrl = formatAPI.binance(symbolStoreObj.symbols, interval).historical;
 
         const response = await axios.get(dataUrl);
         const data = response.data; // Extracting data properly 
@@ -34,7 +36,7 @@ const binance = async function (pairSymbols, interval) {
     }
 };
 
-async function UniswapV3(address, interval, network = "UniswapV3") {
+export async function UniswapV3Historical(symbolStoreObj, interval, network = "uniswap:1") {
     const poolInterval = {
         "1h": "poolHourDatas",
         "1d": "poolDayDatas",
@@ -48,15 +50,23 @@ async function UniswapV3(address, interval, network = "UniswapV3") {
             interval = "1h";
         }
 
-        const response = await fetch(`${DOMAIN}/historical/${network}/${address}/${interval}`);
+        const walletStoreObj = useWalletStore.getState();
+        const apiKey = await decryptAndLoadUserSecret("Subgraph API Key", walletStoreObj.address, walletStoreObj.signature);
+
+        const response = await fetch(`${DOMAIN}/api/v1/his/${interval}/${symbolStoreObj.address}@${network}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-API-Key': apiKey
+            }
+        });
+
         const data = await response.json();
 
         if (!data) {
             throw new Error("Invalid data received");
         }
 
-        // const reversedRate = data.data[poolInterval[interval]][0].close < 1; // Reversed against symbolIn/symbolOut logic
-        // const operator = reversedRate ? (num) => parseFloat(1 / num) : (num) => num;
         data.data[poolInterval[interval]].reverse(); // Beucause it's desc in graphql query.
 
         const convertedData = data.data[poolInterval[interval]].map(entry => ({
@@ -83,6 +93,4 @@ async function UniswapV3(address, interval, network = "UniswapV3") {
         console.error("Error fetching UniswapV3 data:", error);
         return initData;
     }
-}
-
-export { binance, UniswapV3 }
+} 

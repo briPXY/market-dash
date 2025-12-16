@@ -75,9 +75,14 @@ const SymbolSelectorItem = ({ pairObj, preloadPrice, }) => {
     const setPairFromPairObj = usePoolStore(fn => fn.setPairFromPairObj);
     const priceSrcData = useSourceStore(state => state.data);
 
+    const delay =async (ms) => { // prevent free RPC rate limit
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     useEffect(() => {
         const liveUpdate = async () => {
-            const livePrice = await priceSrcData.fetchPrice(pairObj.symbols);
+            await delay(Math.floor(Math.random() * (2000 - 100 + 1)) + 100);
+            const livePrice = await priceSrcData.fetchPrice(pairObj);
             setPrice(isNaN(livePrice) ? '-' : livePrice.toString());
         }
 
@@ -88,7 +93,7 @@ const SymbolSelectorItem = ({ pairObj, preloadPrice, }) => {
         else {
             liveUpdate();
         }
-    }, [preloadPrice, priceSrcData, pairObj.symbols]);
+    }, [preloadPrice, priceSrcData, pairObj.symbols, pairObj]);
 
     return (
         <button onClick={() => setPairFromPairObj(pairObj)} className="flex w-full px-3 py-2 hover:brightness-125 rounded-sm bg-primary-500 text-sm items-center justify-between">
@@ -97,7 +102,7 @@ const SymbolSelectorItem = ({ pairObj, preloadPrice, }) => {
                 <PairIcon symbol0={stdSymbol(pairObj.token0.symbol)} symbol1={stdSymbol(pairObj.token1.symbol)} size={18} spacing="2px" />
             </div>
             <PriceText className="font-medium text-xs" input={price} />
-            {!price && <LoadingIcon className="w-3 h-3" />}
+            {!price && <LoadingIcon className="w-2.5 h-2.5" />}
         </button>
     )
 }
