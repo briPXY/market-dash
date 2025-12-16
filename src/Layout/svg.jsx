@@ -19,36 +19,36 @@ export const LoadingIcon = ({ className, style, fill = "#fff" }) => {
             version="1.1"
             id="L9"
             xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 10 100 100"
+            viewBox="0 0 19 19"
         >
-            <rect x="20" y="50" width="2" height="14" fill={fill}>
+            <rect x="0" y="0" width="3" height="14" fill={fill}>
                 <animateTransform
                     attributeType="XML"
                     attributeName="transform"
                     type="translate"
-                    values="0 0; 0 10; 0 0"
+                    values="0 0; 0 5; 0 0"
                     begin="0s"
                     dur="1.6s"
                     repeatCount="indefinite"
                 />
             </rect>
-            <rect x="30" y="50" width="2" height="14" fill={fill}>
+            <rect x="7" y="0" width="3" height="14" fill={fill}>
                 <animateTransform
                     attributeType="XML"
                     attributeName="transform"
                     type="translate"
-                    values="0 0; 0 10; 0 0"
+                    values="0 0; 0 5; 0 0"
                     begin="0.5s"
                     dur="1.6s"
                     repeatCount="indefinite"
                 />
             </rect>
-            <rect x="40" y="50" width="2" height="14" fill={fill}>
+            <rect x="14" y="0" width="3" height="14" fill={fill}>
                 <animateTransform
                     attributeType="XML"
                     attributeName="transform"
                     type="translate"
-                    values="0 0; 0 10; 0 0"
+                    values="0 0; 0 5; 0 0"
                     begin="1s"
                     dur="1.6s"
                     repeatCount="indefinite"

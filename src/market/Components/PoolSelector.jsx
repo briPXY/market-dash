@@ -97,7 +97,7 @@ const SymbolSelectorItem = ({ pairObj, preloadPrice, }) => {
                 <PairIcon symbol0={stdSymbol(pairObj.token0.symbol)} symbol1={stdSymbol(pairObj.token1.symbol)} size={18} spacing="2px" />
             </div>
             <PriceText className="font-medium text-xs" input={price} />
-            {!price && <LoadingIcon className="w-10 h-10" />}
+            {!price && <LoadingIcon className="w-3 h-3" />}
         </button>
     )
 }
