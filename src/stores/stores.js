@@ -59,8 +59,8 @@ export const usePoolStore = create((set, get) => ({
     },
 
     onSourceChange: async (priceSourceName) => {
-        const savedPairData = await loadState(`savedPairStore-${priceSourceName}`); 
-        
+        const savedPairData = await loadState(`savedPairStore-${priceSourceName}`);
+
         if (savedPairData) {
             set(JSON.parse(savedPairData));
         }
@@ -203,6 +203,7 @@ export const useWalletStore = create((set, get) => ({
 // Modal overlay visibility
 export const useModalVisibilityStore = create((set) => ({
     wallet: false,
+    userSetting: false,
     account: false,
     setModalVisibility: (modal, status) => set({ [modal]: status }),
 }));
