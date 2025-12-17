@@ -6,7 +6,7 @@ import { usePoolStore, usePriceInvertStore, useSourceStore } from "../../stores/
 import { formatPrice, invertedHistoricalPrices } from "../../utils/utils";
 import { useQuery } from "@tanstack/react-query";
 
-export const Hour24Changes = () => {
+export const Hour24Changes = ({initState}) => {
     const pairSymbols = usePoolStore(state => state.symbols);
     const priceSource = useSourceStore(state => state.data)
 
@@ -22,7 +22,7 @@ export const Hour24Changes = () => {
         },
         refetchInterval: 310000, // Fetch every 5 minutes + secs
         staleTime: 310000, // Default: Cache data for 1 min
-        enabled: pairSymbols !== "init",
+        enabled: pairSymbols !== "init" && !initState,
         retry: 0,
     });
 

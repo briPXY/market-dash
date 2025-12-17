@@ -2,15 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import { timeFrameToMs } from "../constants/constants.js";
 import { useMemo } from "react";
 import { initData } from "../constants/initData.js";
-import { SourceConst } from "../constants/sourceConst.js";
 import { MissingAPIKeyError } from "../constants/environment.js";
+import { useSourceStore } from "../stores/stores.js";
 /**
  * Custom React Query hook to fetch and process candlestick data.
  * @param {string} apiUrl - The API URL to fetch data from.
  * @param {Function} transformFn - data transform function
  * @returns {Object} - Query result from React Query.
  */
-const useChartQuery = ({ symbols, interval, network, enabled, symbolStoreObj }) => {
+const useChartQuery = ({ symbols, interval, initState, symbolStoreObj }) => {
 
     const queryKey = useMemo(() => ["mainchart", symbols, interval], [symbols, interval]);
     const initialData = useMemo(() => { return initData }, [])
@@ -20,7 +20,8 @@ const useChartQuery = ({ symbols, interval, network, enabled, symbolStoreObj }) 
         //enabled: !address,
         queryFn: async () => {
             try {
-                const data = await SourceConst[network].ohlcFetch(symbolStoreObj, interval, network);
+                if (initState || !useSourceStore.getState().src) return initialData;
+                const data = await useSourceStore.getState().data.ohlcFetch(symbolStoreObj, interval, useSourceStore.getState().src);
                 return data;
             } catch (err) {
                 console.error(err)
@@ -35,7 +36,7 @@ const useChartQuery = ({ symbols, interval, network, enabled, symbolStoreObj }) 
         refetchOnWindowFocus: false,
         cacheTime: timeFrameToMs[interval],
         placeholderData: (prev) => prev !== undefined ? prev : initialData,
-        enabled: enabled,
+        enabled: !initState,
         retry: 0,
     });
 };

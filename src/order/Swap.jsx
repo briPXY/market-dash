@@ -4,7 +4,6 @@ import SwapForm from "./SwapForm";
 import { formatPrice } from "../utils/utils";
 import { swapDecimalRule } from "../constants/constants";
 import SwapQuotesPanel from "./SwapQuotesPanel";
-import { SourceConst } from "../constants/sourceConst";
 
 function removeNonNumeric(rawValue) {
     let cleaned = rawValue
@@ -24,11 +23,10 @@ function removeNonNumeric(rawValue) {
     return cleaned;
 }
 
-export default function Swap({ isDEX }) {
+export default function Swap() {
     const token0 = usePoolStore(state => state.token0);
     const token1 = usePoolStore(state => state.token1);
 
-    const source = useSourceStore(state => state.src);
     const poolAddress = usePoolStore(state => state.address);
 
     const [sellAmount, setSellAmount] = useState('');
@@ -99,10 +97,10 @@ export default function Swap({ isDEX }) {
                 buyAmount={buyAmount}
                 sellAmount={sellAmount}
                 handleChangeSymbols={handleChangeSymbols}
-                isDEX={isDEX}
+                isDEX={useSourceStore.getState().isDEX ?? null}
             />
             <SwapQuotesPanel
-                queryFn={SourceConst[source].quoteFunction}
+                queryFn={useSourceStore.getState().data.quoteFunction ?? function () { }}
                 tokenIn={currentTokenIn}
                 tokenOut={currentTokenOut}
                 amount={sellAmount}

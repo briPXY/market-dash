@@ -1,11 +1,10 @@
-import { CopyIcon } from "../../Layout/svg";
-import { SourceConst } from "../../constants/sourceConst"
+import { CopyIcon } from "../../Layout/svg"; 
 import { Flex, SvgMemo } from "../../Layout/Layout"
-import { usePoolStore } from "../../stores/stores";
+import { usePoolStore, useSourceStore } from "../../stores/stores";
 
-export const PoolAddressView = ({ src }) => {
+export const PoolAddressView = ( ) => {
     const address = usePoolStore(state => state.address);
-    if (!address || !src || !SourceConst[src].isDex) return null;
+    if (!useSourceStore.getState().data?.isDex) return null;
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(address);

@@ -5,7 +5,7 @@ import Market from './market/Market';
 import { TopBar } from './generic_components/TopBar';
 import "./idb/init.js";
 import { useSourceStore, useWalletStore } from './stores/stores';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { isSavedStateExist, loadState } from './idb/stateDB';
 import { localStorageDeleteDottedKeyAll, localStorageLoadDottedKeyAll } from './utils/utils';
 import { tryReconnectWallet } from './order/wallet';
@@ -23,6 +23,7 @@ function BadComponentTest() {
 
 function App() {
     const setSrc = useSourceStore(state => state.setSrc);
+    const [initState, setInitState] = useState(true);
 
     // Init handler
     useEffect(() => {
@@ -33,11 +34,11 @@ function App() {
 
             const savedNetworkExist = await isSavedStateExist(`savedSource`);
 
-            if (savedNetworkExist) {
+            if (savedNetworkExist) { 
                 const savedNetwork = await loadState("savedSource");
                 setSrc(savedNetwork);
             }
-            else {console.log("is binance")
+            else {
                 setSrc("binance");
             }
 
@@ -53,6 +54,8 @@ function App() {
                 localStorageDeleteDottedKeyAll("wallet");
                 useWalletStore.getState().logoutWallet();
             }
+            // finalize
+            setInitState(false);
         }
 
         init();
@@ -75,10 +78,10 @@ function App() {
         <>
             {/* <BadComponentTest /> */}
             <Section className="overflow-visible w-full mb-1">
-                <TopBar />
+                <TopBar initState={initState}/>
             </Section>
             <Section className="overflow-visible w-full">
-                <Market />
+                <Market initState={initState}/>
             </Section>
             <Section ></Section>
 

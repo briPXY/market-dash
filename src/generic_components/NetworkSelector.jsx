@@ -4,10 +4,10 @@ import { PopoverButton } from "../Layout/Elements";
 import { Flex } from "../Layout/Layout";
 import { SourceConst } from "../constants/sourceConst";
 
-export const NetworkSelector = () => {
+export const NetworkSelector = ({ initState }) => {
     const srcName = useSourceStore(state => state.src);
 
-    if (!srcName) {
+    if (!srcName || initState) {
         return <div className="text-sm">Network Unselected</div>
     }
 

@@ -22,7 +22,7 @@ export const useNetworkStore = create((set) => ({
 }));
 
 export const useSourceStore = create((set) => ({
-    src: "binance", 
+    src: null, 
     data: SourceConst.binance,
     setSaved: (bool) => { set({ saved: bool }) },
     setSrc: async (value) => {
@@ -43,7 +43,7 @@ export const useTradingPlatformStore = create((set) => ({
 }));
 
 export const usePoolStore = create((set, get) => ({
-    address: "0x", // address of pool (case like uniswap) not each symbol
+    address: null, // address of pool (case like uniswap) not each symbol
     symbols: "init",
     token0: initToken[0].token0,
     token1: initToken[0].token1,
@@ -51,7 +51,8 @@ export const usePoolStore = create((set, get) => ({
 
     setPairFromPairObj: async (obj) => {
         await saveState(`savedPairStore-${useSourceStore.getState().src}`, JSON.stringify(obj));
-        set(obj);
+        const objToSet = {...obj, address: obj.address ? obj.address : null}
+        set(objToSet);
     },
 
     setSingleSymbol: (target, value) => {
