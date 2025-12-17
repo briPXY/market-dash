@@ -18,6 +18,7 @@ const SvgContainer = ({
     OHLCData,
     range,
     isError,
+    isLoading,
     chart,
     lengthPerItem,
     isLogScale,
@@ -36,29 +37,34 @@ const SvgContainer = ({
     const [scrollStopped, setScrollStopped] = useState(null); // Debounced scroll state for visibleOHLCData
 
     const innerWidth = useMemo(() => (lengthPerItem * OHLCData?.length) + chartDim.margin.right + chartDim.margin.left, [OHLCData, lengthPerItem]);
-    const innerHeight = useMemo(() => chartDim.containerHeight - (Object.keys(subIndicators).length * chartDim.subIndicatorHeight) - 14, [subIndicators]);
+    const innerHeight = useMemo(() => (OHLCData ? 1 : 0) * (chartDim.containerHeight - (Object.keys(subIndicators).length * chartDim.subIndicatorHeight) - 14), [OHLCData, subIndicators]);
     const yLabelWidth = useYLabelWidth(OHLCData);
 
     const visibleOHLCData = useMemo(() => {
+        if (!OHLCData) return;
         if (scrollStopped) {
             const { iLeft, iRight } = getVisibleIndexRange(chartContainerRef, OHLCData.length);
             return OHLCData.slice(iLeft, iRight);
         }
         else { // 1st render scroll chart to right, slicing data most right
-            const sliceLeft = ((innerWidth - (window.innerWidth * 0.8)) / innerWidth) * OHLCData.length;
+            const sliceLeft = ((innerWidth - (window.innerWidth * 0.8)) / innerWidth) * OHLCData?.length;
             return OHLCData.slice(Math.round(sliceLeft), OHLCData.length - 1);
         }
     }, [OHLCData, innerWidth, scrollStopped]);
 
-    const scale = useMemo(() => xyScaler(visibleOHLCData, "date", "close", isLogScale, innerWidth, innerHeight, chartDim.margin), [visibleOHLCData, isLogScale, innerWidth, innerHeight]);
+    const scale = useMemo(() => {
+        if (!OHLCData) return;
+        return xyScaler(visibleOHLCData, "date", "close", isLogScale, innerWidth, innerHeight, chartDim.margin)
+    }, [OHLCData, visibleOHLCData, isLogScale, innerWidth, innerHeight]);
 
     const bandXScale = useMemo(() => {
+        if (!OHLCData) return;
         return getBandXScale(OHLCData, innerWidth)
     }, [OHLCData, innerWidth]);
 
     // Chart X scroll stop listener
     useEffect(() => {
-        if (isLogScale != "LOG") return;
+        if (isLogScale != "LOG" || !chartContainerRef.current) return;
 
         const el = chartContainerRef.current;
 
@@ -76,14 +82,14 @@ const SvgContainer = ({
             el.removeEventListener("scroll", onScroll);
             if (timeout) clearTimeout(timeout);
         };
-    }, [isLogScale]);
+    }, [isLoading, isLogScale]);
 
     // Y Dynamic SVGs
     useEffect(() => {
         const ySvg = d3.select(ySvgRef.current);
         ySvg.selectAll('*').remove();
 
-        if (OHLCData?.length <= 1 || isError) return;
+        if (OHLCData?.length < 2 || !OHLCData) return;
 
         drawYAxis(ySvg, scale, mainSvg);
         //drawGrid(mainSvg, scale, innerWidth, innerHeight, bandXScale);
@@ -93,13 +99,13 @@ const SvgContainer = ({
 
     // Y Static SVGs
     useEffect(() => {
-        if (OHLCData.length < 1) return;
+        if (OHLCData.length < 2 || !OHLCData) return;
 
         const xLabelSvg = d3.select(xLabelRef.current);
         xLabelSvg.selectAll('*').remove();
         // Draw volume bar overlay
         drawVolumeBars(d3, mainSvg, bandXScale, OHLCData, innerHeight, tooltipRef);
-    }, [OHLCData, bandXScale, innerHeight, innerWidth, mainSvg, range]);
+    }, [OHLCData, bandXScale, innerHeight, innerWidth, mainSvg, range])
 
     return (
         <div ref={containerRef} style={{ height: `${chartDim.containerHeight}px` }} className="relative">

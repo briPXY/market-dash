@@ -4,7 +4,7 @@ import { useWalletStore } from "../stores/stores";
 import { deleteUserSecret, encryptAndSaveUserSecret } from "../utils/user";
 import { isSavedStateExist } from "../idb/stateDB";
 
-export function FormTextUserSecret({ keyName, validator = async (secret) => secret }) {
+export function FormTextUserSecret({ keyName, validator = async (secret) => secret, onAddSuccess = () => { } }) {
     const getCensoredText = (x = 24) => '•'.repeat(x);
     const [secretSubmitted, setSecretSubmitted] = useState(false);
     const [secretString, setSecretString] = useState("");
@@ -17,10 +17,11 @@ export function FormTextUserSecret({ keyName, validator = async (secret) => secr
         try {
             setLoading(true);
             await validator(secretString);
-            const saved = encryptAndSaveUserSecret(keyName, secretString, walletAddress, useWalletStore.getState().signature, useWalletStore.getState().message);
+            const saved = await encryptAndSaveUserSecret(keyName, secretString, walletAddress, useWalletStore.getState().signature, useWalletStore.getState().message);
             setSecretSubmitted(true);
             setStatus(saved);
             setLoading(false);
+            onAddSuccess();
         } catch (e) {
             setStatus(e.message);
             setLoading(false);

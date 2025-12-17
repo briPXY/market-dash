@@ -1,8 +1,7 @@
 import { useMemo } from "react";
-import { Flex, SvgMemo } from "../../Layout/Layout"
+import { Flex } from "../../Layout/Layout"
 import { CardValueChange } from "./CardValueChange"
 import { calculateHistoricalChange } from "../../utils/price.math";
-import { LoadingIcon } from "../../Layout/svg";
 import { usePoolStore, usePriceInvertStore, useSourceStore } from "../../stores/stores";
 import { formatPrice, invertedHistoricalPrices } from "../../utils/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -11,7 +10,7 @@ export const Hour24Changes = () => {
     const pairSymbols = usePoolStore(state => state.symbols);
     const priceSource = useSourceStore(state => state.data)
 
-    const { data: hour24data, isLoading: hour24Loading } = useQuery({
+    const { data: hour24data, isLoading } = useQuery({
         queryKey: [priceSource, pairSymbols],
         queryFn: async () => {
             try {
@@ -24,6 +23,7 @@ export const Hour24Changes = () => {
         refetchInterval: 310000, // Fetch every 5 minutes + secs
         staleTime: 310000, // Default: Cache data for 1 min
         enabled: pairSymbols !== "init",
+        retry: 0,
     });
 
     const invertedStatus = usePriceInvertStore((state) => state.priceInvert);
@@ -36,20 +36,10 @@ export const Hour24Changes = () => {
         return calculateHistoricalChange(hour24data);
     }, [hour24data, invertedStatus]);
 
-    if (hour24Loading) {
-        return (
-            <Flex className="items-center justify-center">
-                <div className="mr-2">Loading 24 hours data</div>
-                <SvgMemo>
-                    <LoadingIcon className="w-4 h-4" />
-                </SvgMemo>
-            </Flex>
-        )
-    }
-
     return (
         <Flex className="gap-1 md:gap-10">
             <Flex className="flex-col md:flex-row gap-2 md:gap-10">
+                {isLoading && <div className="text-xs">Loading...</div>}
                 <CardValueChange num={priceChanges.change} baseNum={0} text={`24h changes`} />
                 <CardValueChange num={priceChanges.percent} baseNum={0} unit={'%'} text="changes" />
             </Flex>

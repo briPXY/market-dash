@@ -3,22 +3,20 @@ import usePriceStore, { useSourceStore, usePoolStore } from "../stores/stores";
 import { closeLivePriceWebSocket, killAllLivePriceLoops } from "../queries/livePrice";
 
 
-const PriceUpdater = ({ type }) => {
-    const setPrice = usePriceStore((state) => type == "trade" ? state.setTradePrice : state.setIndexPrice);
-    const symbols = usePoolStore(state => state.symbols);
-    const priceSource = useSourceStore(state => state.data);
+const PriceUpdater = ( ) => { 
+    const symbols = usePoolStore(state => state.symbols); 
 
     useEffect(() => {
-        if (symbols == "init" || useSourceStore.getState().src == "init") return;
+        if (symbols == "init" || !symbols) return;
 
-        priceSource.livePrice(useSourceStore.getState(), usePoolStore.getState(), setPrice)
+        useSourceStore.getState().data.livePrice(useSourceStore.getState(), usePoolStore.getState(), usePriceStore.getState().setTradePrice)
 
         return () => {
             closeLivePriceWebSocket();
             killAllLivePriceLoops();
         };
 
-    }, [setPrice, type, symbols, priceSource]);
+    }, [symbols]);
 
     return null; // non-pure component
 };

@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { TabPanelParent } from "../Layout/Layout";
 import { useModalVisibilityStore } from "../stores/stores";
 import { ModalOverlay } from "./ModalOverlay";
@@ -24,7 +25,7 @@ export function UserSetting() {
 }
 
 function UserSettingAPIKeys() {
-
+    const mainChartQuery = useQueryClient();
     const validateSubgraphApiKey = async (apiKey) => {
         const subgraphUrl = `https://gateway.thegraph.com/api/${apiKey}/subgraphs/id/DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp`;
         const minimalQuery = `{ _meta { deployment } }`;
@@ -49,11 +50,17 @@ function UserSettingAPIKeys() {
         }
     }
 
+    const HistoricalPriceAPISuccessHandler = () => {
+        mainChartQuery.invalidateQueries({
+            queryKey: ["mainchart"]
+        });
+    }
+
     return (
         <div className="mx-3">
             {/* Subgraph API */}
             <div className="border bg-primary-500 border-primary-100 rounded-md p-4">
-                <FormTextUserSecret keyName={"Subgraph API Key"} validator={validateSubgraphApiKey} />
+                <FormTextUserSecret keyName={"Subgraph API Key"} validator={validateSubgraphApiKey} onAddSuccess={HistoricalPriceAPISuccessHandler} />
             </div>
         </div>
     )

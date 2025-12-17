@@ -2,8 +2,7 @@
 import axios from "axios";
 import { formatAPI } from "./api_formatter";
 import { formatSwapData } from "../utils/utils";
-import { initData } from "../constants/initData";
-import { DOMAIN } from "../constants/environment";
+import { DOMAIN, MissingAPIKeyError } from "../constants/environment";
 import { decryptAndLoadUserSecret } from "../utils/user";
 import { useWalletStore } from "../stores/stores";
 
@@ -32,17 +31,17 @@ export const binanceHistorical = async function (symbolStoreObj, interval) {
 
     } catch (error) {
         console.error("Error fetching Binance data:", error);
-        return initData; // Return an empty array if there is an error
+        throw new Error("Binance historical price error or not responded");
     }
 };
 
 export async function UniswapV3Historical(symbolStoreObj, interval, network = "uniswap:1") {
-    const poolInterval = {
-        "1h": "poolHourDatas",
-        "1d": "poolDayDatas",
-    }
-
     try {
+        const poolInterval = {
+            "1h": "poolHourDatas",
+            "1d": "poolDayDatas",
+        }
+
         const timeframes = { "1h": "1h", "1d": "1d" };
         const timeProp = { "1h": "periodStartUnix", "1d": "date" };
 
@@ -88,9 +87,10 @@ export async function UniswapV3Historical(symbolStoreObj, interval, network = "u
         }
 
         return { ohlc: convertedData, swaps: null };
-
-    } catch (error) {
-        console.error("Error fetching UniswapV3 data:", error);
-        return initData;
+    } catch (err) {
+        if (err instanceof MissingAPIKeyError) {
+            throw new MissingAPIKeyError("Subgraph API key not found")
+        }
+        throw new Error("Subgraph historical query error");
     }
 } 

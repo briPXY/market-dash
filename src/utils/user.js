@@ -2,6 +2,7 @@
 
 import { ethers } from "ethers";
 import { deleteState, isSavedStateExist, loadState, saveState } from "../idb/stateDB";
+import { MissingAPIKeyError } from "../constants/environment";
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -92,8 +93,9 @@ export async function encryptAndSaveUserSecret(keyName, apiKeyToStore, walletAdd
 export async function decryptAndLoadUserSecret(keyName, walletAddress, walletSignature) {
     try {
         const isSecretExist = await isSavedStateExist(`${keyName}_${walletAddress}`);
+        
         if (!isSecretExist) {
-            throw new Error(`Saved ${keyName} from user ${walletAddress} is not available`);
+            throw new MissingAPIKeyError(`Saved ${keyName} from user ${walletAddress} is not available`);
         }
 
         const storedUserSecret = await loadState(`${keyName}_${walletAddress}`);
@@ -104,7 +106,7 @@ export async function decryptAndLoadUserSecret(keyName, walletAddress, walletSig
         return decryptedSecret;
     } catch (e) {
         console.error(e);
-        throw new Error("Error during loading user secret");
+        throw new MissingAPIKeyError("Error during loading user secret");
     }
 }
 

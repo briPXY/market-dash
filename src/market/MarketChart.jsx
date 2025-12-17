@@ -11,18 +11,20 @@ import { candlestick } from "../charts/charts/candlestick";
 import { Yscale } from "./Components/Yscale";
 import { ZoomOverlay } from "../charts/ZoomOverlay";
 import { isAgentMobile } from "../constants/environment";
+import { PreChartScreen } from "./Components/PreChartScreen";
+import { initData } from "../constants/initData";
 
-function MarketChart({ OHLCData, isError, setRange, range}) {
+function MarketChart({ OHLCData, isError, isLoading, error, setRange, range }) {
     const [chart, setChart] = useState({ n: "Candlestick", f: candlestick });
     const [lengthPerItem, setLengthPerItem] = useState(isAgentMobile ? 4 : 6);
-    const [isLogScale, setYscale] = useState("LOG");
+    const [isLogScale, setYscale] = useState("LOG"); 
 
     return (
         <div className={`bg-primary-900 p-2 md:p-4 h-full w-full md:w-[78%] md:flex-none`}>
-            <Flex className="flex-col h-full">
+            <Flex className="flex-col h-full relative">
                 <Flex className="pb-3 pt-0 items-center gap-2 justify-between">
                     <RangeSelector setRange={setRange} selected={range} />
-                    <div>{isError ? "Connection error" : ''}</div>
+                    <div className="text-xs text-accent-negative">{isError ? "Connection error" : ''}</div>
                     <Flex className="overflow-visible justify-end items-center gap-2 text-sm">
                         <PopoverButton showClass={"w-auto h-full top-[100%] right-0 z-15"}>
                             <Button className="w-6 h-6">
@@ -37,10 +39,12 @@ function MarketChart({ OHLCData, isError, setRange, range}) {
                         <ZoomOverlay setLengthPerItem={setLengthPerItem} />
                     </Flex>
                 </Flex>
+                {(isLoading || isError || OHLCData.length <= 1) && <PreChartScreen isLoading={isLoading} error={error} isError={isError} />}
                 <SvgContainer
-                    OHLCData={OHLCData}
+                    OHLCData={OHLCData ?? initData.ohlc}
                     range={range}
                     isError={isError}
+                    isLoading={isLoading}
                     chart={chart.f}
                     isLogScale={isLogScale}
                     lengthPerItem={lengthPerItem}

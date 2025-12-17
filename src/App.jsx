@@ -37,7 +37,7 @@ function App() {
                 const savedNetwork = await loadState("savedSource");
                 setSrc(savedNetwork);
             }
-            else {
+            else {console.log("is binance")
                 setSrc("binance");
             }
 

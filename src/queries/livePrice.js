@@ -187,10 +187,10 @@ export const fetchUniswapPoolPrice = async (network, pairObj) => {
             try {
                 await _selectWorkingRpc(network, RPC_URLS.default);
             } catch (fatal) {
-                throw new Error(`All RPCs failed for ${network}, message:${fatal.message}`);
+                return { fatalError: fatal };
             }
         }
-        return false;
+
     }
 };
 
@@ -219,7 +219,12 @@ export async function ethereurmLivePriceLoopers(priceSourceObj, pairObj, setPric
 
     while (_LivePriceLoops[looperName]) {
         const price = await fetchUniswapPoolPrice(priceSourceObj.src, pairObj);
-        if (!price) continue;
+
+        if (price.fatalError) {
+            _LivePriceLoops[looperName] = false;
+            break;
+        }
+
         const converted = getPriceFromSqrtPriceX96(price, pairObj.token0, pairObj.token1);
         setPrice(converted);
 
