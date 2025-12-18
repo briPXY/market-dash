@@ -50,11 +50,7 @@ export async function extensionWalletLogin(setState = () => { }, onSuccess = () 
         // Sign message
         const signer = await provider.getSigner(connectedAddress);
         const messageToSign =
-            `You're about to sign in on market-dash app.
-
-WARNING: This is a developer demo app.
-Address: ${connectedAddress}
-Timestamp: ${Date.now()}`;
+            `You're about to sign in to Pola. This is a web demo version of the app. Your address is ${connectedAddress}. This signature is important for encrypting sensitive user data on the local disk.`;
 
         let signature = null;
         try {

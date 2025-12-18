@@ -101,11 +101,11 @@ export async function decryptAndLoadUserSecret(keyName, walletAddress, walletSig
         const storedUserSecret = await loadState(`${keyName}_${walletAddress}`);
         const retrievedSalt = base64ToArrayBuffer(storedUserSecret.salt);
         const retrievedMasterKey = await deriveMasterKey(walletSignature, new Uint8Array(retrievedSalt));
-
         const decryptedSecret = await decryptApiKey(retrievedMasterKey, storedUserSecret.encryptedKey, storedUserSecret.iv);
         return decryptedSecret;
     } catch (e) {
         console.error(e);
+        await deleteState(`${keyName}_${walletAddress}`); // delete expired save (eg: from changed signature)
         throw new MissingAPIKeyError("Error during loading user secret");
     }
 }
