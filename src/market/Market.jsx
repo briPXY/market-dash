@@ -21,7 +21,7 @@ function Market({ initState }) {
     const symbols = usePoolStore(state => state.symbols);
     const invertedStatus = usePriceInvertStore((state) => state.priceInvert);
 
-    const { data, isError, error, isLoading } = useChartQuery({ symbols, symbolStoreObj: usePoolStore.getState(), interval: range, initState });
+    const { data, isError, error, isFetching } = useChartQuery({ symbols, symbolStoreObj: usePoolStore.getState(), interval: range, initState });
 
     useEffect(() => {
         if (!isError && data?.length > 0) {
@@ -57,7 +57,8 @@ function Market({ initState }) {
                         OHLCData={invertedStatus ? invertedHistorical : data?.ohlc}
                         isError={isError}
                         error={error}
-                        isLoading={isLoading}
+                        isFetching={isFetching}
+                        dataSymbols={data.symbols}
                     />
                     <TabPanelParent className="md:flex-1" tabClassName="flex-1 rounded-t-lg px-3 py-2 bo text-sm font-semibold" btnContainerClassName="flex px-3 pt-4 justify-center items-center bg-primary-900">
                         <Swap label="Swap" />

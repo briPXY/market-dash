@@ -22,6 +22,7 @@ const useChartQuery = ({ symbols, interval, initState, symbolStoreObj }) => {
             try {
                 if (initState || !useSourceStore.getState().src) return initialData;
                 const data = await useSourceStore.getState().data.ohlcFetch(symbolStoreObj, interval, useSourceStore.getState().src);
+                data.symbols = symbols;
                 return data;
             } catch (err) {
                 console.error(err)

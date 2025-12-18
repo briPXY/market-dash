@@ -18,7 +18,6 @@ const SvgContainer = ({
     OHLCData,
     range,
     isError,
-    isLoading,
     chart,
     lengthPerItem,
     isLogScale,
@@ -82,7 +81,7 @@ const SvgContainer = ({
             el.removeEventListener("scroll", onScroll);
             if (timeout) clearTimeout(timeout);
         };
-    }, [isLoading, isLogScale]);
+    }, [isLogScale]);
 
     // Y Dynamic SVGs
     useEffect(() => {
@@ -105,7 +104,7 @@ const SvgContainer = ({
         xLabelSvg.selectAll('*').remove();
         // Draw volume bar overlay
         drawVolumeBars(d3, mainSvg, bandXScale, OHLCData, innerHeight, tooltipRef);
-    }, [OHLCData, bandXScale, innerHeight, innerWidth, mainSvg, range])
+    }, [OHLCData, bandXScale, innerHeight, innerWidth, mainSvg, range]);
 
     return (
         <div ref={containerRef} style={{ height: `${chartDim.containerHeight}px` }} className="relative">

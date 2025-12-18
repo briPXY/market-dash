@@ -304,7 +304,7 @@ export function TabPanelParent({ children, className = "w-full bg-primary-900 ma
             </div>
             <>
                 {React.Children.map(children, (child, index) => (
-                    <div key={index} style={{ display: activeTab === index ? "block" : "hidden" }} className={"w-full h-full"}>
+                    <div key={index} style={{ display: activeTab === index ? "block" : "none" }} className={"w-full h-full"}>
                         {child}
                     </div>
                 ))}
