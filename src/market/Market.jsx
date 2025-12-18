@@ -58,7 +58,7 @@ function Market({ initState }) {
                         isError={isError}
                         error={error}
                         isFetching={isFetching}
-                        dataSymbols={data.symbols}
+                        dataSymbols={data?.symbols}
                     />
                     <TabPanelParent className="md:flex-1" tabClassName="flex-1 rounded-t-lg px-3 py-2 bo text-sm font-semibold" btnContainerClassName="flex px-3 pt-4 justify-center items-center bg-primary-900">
                         <Swap label="Swap" />

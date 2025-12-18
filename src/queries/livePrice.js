@@ -3,7 +3,7 @@ import { DOMAIN } from "../constants/environment";
 import { ethers } from "ethers";
 import { RPC_URLS } from "../constants/constants";
 import { useSourceStore, useWalletStore } from "../stores/stores";
-import { loadState } from "../idb/stateDB";
+import { decryptAndLoadUserSecret } from "../utils/user";
 
 const _LivePriceLoops = {
     ether: false,
@@ -173,13 +173,13 @@ export const fetchUniswapPoolPrice = async (network, pairObj) => {
         let provider;
 
         if (chainId == "11155111") {// Sepolia 
-            const sepoliaRPC = await loadState(`Sepolia RPC_${useWalletStore.getState().address}`);
+            const sepoliaRPC = await decryptAndLoadUserSecret("Sepolia RPC", useWalletStore.getState().address, useWalletStore.getState().signature);
 
             if (!sepoliaRPC) {
-                return { noRPC: "Need Sepolia RPC" };
+                return "ERR_NO_RPC";
             }
 
-            provider = sepoliaRPC;
+            provider = new ethers.JsonRpcProvider(sepoliaRPC);
         }
         else {
             provider = _RPCProviders[network]; // reuse provider, not new each time 
@@ -194,6 +194,7 @@ export const fetchUniswapPoolPrice = async (network, pairObj) => {
         const sqrtPriceX96 = slot0.sqrtPriceX96.toString();
         return sqrtPriceX96;
     } catch (e) {
+        console.error(e)
         if (e.message.includes("failed to detect network") || e.message.includes("ECONN")) {
             try {
                 await _selectWorkingRpc(network, RPC_URLS.default);
@@ -214,7 +215,7 @@ export function killAllLivePriceLoops() {
 export async function uniswapOneTimerPrice(pairObj) {
     const price = await fetchUniswapPoolPrice(useSourceStore.getState().src, pairObj);
 
-    if (price.noRPC) {
+    if (price == "ERR_NO_RPC") {
         return "Need Sepolia RPC";
     }
 
@@ -236,7 +237,7 @@ export async function ethereurmLivePriceLoopers(priceSourceObj, pairObj, setPric
     while (_LivePriceLoops[looperName]) {
         const price = await fetchUniswapPoolPrice(priceSourceObj.src, pairObj);
 
-        if (price.noRPC) {
+        if (price == "ERR_NO_RPC") {
             setPrice("Need Sepolia RPC");
             _LivePriceLoops[looperName] = false;
             break;
