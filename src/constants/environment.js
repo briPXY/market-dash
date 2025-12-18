@@ -14,3 +14,11 @@ export class MissingAPIKeyError extends Error {
         this.code = "MISSING_API_KEY";
     }
 }
+
+export class ErrorNoRPC extends Error {
+    constructor(message = "Required RPC not found. Please check your settings.") {
+        super(message);
+        this.name = "HttpFetchError";
+        this.code = "MISSING_RPC";
+    }
+}

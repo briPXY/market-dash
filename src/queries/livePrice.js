@@ -2,7 +2,8 @@ import { getPriceFromSqrtPriceX96 } from "../utils/price.math";
 import { DOMAIN } from "../constants/environment";
 import { ethers } from "ethers";
 import { RPC_URLS } from "../constants/constants";
-import { useSourceStore } from "../stores/stores";
+import { useSourceStore, useWalletStore } from "../stores/stores";
+import { loadState } from "../idb/stateDB";
 
 const _LivePriceLoops = {
     ether: false,
@@ -168,21 +169,31 @@ function _delay(ms) {
 export const fetchUniswapPoolPrice = async (network, pairObj) => {
     try {
         await _delay(Math.floor(Math.random() * (2000 - 100 + 1)) + 100);
+        const [, chainId] = network.split(":");
+        let provider;
 
-        const provider = _RPCProviders[network]; // reuse provider, not new each time 
+        if (chainId == "11155111") {// Sepolia 
+            const sepoliaRPC = await loadState(`Sepolia RPC_${useWalletStore.getState().address}`);
+
+            if (!sepoliaRPC) {
+                return { noRPC: "Need Sepolia RPC" };
+            }
+
+            provider = sepoliaRPC;
+        }
+        else {
+            provider = _RPCProviders[network]; // reuse provider, not new each time 
+        }
+
         const poolABI = [
             "function slot0() external view returns (uint160 sqrtPriceX96, int24 tick, uint16 observationIndex, uint16 observationCardinality, uint16 observationCardinalityNext, uint8 feeProtocol, bool unlocked)"
         ];
 
         const poolContract = new ethers.Contract(pairObj.address, poolABI, provider);
         const slot0 = await poolContract.slot0();
-
         const sqrtPriceX96 = slot0.sqrtPriceX96.toString();
-
         return sqrtPriceX96;
     } catch (e) {
-        console.error("fetchLivePrice error @", pairObj.address, "network:", network, e.message);
-
         if (e.message.includes("failed to detect network") || e.message.includes("ECONN")) {
             try {
                 await _selectWorkingRpc(network, RPC_URLS.default);
@@ -202,6 +213,11 @@ export function killAllLivePriceLoops() {
 
 export async function uniswapOneTimerPrice(pairObj) {
     const price = await fetchUniswapPoolPrice(useSourceStore.getState().src, pairObj);
+
+    if (price.noRPC) {
+        return "Need Sepolia RPC";
+    }
+
     const converted = getPriceFromSqrtPriceX96(price, pairObj.token0, pairObj.token1);
     return converted;
 }
@@ -219,6 +235,12 @@ export async function ethereurmLivePriceLoopers(priceSourceObj, pairObj, setPric
 
     while (_LivePriceLoops[looperName]) {
         const price = await fetchUniswapPoolPrice(priceSourceObj.src, pairObj);
+
+        if (price.noRPC) {
+            setPrice("Need Sepolia RPC");
+            _LivePriceLoops[looperName] = false;
+            break;
+        }
 
         if (price.fatalError) {
             _LivePriceLoops[looperName] = false;

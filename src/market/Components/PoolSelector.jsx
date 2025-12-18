@@ -35,11 +35,10 @@ export const PoolSelector = () => {
                 />
                 <PairIcon className="w-1/2 flex"
                     symbol0={stdSymbol(usePoolStore.getState().token0.symbol)}
-                    symbol1={stdSymbol(usePoolStore.getState().token1.symbol)} spacing="-100%"
-                    style={{ width: "30px" }}
-                    style1={{ clipPath: "inset(0 0 0 50%)" }}
+                    symbol1={stdSymbol(usePoolStore.getState().token1.symbol)} spacing="-50%"
+                    style={{ width: "28px" }} 
+                    size={26}
                 />
-                <div className="text-xs text-washed">▼</div>
             </div>
             <div className="flex flex-col p-1 gap-0">
                 <div className="flex items-center mb-1 gap-1 w-full">
@@ -83,7 +82,7 @@ const SymbolSelectorItem = ({ pairObj, preloadPrice, }) => {
         const liveUpdate = async () => {
             await delay(Math.floor(Math.random() * (2000 - 100 + 1)) + 100);
             const livePrice = await priceSrcData.fetchPrice(pairObj);
-            setPrice(isNaN(livePrice) ? '-' : livePrice.toString());
+            setPrice(livePrice.toString());
         }
 
         if (priceSrcData.bulkPrices) {
