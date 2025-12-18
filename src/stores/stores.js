@@ -22,7 +22,7 @@ export const useNetworkStore = create((set) => ({
 }));
 
 export const useSourceStore = create((set) => ({
-    src: null, 
+    src: null,
     data: SourceConst.binance,
     setSaved: (bool) => { set({ saved: bool }) },
     setSrc: async (value) => {
@@ -49,10 +49,18 @@ export const usePoolStore = create((set, get) => ({
     token1: initToken[0].token1,
     feeTier: "",
 
-    setPairFromPairObj: async (obj) => {
-        await saveState(`savedPairStore-${useSourceStore.getState().src}`, JSON.stringify(obj));
-        const objToSet = {...obj, address: obj.address ? obj.address : null}
-        set(objToSet);
+    setPairFromPairObj: (obj) => {
+        const currentState = get();
+        const updatedState = {};
+
+        Object.keys(currentState).forEach((key) => {
+            if (typeof currentState[key] !== 'function') { // prevent setter/getter being removed
+                updatedState[key] = obj[key] ? obj[key] : null;
+            }
+        });
+
+        set(updatedState);
+        saveState(`savedPairStore-${useSourceStore.getState().src}`, obj);
     },
 
     setSingleSymbol: (target, value) => {
@@ -60,12 +68,24 @@ export const usePoolStore = create((set, get) => ({
     },
 
     onSourceChange: (priceSourceName, savedPairData) => {
+        let newData = {};
+        const currentState = get();
+        const updatedState = {};
+
         if (savedPairData) {
-            set(JSON.parse(savedPairData));
+            newData = savedPairData;
         }
-        else { // not pair data saved
-            set(SourceConst[priceSourceName].initPairs[0]);
+        else { // no pair data saved
+            newData = SourceConst[priceSourceName].initPairs[0];
         }
+
+        Object.keys(currentState).forEach((key) => { // prevent shallow copy of props
+            if (typeof currentState[key] !== 'function') { // prevent setter/getter being removed
+                updatedState[key] = newData[key] ? newData[key] : null;
+            }
+        });
+        set(updatedState);
+        saveState(`savedPairStore-${useSourceStore.getState().src}`, newData);
     },
 
     setPairFromListDB: async (info) => {
