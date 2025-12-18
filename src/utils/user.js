@@ -90,10 +90,16 @@ export async function encryptAndSaveUserSecret(keyName, apiKeyToStore, walletAdd
     }
 }
 
+const cachedUserSecret = {}; // for faster secret getter
+
 export async function decryptAndLoadUserSecret(keyName, walletAddress, walletSignature) {
     try {
+        if (cachedUserSecret[`${keyName}_${walletAddress}`]) {
+            return cachedUserSecret[`${keyName}_${walletAddress}`];
+        }
+
         const isSecretExist = await isSavedStateExist(`${keyName}_${walletAddress}`);
-        
+
         if (!isSecretExist) {
             throw new MissingAPIKeyError(`Saved ${keyName} from user ${walletAddress} is not available`);
         }
@@ -102,6 +108,7 @@ export async function decryptAndLoadUserSecret(keyName, walletAddress, walletSig
         const retrievedSalt = base64ToArrayBuffer(storedUserSecret.salt);
         const retrievedMasterKey = await deriveMasterKey(walletSignature, new Uint8Array(retrievedSalt));
         const decryptedSecret = await decryptApiKey(retrievedMasterKey, storedUserSecret.encryptedKey, storedUserSecret.iv);
+        cachedUserSecret[`${keyName}_${walletAddress}`] = decryptedSecret;
         return decryptedSecret;
     } catch (e) {
         console.error(e);
