@@ -4,7 +4,7 @@ import { useWalletStore } from "../stores/stores";
 import { deleteUserSecret, encryptAndSaveUserSecret } from "../utils/user";
 import { isSavedStateExist } from "../idb/stateDB";
 
-export function FormTextUserSecret({ keyName, validator = async (secret) => secret, onAddSuccess = () => { } }) {
+export function FormTextUserSecret({ keyName, getLink, validator = async (secret) => secret, onAddSuccess = () => { } }) {
     const getCensoredText = (x = 24) => '•'.repeat(x);
     const [secretSubmitted, setSecretSubmitted] = useState(false);
     const [secretString, setSecretString] = useState("");
@@ -16,6 +16,7 @@ export function FormTextUserSecret({ keyName, validator = async (secret) => secr
     const subGraphSetHandler = async () => {
         try {
             setLoading(true);
+            setStatus(`Validating ${keyName}...`)
             await validator(secretString);
             const saved = await encryptAndSaveUserSecret(keyName, secretString, walletAddress, useWalletStore.getState().signature, useWalletStore.getState().message);
             setSecretSubmitted(true);
@@ -66,7 +67,7 @@ export function FormTextUserSecret({ keyName, validator = async (secret) => secr
             <div className="flex text-xs font-semibold text-washed gap-1.5 w-full mt-3">
                 {secretSubmitted && <button className="px-2 bg-washed text-primary-900 py-1.5 rounded-sm" onClick={() => deleteAPIKey()}>{loading ? "Loading..." : `Delete ${keyName}`}</button>}
                 {!secretSubmitted && <button className="px-2 bg-washed text-primary-900 py-1.5 rounded-sm" onClick={() => subGraphSetHandler()}>{loading ? "Loading..." : `Save ${keyName}`}</button>}
-                {!secretSubmitted && <button className="px-2 border border-primary-100 py-1.5 rounded-sm" onClick={() => openLink("https://thegraph.com/studio/apikeys/")}>{`Get ${keyName}`}</button>}
+                {!secretSubmitted && <button className="px-2 border border-primary-100 py-1.5 rounded-sm" onClick={() => openLink(getLink)}>{`Get ${keyName}`}</button>}
             </div>
         </>
     )
