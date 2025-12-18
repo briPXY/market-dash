@@ -49,7 +49,7 @@ export const usePoolStore = create((set, get) => ({
     token1: initToken[0].token1,
     feeTier: "",
 
-    setPairFromPairObj: (obj) => {
+    setPairFromPairObj: async (obj) => {
         const currentState = get();
         const updatedState = {};
 
@@ -58,16 +58,16 @@ export const usePoolStore = create((set, get) => ({
                 updatedState[key] = obj[key] ? obj[key] : null;
             }
         });
-
+        
+        await saveState(`savedPairStore-${useSourceStore.getState().src}`, updatedState);
         set(updatedState);
-        saveState(`savedPairStore-${useSourceStore.getState().src}`, obj);
     },
 
     setSingleSymbol: (target, value) => {
         set({ [target]: value });
     },
 
-    onSourceChange: (priceSourceName, savedPairData) => {
+    onSourceChange: async (priceSourceName, savedPairData) => {
         let newData = {};
         const currentState = get();
         const updatedState = {};
@@ -84,8 +84,9 @@ export const usePoolStore = create((set, get) => ({
                 updatedState[key] = newData[key] ? newData[key] : null;
             }
         });
+        
+        await saveState(`savedPairStore-${priceSourceName}`, updatedState);
         set(updatedState);
-        saveState(`savedPairStore-${useSourceStore.getState().src}`, newData);
     },
 
     setPairFromListDB: async (info) => {
