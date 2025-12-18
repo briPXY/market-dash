@@ -7,7 +7,7 @@ const LivePriceLine = ({ OHLCData, scale }) => {
     const ref = useRef(null);
     const livePrice = usePriceStore((state) => state.trade);
     const invertedStatus = usePriceInvertStore((state) => state.priceInvert);
-    const lastPrice = useMemo(() => OHLCData[OHLCData.length - 1].close, [OHLCData])
+    const lastPrice = useMemo(() => OHLCData[OHLCData.length - 1]?.close, [OHLCData])
     const color = livePrice >= lastPrice ? "#0cb085" : "#ef3f3f";
 
     const updatedPrice = scale.y(invertedStatus ? 1 / livePrice : livePrice); //yScale(livePrice);

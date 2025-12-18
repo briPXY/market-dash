@@ -9,7 +9,7 @@ import { trimmedFloatDigits } from "../utils/utils";
 const OverlayXGridAxis = ({ bandXScale, innerWidth, range, parentRef, tooltipRef, data }) => {
     const { height } = useElementSizeThrottled(parentRef, 500);
     const xLabelRef = useRef(null);
-    const digits =  trimmedFloatDigits(data[0].close);
+    const digits = trimmedFloatDigits(data[0]?.close);
 
     useEffect(() => {
         function handleTickHover(_event, tickData) {
