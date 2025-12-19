@@ -17,10 +17,10 @@ import { initData } from "../constants/initData";
 function MarketChart({ OHLCData, isError, isFetching, error, setRange, range, dataSymbols }) {
     const [chart, setChart] = useState({ n: "Candlestick", f: candlestick });
     const [lengthPerItem, setLengthPerItem] = useState(isAgentMobile ? 4 : 6);
-    const [isLogScale, setYscale] = useState("LOG");
+    const [isLogScale, setYscale] = useState("LOG"); 
 
     return (
-        <div className={`bg-primary-900 p-2 md:p-4 h-full w-full md:w-[78%] md:flex-none`}>
+        <div className={`bg-primary-900 p-2 md:p-4 h-full w-full 2xl:w-[79%] xl:w-[74%] lg:w-[72%] md:w-[65%] sm:w-[60%] md:flex-none`}>
             <Flex className="flex-col h-full relative">
                 <Flex className="pb-3 pt-0 items-center gap-2 justify-between">
                     <RangeSelector setRange={setRange} selected={range} />
@@ -33,7 +33,7 @@ function MarketChart({ OHLCData, isError, isFetching, error, setRange, range, da
                             <ChartSelector setChart={setChart} activeChart={chart.n} />
                         </PopoverButton>
                         <PopoverButton showClass={"w-auto h-full top-[100%] right-0 z-15"}>
-                            <Button className="text-xs px-1.5 h-6">{isLogScale.toLowerCase()}</Button>
+                            <Button className="text-xs text-washed px-1.5 h-6">{isLogScale.toLowerCase()}</Button>
                             <Yscale setYscale={setYscale}></Yscale>
                         </PopoverButton>
                         <ZoomOverlay setLengthPerItem={setLengthPerItem} />

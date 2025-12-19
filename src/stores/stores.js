@@ -58,7 +58,7 @@ export const usePoolStore = create((set, get) => ({
                 updatedState[key] = obj[key] ? obj[key] : null;
             }
         });
-        
+
         await saveState(`savedPairStore-${useSourceStore.getState().src}`, updatedState);
         set(updatedState);
     },
@@ -72,7 +72,7 @@ export const usePoolStore = create((set, get) => ({
         const currentState = get();
         const updatedState = {};
 
-        if (savedPairData) {
+        if (savedPairData && savedPairData.symbols) {
             newData = savedPairData;
         }
         else { // no pair data saved
@@ -84,12 +84,13 @@ export const usePoolStore = create((set, get) => ({
                 updatedState[key] = newData[key] ? newData[key] : null;
             }
         });
-        
+
         await saveState(`savedPairStore-${priceSourceName}`, updatedState);
         set(updatedState);
     },
 
     setPairFromListDB: async (info) => {
+        let newPairInfo;
         if (info.token0) { // pair entry have additional info 
             set(info);
         }
@@ -107,10 +108,11 @@ export const usePoolStore = create((set, get) => ({
                 tokenInfo1 = { symbol: info.symbol1, address: null, name: "No information", decimals: "18" };
             }
 
-            set({ symbols: info.symbols, address: null, feeTier: null, token0: tokenInfo0, token1: tokenInfo1 });
+            newPairInfo = { symbols: info.symbols, address: null, feeTier: null, token0: tokenInfo0, token1: tokenInfo1 };
+            set(newPairInfo);
         }
 
-        await saveState(`savedPairStore-${useSourceStore.getState().src}`, JSON.stringify(get()));
+        await saveState(`savedPairStore-${useSourceStore.getState().src}`, newPairInfo);
     },
 
     // internal symbol swapper, only called from setPriceInvert

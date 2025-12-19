@@ -4,7 +4,7 @@ import './elements.css';
 
 const Button = ({ className = '', children, ...props }) => {
     return (
-        <button className={`flex items-center p-1 hover:brightness-125 justify-center bg-primary-500 rounded-sm ${className}`} {...props}>
+        <button className={`${className} flex items-center p-1 hover:brightness-125 justify-center bg-primary-500 rounded-sm`} {...props}>
             {children}
         </button>
     );
@@ -143,7 +143,7 @@ const PopoverButton = ({
     return (
         <div
             ref={popoverRef}
-            style={{ position: "relative", display: "inline-block" }}
+            style={{ position: "relative" }}
             className={className}
         >
             {/* Trigger Button */}

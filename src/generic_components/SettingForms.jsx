@@ -61,7 +61,10 @@ export function FormTextUserSecret({ keyName, getLink, validator = async (secret
                 onChange={(e) => setSecretString(e.target.value)}
                 placeholder={secretSubmitted ? getCensoredText(36) : `Your ${keyName} here`}
                 className="rounded-sm text-sm border border-primary-100 p-2 mt-2 w-full"
-                style={{ background: secretSubmitted ? "var(--color-primary-500" : "var(--color-primary-900)" }}
+                style={{ 
+                    background: secretSubmitted ? "var(--color-primary-500" : "var(--color-primary-900)",
+                    color: secretSubmitted ? "var(--color-accent" : "var(--color-washed)",
+                }}
 
             />
             <div className="flex text-xs font-semibold text-washed gap-1.5 w-full mt-3">

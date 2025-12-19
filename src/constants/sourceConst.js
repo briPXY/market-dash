@@ -10,10 +10,10 @@ export const SourceConst = {};
 
 // uniswap v3
 SourceConst["uniswap:1"] = { // name must resemble indexeDB's pair-list
-    name: "UniswapV3",
-    desc: "Uniswap V3 Ethereum",
+    name: "Uniswap Mainnet",
+    desc: "Uniswap V3 Ethereum Mainnet",
     exchangeIcon: "uniswap",
-    network: "ethereum",
+    blockchain: "ethereum",
     isDex: true,
     poolURL: (pair) => `https://app.uniswap.org/explore/pools/ethereum/${pair}`,
     intervals: ["1h", "1d"],
@@ -28,10 +28,10 @@ SourceConst["uniswap:1"] = { // name must resemble indexeDB's pair-list
 
 // uniswap Sepolia testnet
 SourceConst["uniswap:11155111"] = {
-    name: "UniswapV3Sepolia",
+    name: "Uniswap Sepolia",
     desc: "Uniswap V3 Sepolia (Testnet)",
     exchangeIcon: "uniswap",
-    network: "ethereum",
+    blockchain: "ethereum",
     isDex: true,
     poolURL: (pair) => `https://app.uniswap.org/explore/pools/ethereum_sepolia/${pair}`,
     intervals: ["1h", "1d"],
@@ -46,10 +46,9 @@ SourceConst["uniswap:11155111"] = {
 
 // Binance (this is CEX price source not L2 chain like BSC)
 SourceConst.binance = {
-    name: "binance",
-    desc: "Binance CEX",
+    name: "Binance",
+    desc: "Binance Central Exchange",
     exchangeIcon: "binance",
-    network: "binance-smart-chain",
     isDex: false,
     poolURL: (pair) => `https://www.binance.com/en/trade/${pair}?type=spot`,
     intervals: ["1m", "5m", "15m", "1h", "4h", "1d", "1w", "1M"],

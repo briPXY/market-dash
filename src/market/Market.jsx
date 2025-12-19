@@ -5,9 +5,9 @@ import MarketChart from "./MarketChart";
 import { PriceUpdater } from './PriceUpdater';
 import { useChartQuery } from "../queries/chartquery";
 import { LivePriceText } from "./Components/LivePriceText";
-import {  usePoolStore, usePriceInvertStore } from "../stores/stores";
+import { usePoolStore, usePriceInvertStore } from "../stores/stores";
 import { Hour24Changes } from "./Components/Hour24Changes";
-import { PoolSelector } from "./Components/PoolSelector";
+import { PairSelector } from "./Components/PairSelector";
 import { NetworkSelection } from "./Components/NetworkSelection";
 import { LoadSymbol } from "./Components/LoadSymbol";
 import { PoolAddressView } from "./Components/PoolAddressView";
@@ -15,6 +15,7 @@ import { SwapHistory } from "./SwapHistory";
 import Swap from "../order/Swap";
 import { PriceSample } from "../utils/price.math";
 import { invertedHistoricalPrices } from "../utils/utils";
+import { PopoverButton } from "../Layout/Elements";
 
 function Market({ initState }) {
     const [range, setRange] = useState("1h");
@@ -42,13 +43,19 @@ function Market({ initState }) {
             <NetworkSelection />
             <LoadSymbol />
             <Flex className="flex-col gap-1">
-                <Flex className="justify-between gap-3 bg-primary-900 p-2 py-4 md:p-4 md:items-center">
-                    <Flex className="flex-col md:flex-row md:gap-5 md:items-center items-start text-sm md:text-lg font-semibold">
-                        <PoolSelector />
+                <Flex className="justify-between flex-row gap-1 md:gap-3 bg-primary-900 p-2 py-4 md:p-3 md:items-center">
+                    <Flex className="gap-2 md:gap-5 items-center text-sm md:text-lg font-semibold">
+                        <PairSelector />
                         <LivePriceText OHLCData={invertedStatus ? invertedHistorical : data?.ohlc} />
                         <PoolAddressView />
                     </Flex>
-                    <Hour24Changes initState={initState} />
+                    <div className="hidden md:block">
+                        <Hour24Changes initState={initState} />
+                    </div>
+                    <PopoverButton className="md:hidden" showClass="w-max p-2 rounded-md h-fit top-[100%] bg-primary-500 right-0 z-25">
+                        <button className="text-xs text-washed">24h Changes<span className="text-[12px] px-1 text-washed-dim">▼</span></button>
+                        <Hour24Changes initState={initState} />
+                    </PopoverButton>
                 </Flex>
                 <Flex className="flex flex-col md:flex-row gap-1">
                     <MarketChart

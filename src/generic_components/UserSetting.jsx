@@ -14,7 +14,7 @@ export function UserSetting() {
                 <TabPanelParent
                     className="flex flex-col md:flex-row h-[77vh] mx-auto overflow-scroll"
                     btnContainerClassName="flex flex-wrap md:block md:w-[20%] md:h-full rounded-md p-3 md:p-0"
-                    tabClassName="w-full md:text-left p-2 text-xs md:text-sm"
+                    tabClassName="w-fit md:w-full md:text-left p-2 text-xs md:text-sm font-semibold md:font-base"
                     activeTabClassName="bg-primary-100 rounded-md"
                     inactiveTabClassName="bg-transparent"
                 >

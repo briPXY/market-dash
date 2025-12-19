@@ -1,7 +1,7 @@
 
 import { timeFrameText } from "../../constants/constants";
 import { SourceConst } from "../../constants/sourceConst";
-import { Box, BulletText, Flex } from "../../Layout/Layout"; 
+import { Box, BulletText, Flex } from "../../Layout/Layout";
 import { useSourceStore } from "../../stores/stores";
 
 export function IndicatorList({ setIndicator }) {
@@ -17,29 +17,24 @@ export function IndicatorList({ setIndicator }) {
             </Flex>
         </Box>
     )
-} 
+}
 
 export function RangeSelector({ setRange, selected }) {
     const source = useSourceStore(state => state.src);
-    
-    if (!source){
+
+    if (!source) {
         return null;
     }
 
     const timeframes = SourceConst[source].intervals;
- 
+
     return (
-        <div className="flex space-x-2">
+        <div className="flex">
             {timeframes.map((tf) => (
                 <button
                     key={tf}
                     onClick={() => setRange(tf)}
-                    className={`px-2 py-1 rounded-sm bg-primary-500 text-xs transition-all
-                        ${
-                            selected === tf
-                                ? "text-accent" // Increase brightness when selected
-                                : "hover:brightness-120"
-                        }`}
+                    className={`px-1.5 md:px-2 py-0.5 rounded-xs text-xs transition-all ${selected === tf ? "text-primary font-bold bg-primary-100 " : "font-light text-washed hover:brightness-120"}`}
                 >
                     {timeFrameText[tf]}
                 </button>
