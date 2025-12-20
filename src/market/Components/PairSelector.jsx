@@ -9,31 +9,23 @@ import PairIcon from "../../generic_components/PairIcon";
 // import { FormTokenSearch } from "../FormTokenSearch";
 import { FormPairSearch } from "../FormPairSearch";
 import { stdSymbol } from "../../utils/utils";
+import { AppSetting } from "../../constants/constants";
 
 export const PairSelector = () => {
     const priceSrcData = useSourceStore.getState().data;
-    const pairSymbols = usePoolStore(state => state.symbols);
-    const [bulkPrices, setBulkPrices] = useState(null);
-    // const inverted = usePriceInvertStore((state) => state.priceInvert);
-
-    const handlePopOver = async () => {
-        if (priceSrcData.bulkPrices) {
-            const prices = await priceSrcData.bulkPrices(pairSymbols);
-            setBulkPrices(prices);
-        }
-        return;
-    };
+    const token0 = usePoolStore(state => state.token0); // At least one pair state subscribing 
+    // const inverted = usePriceInvertStore((state) => state.priceInvert); 
 
     return (
-        <PopoverButton onPopover={handlePopOver} showClass={"bg-primary-500 w-[85vw] md:w-90 h-fit top-[100%] p-1 py-2 left-0 z-65 rounded-md"}>
+        <PopoverButton showClass={"bg-primary-500 w-[85vw] md:w-90 h-fit top-[100%] p-1 py-2 left-0 z-65 rounded-md"}>
             <div className="flex cursor-pointer font-medium items-center gap-1 justify-start p-1 md:pr-4 bg-primary-500 border border-primary-100 rounded-full px-2 md:px-3 hover:brightness-125">
                 <SymbolPair
-                    symbol0={stdSymbol(usePoolStore.getState().token0.symbol)}
+                    symbol0={stdSymbol(token0.symbol)}
                     symbol1={stdSymbol(usePoolStore.getState().token1.symbol)}
                     className="inline-block font-light text-sm md:text-lg text-start text-nowrap"
                 />
                 <PairIcon className="w-1/3 flex"
-                    symbol0={stdSymbol(usePoolStore.getState().token0.symbol)}
+                    symbol0={stdSymbol(token0.symbol)}
                     symbol1={stdSymbol(usePoolStore.getState().token1.symbol)}
                     style={{ width: "32px" }}
                     size={24}
@@ -59,7 +51,6 @@ export const PairSelector = () => {
                         <SymbolSelectorItem
                             key={pairObj.symbols}
                             pairObj={pairObj}
-                            preloadPrice={bulkPrices ? bulkPrices[pairSymbols] : null}
                         />
                     ))}
                 </div>
@@ -68,7 +59,7 @@ export const PairSelector = () => {
     )
 }
 
-const SymbolSelectorItem = ({ pairObj, preloadPrice, }) => {
+const SymbolSelectorItem = ({ pairObj }) => {
     const [price, setPrice] = useState(null);
 
     const setPairFromPairObj = usePoolStore(fn => fn.setPairFromPairObj);
@@ -80,19 +71,21 @@ const SymbolSelectorItem = ({ pairObj, preloadPrice, }) => {
 
     useEffect(() => {
         const liveUpdate = async () => {
+            const cachedPrice = localStorage.getItem(`rtick-${pairObj.symbols}`);
+
+            if (cachedPrice && (Date.now() - JSON.parse(cachedPrice).timestamp) < AppSetting.CacheTime_PairsPricesOnPicker) {
+                setPrice(JSON.parse(cachedPrice).value.toString());
+                return;
+            }
+
             await delay(Math.floor(Math.random() * (2000 - 100 + 1)) + 100);
             const livePrice = await priceSrcData.fetchPrice(pairObj);
             setPrice(livePrice.toString());
+            localStorage.setItem(`rtick-${pairObj.symbols}`, JSON.stringify({ value: livePrice, timestamp: Date.now() }));
         }
 
-        if (priceSrcData.bulkPrices) {
-            setPrice(preloadPrice);
-            return;
-        }
-        else {
-            liveUpdate();
-        }
-    }, [preloadPrice, priceSrcData, pairObj.symbols, pairObj]);
+        liveUpdate();
+    }, [pairObj, priceSrcData]);
 
     return (
         <button onClick={() => setPairFromPairObj(pairObj)} className="flex w-full px-3 py-2 hover:brightness-125 rounded-sm bg-primary-500 text-sm items-center justify-between">

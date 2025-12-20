@@ -189,6 +189,10 @@ export const fetchUniswapPoolPrice = async (network, pairObj) => {
             "function slot0() external view returns (uint160 sqrtPriceX96, int24 tick, uint16 observationIndex, uint16 observationCardinality, uint16 observationCardinalityNext, uint8 feeProtocol, bool unlocked)"
         ];
 
+        if (!provider || !ethers.isAddress(pairObj.address)) {
+            throw new Error("no provider");
+        }
+
         const poolContract = new ethers.Contract(pairObj.address, poolABI, provider);
         const slot0 = await poolContract.slot0();
         const sqrtPriceX96 = slot0.sqrtPriceX96.toString();
@@ -213,18 +217,23 @@ export function killAllLivePriceLoops() {
 }
 
 export async function uniswapOneTimerPrice(pairObj) {
-    const price = await fetchUniswapPoolPrice(useSourceStore.getState().src, pairObj);
+    try {
+        const price = await fetchUniswapPoolPrice(useSourceStore.getState().src, pairObj);
 
-    if (price == "ERR_NO_RPC") {
-        return "Need Sepolia RPC";
+        if (price == "ERR_NO_RPC") {
+            return "Need Sepolia RPC";
+        }
+
+        if (!price) {
+            return "not available";
+        }
+
+        const converted = getPriceFromSqrtPriceX96(price, pairObj.token0, pairObj.token1);
+        return converted;
+    } catch (e) { // Must return string or propagated into uncaught error -__-
+        e;
+        return e.message;
     }
-
-    if (!price){
-        return "not available";
-    }
-
-    const converted = getPriceFromSqrtPriceX96(price, pairObj.token0, pairObj.token1);
-    return converted;
 }
 
 export async function ethereurmLivePriceLoopers(priceSourceObj, pairObj, setPrice) {

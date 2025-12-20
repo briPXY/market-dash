@@ -1,5 +1,9 @@
 import { getTokenBySymbolChainId } from "../idb/tokenListDB";
 
+export const AppSetting = {
+    CacheTime_PairsPricesOnPicker: 20000, // miliseconds
+}
+
 export const timeFrameToMs = {
     "1s": 1000,       // 1 second
     "5s": 5000,       // 5 seconds
@@ -83,18 +87,18 @@ export const d3TimeFormats = {
 
 export const RPC_URLS = {};
 
-RPC_URLS.default = [ 
+RPC_URLS.default = [
     "https://ethereum.publicnode.com",       // Fast, reliable public RPC
     "https://eth.llamarpc.com",              // Solid fallback, community-backed
     "https://cloudflare-eth.com",
- 
+
     "https://rpc.payload.de/eth",            // Community maintained, Germany-based
     "https://ethereum.blockpi.network/v1/rpc/public", // Public offering by BlockPI
     "https://rpc.flashbots.net",             // MEV-aware RPC, may not always be ideal for general use
- 
+
     "https://1rpc.io/eth",                   // Free, decent for low-volume
     "https://cloudflare-eth.com",             // Operated by Cloudflare, can be slow or down
-    
+
     "https://rpc.ankr.com/eth",              // probably need api key
 ];
 

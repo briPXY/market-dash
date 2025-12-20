@@ -153,7 +153,7 @@ const PopoverButton = ({
 
             {/* Popover Content */}
             <div className={`absolute shadow-md ${isOpen ? showClass : hideClass}`}>
-                {children[1]}
+                {isOpen && children[1]}
             </div>
         </div>
     );
