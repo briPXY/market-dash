@@ -219,6 +219,10 @@ export async function uniswapOneTimerPrice(pairObj) {
         return "Need Sepolia RPC";
     }
 
+    if (!price){
+        return "not available";
+    }
+
     const converted = getPriceFromSqrtPriceX96(price, pairObj.token0, pairObj.token1);
     return converted;
 }

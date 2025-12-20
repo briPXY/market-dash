@@ -13,13 +13,13 @@ export function PreChartScreen({ isError, error, isFetching, dataSymbols }) {
         }
 
         return false
-    }, [dataSymbols, symbols])
+    }, [dataSymbols, symbols]);
 
     if (!isFetching && !isError) {
         return null;
     }
 
-    if (isFetching || !isError || dataPending) {
+    if (isFetching || (dataPending && !isError)) {
         return (
             <PreChartScreenContainer>
                 <LoadingIcon className="w-5 h-5" />
