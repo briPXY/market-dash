@@ -4,7 +4,7 @@ import { binanceTicker, ethereurmLivePriceLoopers, livePriceWebSocket, uniswapOn
 import { binanceHighlights, uniswapV3EtherumHighlights, uniswapV3SepoilaStarterPairs } from "./starterPairs";
 import { WSS_DOMAIN } from "./environment";
 import { initData, initToken } from "./initData";
-import { getUniswapQuoteFromContract, getUniswapQuoteQueryFn, initDummy } from "../queries/quotes";
+import { getUniswapQuoteFromContract, getUniswapQuoteQueryFn, initDummy } from "../order/contracts";
 
 export const SourceConst = {};
 
