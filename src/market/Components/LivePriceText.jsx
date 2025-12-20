@@ -18,10 +18,10 @@ export const LivePriceText = ({ OHLCData }) => {
 
     return (
         <div className="flex gap-0.5">
-            <PriceText input={tradePrice?.toString()} className={`${textColor}`} />
+            <PriceText input={tradePrice?.toString()} className={`text-lg ${textColor}`} />
             <button title="Inverse Price" onClick={() => setInverted(!invertedStatus)} className="p-0">
                 <SvgMemo>
-                    <SwapIcon className="rotate-90 w-3" color={invertedStatus ? "#ffffff" : "#ffffff65"} />
+                    <SwapIcon className={`rotate-90 w-5 h-5 p-1 ml-${invertedStatus ? "1" : "0"} text-${invertedStatus ? "primary-900" : "washed"} rounded-sm bg-${invertedStatus ? "washed" : "transparent"}`} />
                 </SvgMemo>
             </button>
         </div>
