@@ -47,7 +47,14 @@ export const usePoolStore = create((set, get) => ({
     symbols: "init",
     token0: initToken[0].token0,
     token1: initToken[0].token1,
-    feeTier: "",
+    feeTier: null,
+
+    getAll: () => {
+        return Object.entries(get())
+            // eslint-disable-next-line no-unused-vars
+            .filter(([_, value]) => typeof value !== 'function')
+            .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+    },
 
     setPairFromPairObj: async (obj) => {
         const currentState = get();
@@ -117,10 +124,11 @@ export const usePoolStore = create((set, get) => ({
 
     // internal symbol swapper, only called from setPriceInvert
     swapSymbols: () =>
-        set((state) => ({
-            symbol0: state.symbol1,
-            symbol1: state.symbol0,
-        })),
+        set((state) => {
+            const s0 = state.token0;
+            const s1 = state.token1;
+            return { token0: s1, token1: s0, };
+        }),
 }));
 
 // This store only tracks priceInvert and proxies its update to PoolStore.
@@ -147,6 +155,13 @@ export const useWalletStore = create((set, get) => ({
     isConnected: false,     // boolean
     loginTime: null,
     approvedAccounts: null,
+
+    getAll: () => {
+        return Object.entries(get())
+            // eslint-disable-next-line no-unused-vars
+            .filter(([_, value]) => typeof value !== 'function')
+            .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+    },
 
     /**
      * Update multiple props at once.

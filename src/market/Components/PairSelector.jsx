@@ -19,11 +19,9 @@ export const PairSelector = () => {
     return (
         <PopoverButton showClass={"bg-primary-500 w-[85vw] md:w-90 h-fit top-[100%] p-1 py-2 left-0 z-65 rounded-md"}>
             <div className="flex cursor-pointer font-medium items-center gap-1 justify-start p-1 md:pr-4 bg-primary-500 border border-primary-100 rounded-full px-2 md:px-3 hover:brightness-125">
-                <SymbolPair
-                    symbol0={stdSymbol(token0.symbol)}
-                    symbol1={stdSymbol(usePoolStore.getState().token1.symbol)}
-                    className="inline-block font-light text-sm md:text-lg text-start text-nowrap"
-                />
+                <div className="inline-block font-light text-sm md:text-lg text-start text-nowrap">
+                    {`${stdSymbol(token0.symbol)} / ${stdSymbol(usePoolStore.getState().token1.symbol)}`}
+                </div>
                 <PairIcon className="w-1/3 flex"
                     symbol0={stdSymbol(token0.symbol)}
                     symbol1={stdSymbol(usePoolStore.getState().token1.symbol)}
