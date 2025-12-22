@@ -25,18 +25,26 @@ export default function SwapQuotesPanel({ amount, inputFrom }) {
     // update query keys after keystroke settled for x-seconds
     useEffect(() => {
         if (amount > 0) {
-            setIsDebouncing(true); console.log({ amount, inputFrom });
+            setIsDebouncing(true);
+            debouncedUpdate({ inputAmount: amount, inputIsFrom: inputFrom });
         }
         return () => debouncedUpdate.cancel();
     }, [amount, inputFrom, debouncedUpdate]);
 
     const { data, error, isError, isFetching } = useQuery({
         queryKey: ['tradeQuoteQuery', debouncedKeyValues],
-        queryFn: ({ queryKey }) => {
-            const quoterFn = Trader[useTradingPlatformStore.getState().trader].quoterFn; // trader state subscribed in parent
-            return quoterFn(queryKey);
+        queryFn: async ({ queryKey }) => {
+            try {
+                const [, { inputAmount, inputIsFrom }] = queryKey;
+                const traderName = useTradingPlatformStore.getState().trader;
+                const result = await Trader[traderName].quoterFn(inputAmount, inputIsFrom);
+                return result;
+            } catch (e) {
+                console.error(e);
+                return PlaceholderQuoteData('error');
+            }
         },
-        enabled: amount > 0 && debouncedKeyValues, // Force !! boolean or component (eventually app) crashed from undefined to false transition (tanstack wtf moment)
+        enabled: () => (amount > 0 && debouncedKeyValues), // Force !! boolean or component (eventually app) crashed from undefined to false transition (tanstack wtf moment)
         retry: 1,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
@@ -46,19 +54,26 @@ export default function SwapQuotesPanel({ amount, inputFrom }) {
     if (!data || isError) {
         console.error(error);
     }
-    console.log(debouncedKeyValues, amount)
+
     return (
         <div className="overflow-y-scroll bg-primary-900 p-3">
 
             <div className='flex justify-between text-xs'>
                 <div key={pairAddress} className='text-washed flex flex-col flex-1 items-start gap-2'>
                     {
-                        Object.keys(data).map(e => (<div key={e} >{e}</div>))
+                        Object.keys(data).map((e, i) => (<div style={{ fontWeight: i < 2 ? "700" : "400" }} key={e} >{e}</div>))
                     }
                 </div>
                 <div className='flex flex-col flex-1 items-end gap-2'>
                     {
-                        Object.keys(data).map(e => (<div style={{ fontStyle: isFetching || isDebouncing ? "italic" : "normal" }} key={e}>{isDebouncing ? "pending" : isFetching ? "fetching" : data[e]}</div>))
+                        Object.keys(data).map((e, i) => (
+                            <div
+                                style={{ fontStyle: isFetching || isDebouncing ? "italic" : "normal", fontWeight: i < 2 ? "700" : "400" }}
+                                key={e}
+                            >
+                                {isDebouncing ? "pending" : isFetching ? "fetching" : data[e]}
+                            </div>
+                        ))
                     }
                 </div>
             </div>

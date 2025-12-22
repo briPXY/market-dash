@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { usePoolStore, usePriceStore, useSourceStore } from "../stores/stores";
+import { usePoolStore, usePriceInvertStore, usePriceStore, useSourceStore } from "../stores/stores";
 import SwapForm from "./SwapForm";
 import { formatPrice } from "../utils/utils";
 import { swapDecimalRule } from "../constants/constants";
@@ -24,74 +24,61 @@ function removeNonNumeric(rawValue) {
 }
 
 export default function Swap() {
-    const token0 = usePoolStore(state => state.token0);
-    const token1 = usePoolStore(state => state.token1);
-
-    const poolAddress = usePoolStore(state => state.address);
-
-    const [sellAmount, setSellAmount] = useState('');
+    const symbols = usePoolStore(state => state.symbols);
+    const [sellAmount, setSellAmount] = useState(0);
     const [buyAmount, setBuyAmount] = useState(0);
-    const [currentTokenIn, setcurrentTokenIn] = useState(token1);
-    const [currentTokenOut, setcurrentTokenOut] = useState(token0);
-    const [reversed, setReversed] = useState(false);
-    const queryOrient = useRef({});
+    const inputFrom = useRef(null);
 
-    const handleChangeSymbols = (tokenIn, tokenOut, sell, buy, reverse = false) => {
-        setcurrentTokenIn(tokenIn);
-        setcurrentTokenOut(tokenOut);
-        setSellAmount(sell);
-        setBuyAmount(buy);
-        reverse ? setReversed(!reversed) : null;
+    const handleChangeSymbols = (buy, sell) => {
+        setSellAmount(buy);
+        setBuyAmount(sell);
+        const isReversed = usePriceInvertStore.getState().priceInvert;
+        usePriceInvertStore.getState().setPriceInvert(!isReversed);
     };
 
     const handleSellChange = (value) => {
-
+        inputFrom.current = "sellInput";
         const currentRate = usePriceStore.getState().trade;
         let cleaned = removeNonNumeric(value);
         const numeric = parseFloat(cleaned.replace(',', '.'));
         setSellAmount(cleaned);
 
         if (!isNaN(numeric)) {
-            const amount = reversed ? numeric / currentRate : numeric * currentRate;
+            const isReversed = usePriceInvertStore.getState().priceInvert;
+            const amount = isReversed ? numeric / currentRate : numeric * currentRate;
             const formatted = formatPrice(amount.toFixed(24).toString(), false, swapDecimalRule);
             setBuyAmount(formatted);
         } else {
             setBuyAmount(0); // fallback
         }
 
-        queryOrient.current = { amount: cleaned, method: "quoteExactInputSingle" }; // Quote based on exact sell value
     };
 
     const handleBuyChange = (value) => {
+        inputFrom.current = "buyInput";
         const currentRate = usePriceStore.getState().trade;
         let cleaned = removeNonNumeric(value);
         const numeric = parseFloat(cleaned.replace(',', '.'));
         setBuyAmount(cleaned);
 
         if (!isNaN(numeric)) {
-            const amount = reversed ? numeric * currentRate : numeric / currentRate;
+            const isReversed = usePriceInvertStore.getState().priceInvert;
+            const amount = isReversed ? numeric * currentRate : numeric / currentRate;
             const formatted = formatPrice(amount.toFixed(24).toString(), false, swapDecimalRule);
             setSellAmount(formatted);
         } else {
             setSellAmount(0); // fallback
         }
-
-        queryOrient.current = { amount: cleaned, method: "quoteExactOutputSingle" }; // Quote based on exact buy value
     };
 
-    useEffect(() => { // Reset form when pool address changed
-        setcurrentTokenIn(token1);
-        setcurrentTokenOut(token0);
-        setReversed(false);
+    useEffect(() => { // Reset form when pool address changed 
         setSellAmount(0);
         setBuyAmount(0);
-    }, [token0, token1, poolAddress]);
+    }, [symbols]);
 
     return (
         <div className="flex flex-col gap-1">
             <SwapForm
-                currentTokenIn={currentTokenIn}
-                currentTokenOut={currentTokenOut}
                 handleBuyChange={handleBuyChange}
                 handleSellChange={handleSellChange}
                 buyAmount={buyAmount}
@@ -100,12 +87,8 @@ export default function Swap() {
                 isDEX={useSourceStore.getState().isDEX ?? null}
             />
             <SwapQuotesPanel
-                queryFn={useSourceStore.getState().data.quoteFunction ?? function () { }}
-                tokenIn={currentTokenIn}
-                tokenOut={currentTokenOut}
-                amount={sellAmount}
-                queryKeys={{ tokenIn: currentTokenIn, tokenOut: currentTokenOut, ...queryOrient.current }}
-                enabled={currentTokenIn.id != null && sellAmount > 0}
+                amount={inputFrom.current == "sellInput" ? sellAmount : buyAmount}
+                inputFrom={inputFrom.current}
             />
         </div>
     );

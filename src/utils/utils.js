@@ -55,6 +55,16 @@ export function formatPrice(str, isRaw = false, rule = defaultDecimalRule) {
     return Number(num).toFixed(rule.rest);
 }
 
+export function formatPriceInternational(str, rule = { max: 3 }) {
+    const num = parseFloat(str);
+    if (isNaN(num)) return str;
+
+    return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: num < 100 ? rule.max : 2,
+    }).format(num);
+}
+
 export function stdSymbol(symbol) {
     return wrappedTokenMap[symbol] ?? symbol.replace(/^w/, "");
 }

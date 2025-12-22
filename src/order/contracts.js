@@ -1,19 +1,23 @@
 import { ethers, parseUnits } from "ethers";
 // import { PoolManager } from '@uniswap/v4-sdk';
 // import { Token } from '@uniswap/sdk-core';
-import { formatPrice, getAvailableRPC } from "../utils/utils";
-import { RPC_URLS, swapDecimalRule } from "../constants/constants";
+import { formatPriceInternational, getAvailableRPC } from "../utils/utils";
+import { RPC_URLS } from "../constants/constants";
+import { usePoolStore, useWalletStore } from "../stores/stores";
+
 const workingRPC = {};
+
+const GAS_QUOTER_ABI = [
+    "function exactInputSingle((address tokenIn,address tokenOut,uint24 fee,address recipient,uint256 amountIn,uint256 amountOutMinimum,uint160 sqrtPriceLimitX96)) external payable returns (uint256)"
+];
+
+const SWAP_QUOTER_ABI = {
+    quoteExactInputSingle: ["function quoteExactInputSingle(address tokenIn, address tokenOut, uint24 fee, uint256 amountIn, uint160 sqrtPriceLimitX96) external view returns (uint256 amountOut)"],
+    quoteExactOutputSingle: ["function quoteExactOutputSingle(address tokenIn, address tokenOut, uint24 fee, uint256 amountOut, uint160 sqrtPriceLimitX96) external view returns (uint256 amountIn)"]
+};
 
 /**
  * Calls a read-only function on a smart contract using a custom RPC URL.
- * 
- * @param abi - The contract ABI.
- * @param contractAddress - The address of the deployed smart contract.
- * @param rpcUrl - RPC endpoint to use (e.g., Infura, Alchemy, or public RPC).
- * @param method - The name of the contract method to call.
- * @param params - Optional array of parameters to pass to the method.
- * @returns The result of the contract method call, or null if it fails.
  */
 export async function contractCallRead({ abi, contractAddress, rpcUrl, method, params = [] }) {
     try {
@@ -34,13 +38,6 @@ export async function contractCallRead({ abi, contractAddress, rpcUrl, method, p
 
 /**
  * Sends a write (mutating) transaction to a contract method.
- * 
- * @param abi - Contract ABI
- * @param contractAddress - Deployed contract address
- * @param rpcUrl - RPC URL for network context
- * @param method - Contract method to call
- * @param params - Parameters to pass to the method
- * @returns Transaction receipt or null if failed
  */
 export async function contractCallWrite({ abi, contractAddress, rpcUrl, method, params = [] }) {
     try {
@@ -69,15 +66,15 @@ export async function contractCallWrite({ abi, contractAddress, rpcUrl, method, 
 
         // Call the method with parameters
         const tx = await contract[method](...params);
-        console.log("📤 Transaction sent:", tx.hash);
+        console.log("Transaction sent:", tx.hash);
 
         // Wait for confirmation
         const receipt = await tx.wait();
-        console.log("✅ Transaction mined:", receipt.transactionHash);
+        console.log("Transaction mined:", receipt.transactionHash);
 
         return receipt;
     } catch (error) {
-        console.error(`❌ Contract write failed: ${error.message}`);
+        console.error(`Contract write failed: ${error.message}`);
         return null;
     }
 }
@@ -90,52 +87,7 @@ function truncateToDecimals(value, decimals) {
         : value.toString();
 }
 
-// quoteQueryFn.js
-export async function getUniswapQuoteQueryFn({ queryKey }) {
-    // eslint-disable-next-line no-unused-vars
-    const [_key, { tokenIn, tokenOut, amount, protocols = 'v3' }] = queryKey;
-
-    const addressIn = tokenIn.id;
-    const addressOut = tokenOut.id;
-    const amountInETH = parseUnits(amount.toString(), Number(tokenIn.decimals)).toString();
-
-    const url = `https://api.uniswap.org/v3/quote?` +
-        new URLSearchParams({
-            addressIn,
-            addressOut,
-            amountInETH,
-            protocols
-        });
-
-    const res = await fetch(url);
-    if (!res.ok) {
-        console.error(res.statusText);
-        throw new Error(`Uniswap quote error: ${res.statusText}`);
-    }
-
-    const data = await res.json();
-    const q = data.quote;
-
-    if (!q) {
-        console.error();
-        throw new Error('Invalid quote response');
-    }
-
-    // Parse and return only relevant values
-    return {
-        "Amount-In": q.amountIn,
-        "Amount-Out": q.amountOut,
-        "Execution Price": q.executionPrice?.numerator && q.executionPrice?.denominator
-            ? Number(q.executionPrice.numerator) / Number(q.executionPrice.denominator)
-            : null,
-        "Price Impact": q.priceImpact,
-        "Estimated Network Fee": q.estimatedNetworkFee,
-        "Gas Use Estimate": q.gasUseEstimate,
-        "Gas Use Estimate Quote": q.gasUseEstimateQuote,
-        "Fee Tier": q.route?.[0]?.feeTier || null,
-    };
-}
- 
+export const PlaceholderQuoteData = (val) => ({ "Min. Receive": val, "Avg. Price": val, "Fee Tier": val, "Quoter Address": val, "Network Cost": val });
 
 async function getEffectiveGasPrice(provider) {
     const feeData = await provider.getFeeData();
@@ -143,26 +95,21 @@ async function getEffectiveGasPrice(provider) {
     return feeData.maxFeePerGas || feeData.gasPrice;
 }
 
-export async function getUniswapQuoteFromContract({ queryKey }) {
-    const [_key, { tokenIn, tokenOut, amount, fee = 3000, userAddress, userBalance, method }] = queryKey;
-    _key;
+// Uniswap trade panel's quoter function
+export async function getUniswapQuoteFromContract(amount, inputFrom) {
+    const pairStoreObj = usePoolStore.getState().getAll();
+    const fee = pairStoreObj.feeTier ?? 3000;
+    const userAddress = useWalletStore.getState().address;
 
-    const GAS_QUOTER_ABI = [
-        "function exactInputSingle((address tokenIn,address tokenOut,uint24 fee,address recipient,uint256 amountIn,uint256 amountOutMinimum,uint160 sqrtPriceLimitX96)) external payable returns (uint256)"
-    ];
-
-    const SWAP_QUOTER_ABI = {
-        quoteExactInputSingle: ["function quoteExactInputSingle(address tokenIn, address tokenOut, uint24 fee, uint256 amountIn, uint160 sqrtPriceLimitX96) external view returns (uint256 amountOut)"],
-        quoteExactOutputSingle: ["function quoteExactOutputSingle(address tokenIn, address tokenOut, uint24 fee, uint256 amountOut, uint160 sqrtPriceLimitX96) external view returns (uint256 amountIn)"]
-    };
+    const method = inputFrom == "sellInput" ? "quoteExactInputSingle" : "quoteExactOutputSingle";
 
     if (!workingRPC.quoter) {
         workingRPC.quoter = await getAvailableRPC(RPC_URLS.default);
     }
 
     const provider = new ethers.JsonRpcProvider(workingRPC.quoter);
-    const safeAmount = truncateToDecimals(amount, tokenIn.decimals || 18)
-    const amountInBase = parseUnits(safeAmount, Number(tokenIn.decimals));
+    const safeAmount = truncateToDecimals(amount, pairStoreObj.token1.decimals || 18)
+    const amountInBase = parseUnits(safeAmount, Number(pairStoreObj.token1.decimals));
 
     // 🪄 Setup read-only provider (you can use any RPC endpoint)
     if (!workingRPC.quoter) {
@@ -170,14 +117,15 @@ export async function getUniswapQuoteFromContract({ queryKey }) {
     }
 
     const quoter = new ethers.Contract("0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6", SWAP_QUOTER_ABI[method], provider);
-    // ----------------------------------------------------
+
     // STEP 1: Get Quoter Quote (The amountOut)
-    // ----------------------------------------------------
+
     let amountOut;
+
     try {
         amountOut = await quoter[method].staticCall(
-            tokenIn.id,
-            tokenOut.id,
+            pairStoreObj.token1.address,
+            pairStoreObj.token0.address,
             fee,
             amountInBase,
             0
@@ -187,19 +135,15 @@ export async function getUniswapQuoteFromContract({ queryKey }) {
         throw new Error("Failed to fetch on-chain quote");
     }
 
-    // ----------------------------------------------------
-    // STEP 2: Estimate Gas Cost (New Logic)
-    // ----------------------------------------------------
+    // STEP 2: Estimate Gas Cost
 
     const router = new ethers.Contract("0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", GAS_QUOTER_ABI, provider);
 
-    // Prepare the exact parameters for the real swap transaction.
-    // NOTE: For estimation, recipient is typically the user's address.
     const swapParams = {
-        tokenIn: tokenIn.id,
-        tokenOut: tokenOut.id,
+        tokenIn: pairStoreObj.token1.address,
+        tokenOut: pairStoreObj.token0.address,
         fee,
-        recipient: userAddress,
+        recipient: useWalletStore.getState().address,
         amountIn: amountInBase,
         amountOutMinimum: amountOut,
         sqrtPriceLimitX96: 0
@@ -209,8 +153,8 @@ export async function getUniswapQuoteFromContract({ queryKey }) {
     let gasCostETH = "N/A";
 
     // Calculation for return object (Existing Code)
-    const decIn = Number(tokenIn.decimals ?? 18);
-    const decOut = Number(tokenOut.decimals ?? 18);
+    const decIn = Number(pairStoreObj.token1.decimals ?? 18);
+    const decOut = Number(pairStoreObj.token0.decimals ?? 18);
 
     const isInputSell = method == "quoteExactInputSingle";
     const formattedIn = Number(ethers.formatUnits(amountInBase, decIn));
@@ -218,16 +162,16 @@ export async function getUniswapQuoteFromContract({ queryKey }) {
     const executionPrice = formattedOut / formattedIn;
 
     // Return the combined result
-    const sellText = `Sell (${tokenIn.symbol})`;
-    const receiveText = `Receive (${tokenOut.symbol})`;
-    const priceText = `Avg. Price (${tokenIn.symbol}/${tokenOut.symbol})`;
+    const sellText = `Sell (${pairStoreObj.token1.symbol})`;
+    const receiveText = `Receive (${pairStoreObj.token0.symbol})`;
+    const priceText = `Avg. Price (${pairStoreObj.token1.symbol}/${pairStoreObj.token0.symbol})`;
     const sellValue = isInputSell ? formattedIn : formattedOut;
     const buyValue = isInputSell ? formattedOut : formattedIn;
 
     if (!userAddress) {
         return {
-            [sellText]: `${formatPrice(sellValue.toString(), false, swapDecimalRule)}`,
-            [receiveText]: `${formatPrice(buyValue.toString(), false, swapDecimalRule)}`,
+            [sellText]: `${formatPriceInternational(sellValue.toString())}`,
+            [receiveText]: `${formatPriceInternational(buyValue.toString())}`,
             [priceText]: `${executionPrice.toPrecision(6)}`,
             "Fee tier": `${fee / 10000}%`,
             "Est. Gas (Units)": "login needed",
@@ -236,34 +180,29 @@ export async function getUniswapQuoteFromContract({ queryKey }) {
     }
 
     try {
-        // 💡 Use .estimateGas() on the router function. This requires the Router ABI.
         const estimatedGas = await router.exactInputSingle.estimateGas(swapParams, { from: userAddress });
         gasEstimateUnits = estimatedGas.toString();
-        // Convert Gas Units to ETH Value (New Logic)  
-        // Fetch the current price per gas unit
+        // Convert Gas Units to ETH Value
         const gasPriceWei = await getEffectiveGasPrice(provider);
 
         if (gasPriceWei) {
-            // gasCostWei = estimatedGas * gasPriceWei
             const gasCostWei = estimatedGas * gasPriceWei;
-
-            // Convert Wei to ETH/Base Currency
             gasCostETH = ethers.formatEther(gasCostWei);
         }
 
     } catch (err) {
-        console.error(err);
-        gasEstimateUnits = !userBalance ? "No balance" : "ERROR";
-        gasCostETH = !userBalance ? "No balance" : "ERROR";
+        err;
+        gasEstimateUnits = "No balance"; // for now, usually will fail if user got 0 token balance
+        gasCostETH = "No balance";
     }
 
     return {
-        [sellText]: `${formatPrice(sellValue.toString(), false, swapDecimalRule)}`,
-        [receiveText]: `${formatPrice(buyValue.toString(), false, swapDecimalRule)}`,
+        [sellText]: `${formatPriceInternational(sellValue.toString())}`,
+        [receiveText]: `${formatPriceInternational(buyValue.toString())}`,
         [priceText]: `${executionPrice.toPrecision(6)}`,
         "Fee tier": `${fee / 10000}%`,
         "Est. Gas (Units)": gasEstimateUnits,
-        "Network Cost (ETH)": formatPrice(gasCostETH, false, 8)
+        "Network Cost (ETH)": formatPriceInternational(gasCostETH, false, 8)
     };
 }
 
@@ -275,12 +214,6 @@ initDummy.props = ["Loading Network", "Loading Pool"]
 
 /**
  * Check if Uniswap v4 pool exists and cache the result for 24 hours.
- * @param {object} provider - ethers provider instance
- * @param {string} tokenAAddr - token A contract address
- * @param {string} tokenBAddr - token B contract address
- * @param {number} fee - fee tier (default: 3000)
- * @param {number} decimalsA - token A decimals
- * @param {number} decimalsB - token B decimals
  */
 // export async function poolExists(provider, tokenAAddr, tokenBAddr, decimalsA = 18, decimalsB = 18, fee = 3000) {
 //     const cacheKey = `${tokenAAddr}-${tokenBAddr}-${fee}`.toLowerCase()

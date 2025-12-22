@@ -4,16 +4,19 @@ import { SwapIcon } from "../Layout/svg";
 import FiatValue from "./FiatValue";
 import { SwapTokenInfo } from "./components/SwapTokenInfo";
 import { SvgMemo } from "../Layout/Layout";
-import { useModalVisibilityStore, useWalletStore } from "../stores/stores";
+import { useModalVisibilityStore, usePoolStore, usePriceInvertStore, useWalletStore } from "../stores/stores";
 import { stdSymbol } from "../utils/utils";
 // import { useState } from "react";
 
 
-function SwapForm({ currentTokenIn, currentTokenOut, handleSellChange, sellAmount, buyAmount, handleBuyChange, handleChangeSymbols, reversed }) {
-    const accountAddress = useWalletStore(state => state.address); // Real logged-in/off state  
+function SwapForm({ handleSellChange, sellAmount, buyAmount, handleBuyChange, handleChangeSymbols }) {
+    const reversed = usePriceInvertStore(state => state.priceInvert);
+    const accountAddress = useWalletStore(state => state.address); // Real logged-in/off state 
+    const currentTokenIn = usePoolStore.getState().token1; // Token that sold
+    const currentTokenOut = usePoolStore.getState().token0; // Token that bought
     // const [loginState, setloginState] = useState(null);
     const { setModalVisibility } = useModalVisibilityStore();
-
+    
     return (
         <div className="flex flex-col px-3 pb-3 gap-2 bg-primary-900 w-full h-full relative">
             <div className="flex gap-0 flex-col items-center">
@@ -35,12 +38,13 @@ function SwapForm({ currentTokenIn, currentTokenOut, handleSellChange, sellAmoun
                 </div>
 
                 <button
-                    onClick={() => handleChangeSymbols(currentTokenOut, currentTokenIn, buyAmount, sellAmount, true)}
+                    onClick={() => handleChangeSymbols(buyAmount, sellAmount)}
                     className="flex items-center justify-center bg-primary-100 p-2.5 rounded-lg w-fit text-white -my-4.5 z-10"
                     title="Switch currency"
+                    style={{ background: reversed ? "var(--color-primary)" : "var(--color-primary-100)" }}
                 >
                     <SvgMemo>
-                        <SwapIcon className="scale-110" color={reversed ? "#ffffff" : "#00000095"} />
+                        <SwapIcon className="scale-100" color="var(--color-primary-900)" />
                     </SvgMemo>
                 </button>
 

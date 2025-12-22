@@ -4,7 +4,7 @@ import { binanceTicker, ethereurmLivePriceLoopers, livePriceWebSocket, uniswapOn
 import { binanceHighlights, uniswapV3EtherumHighlights, uniswapV3SepoilaStarterPairs } from "./starterPairs";
 import { WSS_DOMAIN } from "./environment";
 import { initData, initToken } from "./initData";
-import { getUniswapQuoteFromContract, getUniswapQuoteQueryFn, initDummy } from "../order/contracts";
+import { getUniswapQuoteFromContract, initDummy } from "../order/contracts";
 
 export const SourceConst = {};
 
@@ -41,7 +41,7 @@ SourceConst["uniswap:11155111"] = {
     ohlcFetch: UniswapV3Historical,
     h24Query: UniswapV3_24h,
     getLivePriceURL: (poolAddress) => `${WSS_DOMAIN}/liveprice/UniswapV3Sepolia/${poolAddress}`,
-    quoteFunction: getUniswapQuoteQueryFn,
+    quoteFunction: getUniswapQuoteFromContract,
 };
 
 // Binance (this is CEX price source not L2 chain like BSC)
