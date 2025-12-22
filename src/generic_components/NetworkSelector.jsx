@@ -25,7 +25,7 @@ export const NetworkSelector = ({ initState }) => {
                     {Object.keys(SourceConst).slice(0, -1).map((network) => (
                         <Flex
                             key={network}
-                            onClick={() => useSourceStore.getState().setSrc(network)}
+                            onClick={() => useSourceStore.getState().setSrc(network, SourceConst)}
                             className="rounded-md items-center p-2 h-fit border border-primary-100 bg-primary-500 cursor-pointer gap-2 hover:brightness-125"
                             style={{ borderColor: srcName == network ? "var(--color-primary)" : "" }}
                         >

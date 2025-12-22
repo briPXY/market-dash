@@ -1,5 +1,6 @@
 
 import './App.css';
+import { SourceConst } from './constants/sourceConst';
 import { Section } from './Layout/Layout'
 import Market from './market/Market';
 import { TopBar } from './generic_components/TopBar';
@@ -15,7 +16,6 @@ import WalletExtensionListener from './order/WalletExtensionListener';
 import { installTokenLists } from './idb/tokenListDB';
 import { installPairLists } from './idb/pairListDB';
 import { UserSetting } from './generic_components/UserSetting';
-
 // eslint-disable-next-line no-unused-vars
 function BadComponentTest() {
     throw new Error("React crash test");
@@ -36,7 +36,7 @@ function App() {
 
             if (savedNetworkExist) { 
                 const savedNetwork = await loadState("savedSource");
-                setSrc(savedNetwork);
+                setSrc(savedNetwork, SourceConst);
             }
             else {
                 setSrc("binance");

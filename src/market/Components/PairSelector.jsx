@@ -45,7 +45,7 @@ export const PairSelector = () => {
                     </Flex>
 
                     {/* bookmarks/highlight */}
-                    {priceSrcData.initPairs.map((pairObj) => (
+                    {priceSrcData && priceSrcData.initPairs.map((pairObj) => (
                         <SymbolSelectorItem
                             key={pairObj.symbols}
                             pairObj={pairObj}

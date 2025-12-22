@@ -1,54 +1,52 @@
 import { useQuery } from '@tanstack/react-query';
 import { SourceConst } from '../constants/sourceConst';
-import { usePoolStore, useSourceStore, useWalletStore } from '../stores/stores';
+import { usePoolStore, useSourceStore, useTradingPlatformStore } from '../stores/stores';
 import { ExternalLinkIcon } from '../Layout/svg';
 import { ExchangeIcon } from '@web3icons/react/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
+import { PlaceholderQuoteData } from './contracts';
+import { Trader } from '../constants/constants';
 
-
-const initProps = { "Min. Receive": '-', "Avg. Price": '-', "Fee Tier": '-', "Quoter Address": '-', "Network Cost": '-' };
-
-export default function SwapQuotesPanel({ queryKeys, enabled, queryFn }) {
+export default function SwapQuotesPanel({ amount, inputFrom }) {
     const pairAddress = usePoolStore(state => state.address ?? state.symbols);
     const [isDebouncing, setIsDebouncing] = useState(false);
-    const [debouncedKey, setDebouncedKey] = useState(null);
+    const [debouncedKeyValues, setDebouncedKeyValues] = useState(null);
     const network = useSourceStore.getState().data ?? SourceConst.init;
-    const userAddress = useWalletStore(state => state.address);
 
-    // Create a stable debounced function ONCE
     const debouncedUpdate = useMemo(() =>
         debounce((values) => {
-            if (enabled) {
-                setIsDebouncing(false);
-                setDebouncedKey(values);
-                // console.log("debounced:", values.amount);
-            }
-        }, 3000), [enabled]);
+            setIsDebouncing(false);
+            setDebouncedKeyValues(values);
+        }, 3000),
+        []
+    );
 
-    // Call debounced function when inputs change
+    // update query keys after keystroke settled for x-seconds
     useEffect(() => {
-        if (enabled) {
-            // Set the pending state immediately
-            setIsDebouncing(true);
+        if (amount > 0) {
+            setIsDebouncing(true); console.log({ amount, inputFrom });
         }
-
-        debouncedUpdate({ ...queryKeys, userAddress });
         return () => debouncedUpdate.cancel();
-    }, [debouncedUpdate, enabled, queryKeys, userAddress]);
+    }, [amount, inputFrom, debouncedUpdate]);
 
-    const { data, error, isFetching } = useQuery({
-        queryKey: ['uniswapQuote', debouncedKey],
-        queryFn: queryFn,
-        enabled: enabled && !!debouncedKey,
+    const { data, error, isError, isFetching } = useQuery({
+        queryKey: ['tradeQuoteQuery', debouncedKeyValues],
+        queryFn: ({ queryKey }) => {
+            const quoterFn = Trader[useTradingPlatformStore.getState().trader].quoterFn; // trader state subscribed in parent
+            return quoterFn(queryKey);
+        },
+        enabled: amount > 0 && debouncedKeyValues, // Force !! boolean or component (eventually app) crashed from undefined to false transition (tanstack wtf moment)
         retry: 1,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
-        initialData: initProps
+        placeholderData: PlaceholderQuoteData('-'),
     });
 
-    if (error) console.error(error);
-
+    if (!data || isError) {
+        console.error(error);
+    }
+    console.log(debouncedKeyValues, amount)
     return (
         <div className="overflow-y-scroll bg-primary-900 p-3">
 
@@ -58,7 +56,7 @@ export default function SwapQuotesPanel({ queryKeys, enabled, queryFn }) {
                         Object.keys(data).map(e => (<div key={e} >{e}</div>))
                     }
                 </div>
-                <div key={queryKeys.amount} className='flex flex-col flex-1 items-end gap-2'>
+                <div className='flex flex-col flex-1 items-end gap-2'>
                     {
                         Object.keys(data).map(e => (<div style={{ fontStyle: isFetching || isDebouncing ? "italic" : "normal" }} key={e}>{isDebouncing ? "pending" : isFetching ? "fetching" : data[e]}</div>))
                     }

@@ -7,13 +7,12 @@ import { useQuery } from "@tanstack/react-query";
 
 export const Hour24Changes = ({ initState }) => {
     const pairSymbols = usePoolStore(state => state.symbols);
-    const priceSource = useSourceStore(state => state.data)
 
     const { data: hour24data } = useQuery({
-        queryKey: [priceSource, pairSymbols],
+        queryKey: ["24HourHistorical", pairSymbols],
         queryFn: async () => {
             try {
-                const data = await priceSource.h24Query(usePoolStore.getState(), useSourceStore.getState().src);
+                const data = await useSourceStore.getState().data.h24Query(usePoolStore.getState(), useSourceStore.getState().src);
                 return data; // Apply transformation if provided
             } catch (e) {
                 console.error(e);

@@ -8,7 +8,7 @@ export const NetworkSelection = () => {
     const setSrc = useSourceStore(state => state.setSrc);
 
     const setNetwork = async (network) => {
-        setSrc(network);
+        setSrc(network, SourceConst);
     }
 
     const unselected = {

@@ -1,3 +1,4 @@
+import { getUniswapQuoteFromContract } from "../order/contracts";
 import { getTokenBySymbolChainId } from "../idb/tokenListDB";
 
 export const AppSetting = {
@@ -251,4 +252,5 @@ export const Trader = {};
 Trader.Uniswap = {
     tokenInfoGetter: getTokenBySymbolChainId,
     wrappedMap: standardToWrappedTokenMap,
+    quoterFn: getUniswapQuoteFromContract
 }

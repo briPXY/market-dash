@@ -1,7 +1,5 @@
-import { SourceConst } from "../constants/sourceConst";
 import { loadState, saveState } from "../idb/stateDB";
 import { create } from "zustand";
-import { Trader } from "../constants/constants";
 import { initToken } from "../constants/initData";
 
 export const usePriceStore = create((set) => ({
@@ -23,23 +21,19 @@ export const useNetworkStore = create((set) => ({
 
 export const useSourceStore = create((set) => ({
     src: null,
-    data: SourceConst.binance,
+    data: null,
     setSaved: (bool) => { set({ saved: bool }) },
-    setSrc: async (value) => {
+    setSrc: async (value, sourceConstObj) => { // Now must include source constant obj to prevent access init error
         await saveState(`savedSource`, value);
-        await saveState(`savedSource.data`, SourceConst[value]);
+        await saveState(`savedSource.data`, sourceConstObj[value]);
         const savedPairData = await loadState(`savedPairStore-${value}`);
-        usePoolStore.getState().onSourceChange(value, savedPairData);
-        set({ src: value, init: false, saved: true, data: SourceConst[value] });
+        usePoolStore.getState().onSourceChange(value, savedPairData, sourceConstObj[value].initPairs[0]);
+        set({ src: value, init: false, saved: true, data: sourceConstObj[value] });
     },
 }));
 
-export const useTradingPlatformStore = create((set) => ({
-    trader: Trader.Uniswap,
-    setPlatform: async (value) => {
-        set({ platform: value });
-        await saveState(`savedTradingPlatform`, value);
-    },
+export const useTradingPlatformStore = create(() => ({
+    trader: "Uniswap"
 }));
 
 export const usePoolStore = create((set, get) => ({
@@ -74,7 +68,7 @@ export const usePoolStore = create((set, get) => ({
         set({ [target]: value });
     },
 
-    onSourceChange: async (priceSourceName, savedPairData) => {
+    onSourceChange: async (priceSourceName, savedPairData, initPairs) => {
         let newData = {};
         const currentState = get();
         const updatedState = {};
@@ -83,7 +77,7 @@ export const usePoolStore = create((set, get) => ({
             newData = savedPairData;
         }
         else { // no pair data saved
-            newData = SourceConst[priceSourceName].initPairs[0];
+            newData = initPairs;
         }
 
         Object.keys(currentState).forEach((key) => { // prevent shallow copy of props
