@@ -17,12 +17,12 @@ import { PriceSample } from "../utils/price.math";
 import { invertedHistoricalPrices } from "../utils/utils";
 import { PopoverButton } from "../Layout/Elements";
 
-function Market({ initState }) {
+function Market() {
     const [range, setRange] = useState("1h");
     const symbols = usePoolStore(state => state.symbols);
     const invertedStatus = usePriceInvertStore((state) => state.priceInvert);
 
-    const { data, isError, error, isFetching } = useChartQuery({ symbols, symbolStoreObj: usePoolStore.getState(), interval: range, initState });
+    const { data, isError, error, isFetching } = useChartQuery({ symbols, symbolStoreObj: usePoolStore.getState(), interval: range });
 
     useEffect(() => {
         if (!isError && data?.length > 0) {
@@ -50,11 +50,11 @@ function Market({ initState }) {
                         <PoolAddressView />
                     </Flex>
                     <div className="hidden md:block">
-                        <Hour24Changes initState={initState} />
+                        <Hour24Changes />
                     </div>
                     <PopoverButton className="md:hidden" showClass="w-max p-2 rounded-md h-fit top-[100%] bg-primary-500 right-0 z-25">
                         <button className="text-xs text-washed">24h Changes<span className="text-[12px] px-1 text-washed-dim">▼</span></button>
-                        <Hour24Changes initState={initState} />
+                        <Hour24Changes />
                     </PopoverButton>
                 </Flex>
                 <Flex className="flex flex-col md:flex-row gap-1">

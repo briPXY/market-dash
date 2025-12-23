@@ -1,20 +1,21 @@
 import { ExchangeIcon } from "@web3icons/react/dynamic";
-import { useSourceStore } from "../stores/stores";
+import { useAppInitStore, useSourceStore } from "../stores/stores";
 import { PopoverButton } from "../Layout/Elements";
 import { Flex } from "../Layout/Layout";
 import { SourceConst } from "../constants/sourceConst";
 
-export const NetworkSelector = ({ initState }) => {
+export const NetworkSelector = () => {
     const srcName = useSourceStore(state => state.src);
+    const initDone = useAppInitStore(state => state.initDone);
 
-    if (!srcName || initState) {
+    if (!srcName || !initDone) {
         return <div className="text-sm">Network Unselected</div>
     }
 
     return (
         <PopoverButton showClass={"w-min h-fit top-[100%] bg-primary-500 z-65 rounded-lg border border-primary-100"}>
             <Flex className="items-center cursor-pointer border border-primary-100 rounded-full hover:brightness-125">
-                <div className="font-light text-xs pl-3 pr-1">Source:</div> 
+                <div className="font-light text-xs pl-3 pr-1">Source:</div>
                 <ExchangeIcon id={useSourceStore.getState().data.exchangeIcon} size={30} variant="branded" className="p-0.5 rounded-sm" />
                 <div className="text-xs font-semibold text-left">{useSourceStore.getState().data.name}</div>
                 <div className="text-[12px] px-1.5 text-washed-dim">▼</div>

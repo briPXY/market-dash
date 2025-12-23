@@ -230,13 +230,19 @@ export const useWalletStore = create((set, get) => ({
     },
 }));
 
-
 // Modal overlay visibility
 export const useModalVisibilityStore = create((set) => ({
     wallet: false,
     userSetting: false,
     account: false,
     setModalVisibility: (modal, status) => set({ [modal]: status }),
+}));
+
+// App init states (prevent rapid re-render at init)
+export const useAppInitStore = create((set) => ({
+    initState: null, // string msg
+    initDone: false, // bool only
+    setState: (state, status) => set({ [state]: status }),
 }));
 
 export default usePriceStore;

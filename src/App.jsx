@@ -5,8 +5,8 @@ import { Section } from './Layout/Layout'
 import Market from './market/Market';
 import { TopBar } from './generic_components/TopBar';
 import "./idb/init.js";
-import { useSourceStore, useWalletStore } from './stores/stores';
-import { useEffect, useState } from 'react';
+import { useAppInitStore, useSourceStore, useWalletStore } from './stores/stores';
+import { useEffect } from 'react';
 import { isSavedStateExist, loadState } from './idb/stateDB';
 import { localStorageDeleteDottedKeyAll, localStorageLoadDottedKeyAll } from './utils/utils';
 import { tryReconnectWallet } from './order/wallet';
@@ -16,6 +16,7 @@ import WalletExtensionListener from './order/WalletExtensionListener';
 import { installTokenLists } from './idb/tokenListDB';
 import { installPairLists } from './idb/pairListDB';
 import { UserSetting } from './generic_components/UserSetting';
+import { ModalSplash } from './generic_components/ModalSplash';
 // eslint-disable-next-line no-unused-vars
 function BadComponentTest() {
     throw new Error("React crash test");
@@ -23,18 +24,21 @@ function BadComponentTest() {
 
 function App() {
     const setSrc = useSourceStore(state => state.setSrc);
-    const [initState, setInitState] = useState(true);
+    const setInitState = useAppInitStore(state => state.setState);
 
     // Init handler
     useEffect(() => {
         async function init() {
             // Install token lists and pair lists from json into indexedDB, if not installed before
+            setInitState("initState", "Installing token lists");
             await installTokenLists();
+            setInitState("initState", "Installing pair lists");
             await installPairLists();
 
+            setInitState("initState", "Restoring saved states");
             const savedNetworkExist = await isSavedStateExist(`savedSource`);
 
-            if (savedNetworkExist) { 
+            if (savedNetworkExist) {
                 const savedNetwork = await loadState("savedSource");
                 setSrc(savedNetwork, SourceConst);
             }
@@ -55,11 +59,11 @@ function App() {
                 useWalletStore.getState().logoutWallet();
             }
             // finalize
-            setInitState(false);
+            setInitState("initDone", true);
         }
 
         init();
-    }, [setSrc]);
+    }, [setInitState, setSrc]);
 
     // App on-close handler
     useEffect(() => {
@@ -78,14 +82,15 @@ function App() {
         <>
             {/* <BadComponentTest /> */}
             <Section className="overflow-visible w-full mb-1">
-                <TopBar initState={initState}/>
+                <TopBar />
             </Section>
             <Section className="overflow-visible w-full">
-                <Market initState={initState}/>
+                <Market />
             </Section>
             <Section ></Section>
 
             {/* Modals */}
+            <ModalSplash />
             <WalletList />
             <UserWalletSidebar />
             <UserSetting />
