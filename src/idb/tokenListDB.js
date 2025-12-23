@@ -65,10 +65,10 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
             token.address = token.address.toLowerCase();
 
             // ensure chainId key exists, or create dummy
-            if (!(secondaryKey in token) || !token[secondaryKey]) {
+            if (!(secondaryKey in token) || !token[secondaryKey]) { // chainId not exist
                 token[secondaryKey] = `${source.blockchain}:${source.chainId}`;
             }
-            else {
+            else { // chainId of a token exist in the json file
                 token.chainId = `${source.blockchain}:${token.chainId}`;
             }
 
@@ -289,9 +289,14 @@ export async function searchTokensHybrid(query, chain = null, limit = 24) {
         .map(t => { delete t._p; return t; });
 }
 
+// Order of file matter
+// The json file without/less-rich of chainId should be in the 1st of array in param
+// no pseudo/in-memory db mechanism yet <-- it's TODO
 export async function installTokenLists() {
     await importTokenLists([
-        { url: "/token-list/uniswapv3ethereum.json", list: "tokens", chainId: 1, blockchain: "ethereum" },
-        { url: "/token-list/ethereum.json", list: "tokens", chainId: 1, blockchain: "ethereum" },
+        { url: "/token-list/uniswapv3ethereum.json", list: "tokens", chainId: 1, blockchain: "ethereum" }, // lack of chainId
+        { url: "/token-list/TrustWalletEthereum.json", list: "tokens", chainId: 1, blockchain: "ethereum" },
+        { url: "/token-list/UniswapRepositoryMainnet.json", list: "tokens", chainId: 1, blockchain: "ethereum" },
+        { url: "/token-list/UniswapOfficialList.json", list: "tokens", chainId: 1, blockchain: "ethereum" }, // various id of chainId
     ]);
 }
