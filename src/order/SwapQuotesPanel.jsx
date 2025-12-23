@@ -6,7 +6,7 @@ import { ExchangeIcon } from '@web3icons/react/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
 import { PlaceholderQuoteData } from './contracts';
-import { Trader } from '../constants/constants';
+import { Traders } from '../constants/constants';
 
 export default function SwapQuotesPanel({ amount, inputFrom }) {
     const pairAddress = usePoolStore(state => state.address ?? state.symbols);
@@ -37,7 +37,7 @@ export default function SwapQuotesPanel({ amount, inputFrom }) {
             try {
                 const [, { inputAmount, inputIsFrom }] = queryKey;
                 const traderName = useTradingPlatformStore.getState().trader;
-                const result = await Trader[traderName].quoterFn(inputAmount, inputIsFrom);
+                const result = await Traders[traderName].quoterFn(inputAmount, inputIsFrom);
                 return result;
             } catch (e) {
                 console.error(e);

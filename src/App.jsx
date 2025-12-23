@@ -5,7 +5,7 @@ import { Section } from './Layout/Layout'
 import Market from './market/Market';
 import { TopBar } from './generic_components/TopBar';
 import "./idb/init.js";
-import { useAppInitStore, useSourceStore, useWalletStore } from './stores/stores';
+import { useAppInitStore, useSourceStore, useTradingPlatformStore, useWalletStore } from './stores/stores';
 import { useEffect } from 'react';
 import { isSavedStateExist, loadState } from './idb/stateDB';
 import { localStorageDeleteDottedKeyAll, localStorageLoadDottedKeyAll } from './utils/utils';
@@ -17,6 +17,7 @@ import { installTokenLists } from './idb/tokenListDB';
 import { installPairLists } from './idb/pairListDB';
 import { UserSetting } from './generic_components/UserSetting';
 import { ModalSplash } from './generic_components/ModalSplash';
+import { Traders } from './constants/constants';
 // eslint-disable-next-line no-unused-vars
 function BadComponentTest() {
     throw new Error("React crash test");
@@ -34,6 +35,8 @@ function App() {
             await installTokenLists();
             setInitState("initState", "Installing pair lists");
             await installPairLists();
+
+            useTradingPlatformStore.getState().setTrader("Uniswap", Traders);
 
             setInitState("initState", "Restoring saved states");
             const savedNetworkExist = await isSavedStateExist(`savedSource`);

@@ -247,9 +247,9 @@ ChainId.ethereum = {
 };
 
 
-export const Trader = {};
+export const Traders = {};
 
-Trader.Uniswap = {
+Traders.Uniswap = {
     tokenInfoGetter: getTokenBySymbolChainId,
     wrappedMap: standardToWrappedTokenMap,
     quoterFn: getUniswapQuoteFromContract

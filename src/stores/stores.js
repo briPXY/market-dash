@@ -32,8 +32,12 @@ export const useSourceStore = create((set) => ({
     },
 }));
 
-export const useTradingPlatformStore = create(() => ({
-    trader: "Uniswap"
+export const useTradingPlatformStore = create((set) => ({
+    trader: "Uniswap",
+    props: {},
+    setTrader: (traderObjName, traderObj) => {
+        set({ trader: traderObjName, props: traderObj[traderObjName] });
+    }
 }));
 
 export const usePoolStore = create((set, get) => ({
@@ -97,10 +101,10 @@ export const usePoolStore = create((set, get) => ({
         }
         else {
             const network = `${useNetworkStore.getState().chain}:${useNetworkStore.getState().chainId}`;
-            const symbol0 = useTradingPlatformStore.getState().trader.wrappedMap[info.symbol0] ?? info.symbol0;
-            const symbol1 = useTradingPlatformStore.getState().trader.wrappedMap[info.symbol1] ?? info.symbol1;
-            let tokenInfo0 = await useTradingPlatformStore.getState().trader.tokenInfoGetter(symbol0, network);
-            let tokenInfo1 = await useTradingPlatformStore.getState().trader.tokenInfoGetter(symbol1, network);
+            const symbol0 = useTradingPlatformStore.getState().props.wrappedMap[info.symbol0] ?? info.symbol0;
+            const symbol1 = useTradingPlatformStore.getState().props.wrappedMap[info.symbol1] ?? info.symbol1;
+            let tokenInfo0 = await useTradingPlatformStore.getState().props.tokenInfoGetter(symbol0, network);
+            let tokenInfo1 = await useTradingPlatformStore.getState().props.tokenInfoGetter(symbol1, network);
 
             if (!tokenInfo0) {
                 tokenInfo0 = { symbol: info.symbol0, address: null, name: "No information", decimals: "18" };

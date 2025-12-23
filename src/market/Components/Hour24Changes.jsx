@@ -21,7 +21,7 @@ export const Hour24Changes = () => {
         },
         refetchInterval: 310000, // Fetch every 5 minutes + secs
         staleTime: 310000, // Default: Cache data for 1 min
-        enabled: pairSymbols !== "init" && !initDone,
+        enabled: pairSymbols !== "init" && initDone,
         retry: 0,
     });
 
