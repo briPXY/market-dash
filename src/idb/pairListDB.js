@@ -9,33 +9,55 @@ function getNestedValue(obj, path) {
     }, obj);
 }
 
-function binanceEntryMethod(info) {
-    const obj = {};
+// entry functions
+// the schema (pairInfoSchema) for the pairlist db value must resemble usePoolStore() @ store.js
+
+const pairInfoSchema = {
+    symbols: null,
+    symbol0: null,
+    symbol1: null,
+    address: null,
+    feeTier: null,
+    liquidity: null,
+    version: null,
+    idb_key: null,
+    token0: { symbol: null, address: null, decimals: null, name: null, chainId: null, blockchain: null },
+    token1: { symbol: null, address: null, decimals: null, name: null, chainId: null, blockchain: null },
+}
+
+
+function binanceEntryMethod(info, priceOracle) {
+    const obj = { ...pairInfoSchema };
+    obj.idb_key = [priceOracle, info.baseAsset, info.quoteAsset];
     obj.symbols = info.symbol;
     obj.symbols_rev = info.quoteAsset + info.baseAsset;//reversed symbol pair
     obj.symbol0 = info.baseAsset;
     obj.symbol1 = info.quoteAsset;
+    obj.token1.symbol = info.quoteAsset;
+    obj.token0.symbol = info.baseAsset;
     return obj;
 }
 
-function subgraphEntryMethod(info) {
-    const obj = {};
+function subgraphEntryMethod(info, priceOracle) {
+    const obj = { ...pairInfoSchema };
+    obj.idb_key = [priceOracle, info.token0.symbol, info.token1.symbol];
     obj.symbols = info.token0.symbol + info.token1.symbol;
     obj.symbols_rev = info.token1.symbol + info.token0.symbol; // reversed symbols
     obj.symbol0 = info.token0.symbol;
     obj.symbol1 = info.token1.symbol;
-    // additional infos
+    obj.feeTier = info.feeTier;
     obj.token0 = info.token0;
     obj.token1 = info.token1;
-    obj.address = info.id; // pool address
+    obj.token0.address = info.token0.id
+    obj.token1.address = info.token1.id
+    obj.address = info.id; // pool address 
     obj.liquidity = info.liquidity;
-    obj.fee_tier = info.feeTier;
     return obj;
 }
 
-export async function createPaiListsDB(pathToDive, sourceURL, exchange = "", entryMethod) {
+export async function createPaiListsDB(pathToDive, sourceURL, priceOracle = "", entryMethod) {
     // 1. DONE signature check
-    if (localStorage.getItem(`pair-list:${exchange}`) === "true") {
+    if (localStorage.getItem(`pair-list:${priceOracle}`) === "true") {
         return false;
     }
 
@@ -44,10 +66,10 @@ export async function createPaiListsDB(pathToDive, sourceURL, exchange = "", ent
         upgrade(db) {
             if (!db.objectStoreNames.contains("pair-list")) {
                 const store = db.createObjectStore("pair-list", {
-                    keyPath: ['exchange', 'symbol0', 'symbol1']
+                    keyPath: ['priceOracle', 'symbol0', 'symbol1']
                 });
 
-                store.createIndex("byExchange", "exchange");
+                store.createIndex("byPriceOracle", "priceOracle");
                 store.createIndex("bySymbols", "symbols");
                 store.createIndex("bySymbolsReversed", "symbols_rev");
             }
@@ -80,15 +102,15 @@ export async function createPaiListsDB(pathToDive, sourceURL, exchange = "", ent
     const store = tx.objectStore("pair-list");
 
     for (const info of list) {
-        const obj = entryMethod(info);
-        obj.exchange = exchange;
+        const obj = entryMethod(info, priceOracle);
+        obj.priceOracle = priceOracle;
         await store.put(obj)
     }
 
     await tx.done;
 
-    localStorage.setItem(`pair-list:${exchange}`, "true");
-    console.log(`${exchange} pair list database has installed`);
+    localStorage.setItem(`pair-list:${priceOracle}`, "true");
+    console.log(`${priceOracle} pair list database has installed`);
     return true;
 } // v1
 
@@ -229,7 +251,7 @@ export async function searchPairListSingleIndex(
 }
 
 export async function installPairLists(callback = () => { }) {
-    await createPaiListsDB(["symbols"], "/pair-list/exchangeInfo.json", "binance", binanceEntryMethod);
+    await createPaiListsDB(["symbols"], "/pair-list/exchangeInfo.json", "binance", binanceEntryMethod); // Binance CEX oracle
     await createPaiListsDB(["data", "pools"], "/pair-list/UniswapV3Pairs.json", "uniswap:1", subgraphEntryMethod);
     callback();
 }

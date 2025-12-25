@@ -11,7 +11,6 @@ export async function importTokenLists(sources = [{ url: null, list: null, chain
 
     // done signature check
     if (localStorage.getItem("token-list:done") === "true") {
-        console.log("Token list already imported. Skipping...");
         return false;
     }
 
@@ -116,11 +115,7 @@ export async function getTokenBySymbolChainId(symbol, chainId, filter = null) {
     while (cursor) {
         const entry = cursor.value;
 
-        if (
-            entry.symbol === symbol &&
-            entry.chainId === chainId &&
-            entry[filterIndex] === filterValue
-        ) {
+        if (entry.symbol === symbol && entry.chainId === chainId && entry[filterIndex] === filterValue) {
             return entry;
         }
 
@@ -144,14 +139,11 @@ export function loadRecentSearches() {
 
 function saveRecentSearch(query) {
     const recent = loadRecentSearches();
-
     // remove old duplicate
     const existingIndex = recent.indexOf(query);
     if (existingIndex !== -1) recent.splice(existingIndex, 1);
-
     // push newest
     recent.unshift(query);
-
     // trim to max
     if (recent.length > RECENT_CACHE_LIMIT) {
         recent.length = RECENT_CACHE_LIMIT;
@@ -226,8 +218,6 @@ export async function searchTokensHybrid(query, chain = null, limit = 24) {
     };
 
     //   PREFIX SEARCHES (indexed, fastest)
-
-
     // 1a. prefix match SYMBOL
     {
         const tx = db.transaction("tokens", "readonly");
@@ -287,6 +277,27 @@ export async function searchTokensHybrid(query, chain = null, limit = 24) {
     return Array.from(results.values())
         .sort((a, b) => a._p - b._p)
         .map(t => { delete t._p; return t; });
+}
+
+export async function getAddressBySymbolChain(symbol, chainName) {
+    const db = await openDB("token-list", 1);
+    const transaction = db.transaction("tokens", "readonly");
+    const index = transaction.store.index("symbol_chain");
+    const token = await index.get([symbol, chainName]);
+    await transaction.done;
+
+    return token?.address ?? null;
+}
+
+// double search useful for pair validating
+export async function get2AddressBySymbolsChain(symbol0, symbol1, chainName) {
+    const db = await openDB("token-list", 1);
+    const transaction = db.transaction("tokens", "readonly");
+    const index = transaction.store.index("symbol_chain");
+
+    const [token0, token1] = await Promise.all([index.get([symbol0, chainName]), index.get([symbol1, chainName])]);
+    await transaction.done;
+    return { address0: token0 ? token0.address : null, address1: token1 ? token1.address : null };
 }
 
 // Order of file matter

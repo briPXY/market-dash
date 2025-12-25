@@ -1,4 +1,4 @@
-import { loadState, saveState } from "../idb/stateDB";
+import { dbUpdateProperty, loadState, saveState } from "../idb/stateDB";
 import { create } from "zustand";
 import { initToken } from "../constants/initData";
 
@@ -41,11 +41,14 @@ export const useTradingPlatformStore = create((set) => ({
 }));
 
 export const usePoolStore = create((set, get) => ({
+    idb_key:null,
     address: null, // address of pool (case like uniswap) not each symbol
     symbols: "init",
     token0: initToken[0].token0,
     token1: initToken[0].token1,
     feeTier: null,
+    liquidity: null,
+    version: null,
 
     getAll: () => {
         return Object.entries(get())
@@ -68,8 +71,18 @@ export const usePoolStore = create((set, get) => ({
         set(updatedState);
     },
 
-    setSingleSymbol: (target, value) => {
-        set({ [target]: value });
+    setPairState: (target, value) => {
+        if (!get()[target]){
+            dbUpdateProperty("pair-list", "pair-list", get().idb_key, [target], value)
+        }
+        set({ [target]: value }); 
+    },
+
+    setPairSubState: (target, subTarget, value) => {
+        if (!get()[target][subTarget]){
+            dbUpdateProperty("pair-list", "pair-list", get().idb_key, [target, subTarget], value)
+        }
+        set((state) => ({ [target]: {...state[target], [subTarget]: value }}));
     },
 
     onSourceChange: async (priceSourceName, savedPairData, initPairs) => {
@@ -92,32 +105,6 @@ export const usePoolStore = create((set, get) => ({
 
         await saveState(`savedPairStore-${priceSourceName}`, updatedState);
         set(updatedState);
-    },
-
-    setPairFromListDB: async (info) => {
-        let newPairInfo;
-        if (info.token0) { // pair entry have additional info 
-            set(info);
-        }
-        else {
-            const network = `${useNetworkStore.getState().chain}:${useNetworkStore.getState().chainId}`;
-            const symbol0 = useTradingPlatformStore.getState().props.wrappedMap[info.symbol0] ?? info.symbol0;
-            const symbol1 = useTradingPlatformStore.getState().props.wrappedMap[info.symbol1] ?? info.symbol1;
-            let tokenInfo0 = await useTradingPlatformStore.getState().props.tokenInfoGetter(symbol0, network);
-            let tokenInfo1 = await useTradingPlatformStore.getState().props.tokenInfoGetter(symbol1, network);
-
-            if (!tokenInfo0) {
-                tokenInfo0 = { symbol: info.symbol0, address: null, name: "No information", decimals: "18" };
-            }
-            if (!tokenInfo1) {
-                tokenInfo1 = { symbol: info.symbol1, address: null, name: "No information", decimals: "18" };
-            }
-
-            newPairInfo = { symbols: info.symbols, address: null, feeTier: null, token0: tokenInfo0, token1: tokenInfo1 };
-            set(newPairInfo);
-        }
-
-        await saveState(`savedPairStore-${useSourceStore.getState().src}`, newPairInfo);
     },
 
     // internal symbol swapper, only called from setPriceInvert
