@@ -5,8 +5,12 @@ export const WSS_DOMAIN = import.meta.env.VITE_WSS_DOMAIN ?? "";
 
 export const isAgentMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-// custom errors
+export const Cacheds = {
+    etherProvider: null,
+    sepoliaProvider: null,
+};
 
+// custom errors 
 export class MissingAPIKeyError extends Error {
     constructor(message = "API Key not found. Please check your settings.") {
         super(message);

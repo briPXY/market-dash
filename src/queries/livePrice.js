@@ -1,9 +1,9 @@
 import { getPriceFromSqrtPriceX96 } from "../utils/price.math";
-import { DOMAIN } from "../constants/environment";
+import { Cacheds, DOMAIN } from "../constants/environment";
 import { ethers } from "ethers";
 import { RPC_URLS } from "../constants/constants";
-import { useSourceStore, useWalletStore } from "../stores/stores";
-import { decryptAndLoadUserSecret } from "../utils/user";
+import { useSourceStore } from "../stores/stores";
+import { cycleEtherProvider } from "../order/contracts";
 
 const _LivePriceLoops = {
     ether: false,
@@ -173,16 +173,13 @@ export const fetchUniswapPoolPrice = async (network, pairObj) => {
         let provider;
 
         if (chainId == "11155111") {// Sepolia 
-            const sepoliaRPC = await decryptAndLoadUserSecret("Sepolia RPC", useWalletStore.getState().address, useWalletStore.getState().signature);
-
-            if (!sepoliaRPC) {
+            if (!Cacheds.sepoliaProvider) {
                 return "ERR_NO_RPC";
             }
-
-            provider = new ethers.JsonRpcProvider(sepoliaRPC);
+            provider = Cacheds.sepoliaProvider;
         }
         else {
-            provider = _RPCProviders[network]; // reuse provider, not new each time 
+            provider = Cacheds.etherProvider; // reuse provider, not new each time 
         }
 
         const poolABI = [
@@ -201,7 +198,7 @@ export const fetchUniswapPoolPrice = async (network, pairObj) => {
         console.error(e)
         if (e.message.includes("failed to detect network") || e.message.includes("ECONN")) {
             try {
-                await _selectWorkingRpc(network, RPC_URLS.default);
+                await cycleEtherProvider();
             } catch (fatal) {
                 return { fatalError: fatal };
             }

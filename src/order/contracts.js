@@ -2,10 +2,11 @@ import { ethers, parseUnits } from "ethers";
 // import { PoolManager } from '@uniswap/v4-sdk';
 // import { Token } from '@uniswap/sdk-core';
 import { formatPriceInternational, getAvailableRPC } from "../utils/utils";
-import { RPC_URLS } from "../constants/constants";
 import { usePoolStore, useWalletStore } from "../stores/stores";
-
-const workingRPC = {};
+import { get2AddressBySymbolsChain } from "../idb/tokenListDB";
+import { Cacheds } from "../constants/environment";
+import { RPC_URLS } from "../constants/constants";
+import { decryptAndLoadUserSecret } from "../utils/user";
 
 const GAS_QUOTER_ABI = [
     "function exactInputSingle((address tokenIn,address tokenOut,uint24 fee,address recipient,uint256 amountIn,uint256 amountOutMinimum,uint160 sqrtPriceLimitX96)) external payable returns (uint256)"
@@ -15,6 +16,52 @@ const SWAP_QUOTER_ABI = {
     quoteExactInputSingle: ["function quoteExactInputSingle(address tokenIn, address tokenOut, uint24 fee, uint256 amountIn, uint160 sqrtPriceLimitX96) external view returns (uint256 amountOut)"],
     quoteExactOutputSingle: ["function quoteExactOutputSingle(address tokenIn, address tokenOut, uint24 fee, uint256 amountOut, uint160 sqrtPriceLimitX96) external view returns (uint256 amountIn)"]
 };
+
+export const UNISWAP_FACTORIES = {
+    1: { // Ethereum
+        v3: "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+        v2: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"
+    },
+    42161: { // Arbitrum
+        v3: "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+        v2: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4" // Sushi
+    },
+    8453: { // Base
+        v3: "0x33128a8fC17869897dcE68Ed026d694621f6FDfD",
+        v2: null
+    },
+    10: { // Optimism
+        v3: "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+        v2: null
+    },
+    137: { // Polygon
+        v3: "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+        v2: "0x5757371414417b8c6caad45baef941abc7d3ab32"
+    }
+}
+
+const V3_FEES = [500, 3000, 10000];
+
+const V3_FACTORY_CHECKER_ABI = [
+    "function getPool(address,address,uint24) view returns (address)"
+]
+
+const V2_FACTORY_CHECKER_ABI = [
+    "function getPair(address,address) view returns (address)"
+]
+
+export async function cycleEtherProvider() {
+    const rpcUrl = await getAvailableRPC(RPC_URLS.default);
+    Cacheds.etherProvider = new ethers.JsonRpcProvider(rpcUrl);
+
+    if (useWalletStore.getState().address && useWalletStore.getState().signature && !Cacheds.sepoliaProvider) {
+        const sepoliaRPC = await decryptAndLoadUserSecret("Sepolia RPC", useWalletStore.getState().address, useWalletStore.getState().signature);
+        Cacheds.sepoliaProvider = new ethers.JsonRpcProvider(sepoliaRPC);
+    }
+    else {
+        return;
+    }
+}
 
 /**
  * Calls a read-only function on a smart contract using a custom RPC URL.
@@ -103,20 +150,10 @@ export async function getUniswapQuoteFromContract(amount, inputFrom) {
 
     const method = inputFrom == "sellInput" ? "quoteExactInputSingle" : "quoteExactOutputSingle";
 
-    if (!workingRPC.quoter) {
-        workingRPC.quoter = await getAvailableRPC(RPC_URLS.default);
-    }
-
-    const provider = new ethers.JsonRpcProvider(workingRPC.quoter);
     const safeAmount = truncateToDecimals(amount, pairStoreObj.token1.decimals || 18)
     const amountInBase = parseUnits(safeAmount, Number(pairStoreObj.token1.decimals));
 
-    // 🪄 Setup read-only provider (you can use any RPC endpoint)
-    if (!workingRPC.quoter) {
-        workingRPC.quoter = await getAvailableRPC(RPC_URLS.default);
-    }
-
-    const quoter = new ethers.Contract("0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6", SWAP_QUOTER_ABI[method], provider);
+    const quoter = new ethers.Contract("0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6", SWAP_QUOTER_ABI[method], Cacheds.etherProvider);
 
     // STEP 1: Get Quoter Quote (The amountOut)
 
@@ -137,7 +174,7 @@ export async function getUniswapQuoteFromContract(amount, inputFrom) {
 
     // STEP 2: Estimate Gas Cost
 
-    const router = new ethers.Contract("0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", GAS_QUOTER_ABI, provider);
+    const router = new ethers.Contract("0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", GAS_QUOTER_ABI, Cacheds.etherProvider);
 
     const swapParams = {
         tokenIn: pairStoreObj.token1.address,
@@ -173,7 +210,7 @@ export async function getUniswapQuoteFromContract(amount, inputFrom) {
             [sellText]: `${formatPriceInternational(sellValue.toString())}`,
             [receiveText]: `${formatPriceInternational(buyValue.toString())}`,
             [priceText]: `${executionPrice.toPrecision(6)}`,
-            "Fee tier": `${fee / 10000}%`,
+            "Fee tier": `${fee / 100000}%`,
             "Est. Gas (Units)": "login needed",
             "Network Cost (ETH)": "login needed"
         };
@@ -183,7 +220,7 @@ export async function getUniswapQuoteFromContract(amount, inputFrom) {
         const estimatedGas = await router.exactInputSingle.estimateGas(swapParams, { from: userAddress });
         gasEstimateUnits = estimatedGas.toString();
         // Convert Gas Units to ETH Value
-        const gasPriceWei = await getEffectiveGasPrice(provider);
+        const gasPriceWei = await getEffectiveGasPrice(Cacheds.etherProvider);
 
         if (gasPriceWei) {
             const gasCostWei = estimatedGas * gasPriceWei;
@@ -264,3 +301,93 @@ initDummy.props = ["Loading Network", "Loading Pool"]
 //     return exists
 // }
 
+
+export async function getPoolVersionInfo(provider, pairObj) {
+    const code = await provider.getCode(pairObj.address)
+    if (code === "0x") return null
+
+    try {
+        const v3Pool = new ethers.Contract(pairObj.address, ["function fee() view returns (uint24)"], provider)
+        const [fee] = await Promise.all([v3Pool.fee(), v3Pool.token0(), v3Pool.token1()]);
+        if (!pairObj.feeTier) {
+            usePoolStore.getState().setSingleState("feeTier", fee);
+        }
+        if (!pairObj.version) {
+            usePoolStore.getState().setSingleState("version", "V3");
+        }
+        return true;
+    } catch (e) { e }
+
+    try {
+        const v2Pair = new ethers.Contract(pairObj.address, ["function getReserves() view returns (uint112,uint112,uint32)"], provider)
+        await Promise.all([v2Pair.getReserves()])
+        if (!pairObj.version) {
+            usePoolStore.getState().setSingleState("version", "V2");
+        }
+        if (!pairObj.feeTier) {
+            usePoolStore.getState().setSingleState("feeTier", 3000);
+        }
+    } catch (e) { e }
+
+    return true;
+}
+
+export async function validateUniswapPoolExist(pairObj, blockchain, chainId) {
+    const factories = UNISWAP_FACTORIES[chainId]
+    if (!factories) return null;
+    const provider = Cacheds.etherProvider;
+
+    if (pairObj.address) { // check if it have uniswap pool address
+        const poolInfo = await getPoolVersionInfo(provider, pairObj.address);
+        return poolInfo;
+    }
+
+    let address0 = pairObj.token0.address;
+    let address1 = pairObj.token1.address;
+
+    if (!address0 || !address1) {
+        const { address0: dbadd0, address1: dbadd1 } = await get2AddressBySymbolsChain(pairObj.token0.symbol, pairObj.token1.symbol, `${blockchain}:${chainId}`);
+        !address0 ? address0 = dbadd0 : address0;
+        !address1 ? address1 = dbadd1 : address1;
+    }
+    // if address from db not available
+    if (!address0 || !address1) {
+        return false;
+    }
+
+    const [addr0, addrb] = address0.toLowerCase() < address1.toLowerCase() ? [address0, address1] : [address1, address0];
+
+    // V3 (multi-fee)
+    if (factories.v3) {
+        const factory = new ethers.Contract(factories.v3, V3_FACTORY_CHECKER_ABI, provider)
+        console.log(pairObj)
+        for (const fee of V3_FEES) {
+            try {
+                const pool = await factory.getPool(addr0, addrb, fee)
+                if (pool !== ethers.ZeroAddress) {
+                    usePoolStore.getState().setSingleState("feeTier", fee);
+                    usePoolStore.getState().setSingleState("version", "V3");
+                    return true;
+                }
+
+            } catch (e) { e }
+        }
+    }
+
+    // V2
+    if (factories.v2) {
+        console.log(pairObj)
+        try {
+            const factory = new ethers.Contract(factories.v2, V2_FACTORY_CHECKER_ABI, provider)
+
+            const pair = await factory.getPair(addr0, addrb)
+            if (pair !== ethers.ZeroAddress) {
+                usePoolStore.getState().setSingleState("feeTier", 3000);
+                usePoolStore.getState().setSingleState("version", "V2");
+                return true;
+            }
+        } catch (e) { e }
+    }
+
+    return false;
+}

@@ -18,6 +18,7 @@ import { installPairLists } from './idb/pairListDB';
 import { UserSetting } from './generic_components/UserSetting';
 import { ModalSplash } from './generic_components/ModalSplash';
 import { Traders } from './constants/constants';
+import { cycleEtherProvider } from './order/contracts';
 // eslint-disable-next-line no-unused-vars
 function BadComponentTest() {
     throw new Error("React crash test");
@@ -61,6 +62,8 @@ function App() {
                 localStorageDeleteDottedKeyAll("wallet");
                 useWalletStore.getState().logoutWallet();
             }
+
+            await cycleEtherProvider();
             // finalize
             setInitState("initDone", true);
         }
