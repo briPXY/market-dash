@@ -18,6 +18,10 @@ const PairIcon = ({
 }) => {
     const invertedStatus = usePriceInvertStore((state) => state.priceInvert);
 
+    if (!symbol0 || !symbol1){
+        return null;
+    }
+    
     return (
         <div className={className} {...rest}>
             <div style={style0} >

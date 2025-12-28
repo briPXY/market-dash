@@ -66,7 +66,7 @@ export function formatPriceInternational(str, rule = { max: 3 }) {
 }
 
 export function stdSymbol(symbol) {
-    return wrappedTokenMap[symbol] ?? symbol.replace(/^w/, "");
+    if (symbol) return wrappedTokenMap[symbol] ?? symbol.replace(/^w/, "");
 }
 
 export function invertedHistoricalPrices(array) {

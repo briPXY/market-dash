@@ -20,11 +20,11 @@ export const PairSelector = () => {
         <PopoverButton showClass={"bg-primary-500 w-[85vw] md:w-90 h-fit top-[100%] p-1 py-2 left-0 z-65 rounded-md"}>
             <div className="flex cursor-pointer font-medium items-center gap-1 justify-start p-1 md:pr-4 bg-primary-500 border border-primary-100 rounded-full px-2 md:px-3 hover:brightness-125">
                 <div className="inline-block font-light text-sm md:text-lg text-start text-nowrap">
-                    {`${stdSymbol(token0.symbol)} / ${stdSymbol(usePoolStore.getState().token1.symbol)}`}
+                    {`${stdSymbol(token0?.symbol)} / ${stdSymbol(usePoolStore.getState().token1?.symbol)}`}
                 </div>
                 <PairIcon className="w-1/3 flex"
-                    symbol0={stdSymbol(token0.symbol)}
-                    symbol1={stdSymbol(usePoolStore.getState().token1.symbol)}
+                    symbol0={stdSymbol(token0?.symbol)}
+                    symbol1={stdSymbol(usePoolStore.getState().token1?.symbol)}
                     style={{ width: "32px" }}
                     size={24}
                     className1="shadow-[0_4px_6px_-1px_rgba(0,0,0,0.5)] rounded-full"
@@ -84,6 +84,10 @@ const SymbolSelectorItem = ({ pairObj }) => {
 
         liveUpdate();
     }, [pairObj, priceSrcData]);
+
+    if (!pairObj.token0 || !pairObj) {
+        return <LoadingIcon className="w-2.5 h.25" />
+    }
 
     return (
         <button onClick={() => setPairFromPairObj(pairObj)} className="flex w-full px-3 py-2 hover:brightness-125 rounded-sm bg-primary-500 text-sm items-center justify-between">

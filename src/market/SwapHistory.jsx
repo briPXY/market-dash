@@ -18,12 +18,11 @@ const toggleHeight = (ref) => {
 };
 
 export const SwapHistory = ({ swaps }) => {
-    // eslint-disable-next-line no-unused-vars
-    const address = usePoolStore(state => state.address);
+    const token0 = usePoolStore(state => state.token0);
     const src = useSourceStore(state => state.src);
     const listBoxRef = useRef(null);
 
-    if (!swaps || !src) return;
+    if (!swaps || !src || !token0) return;
 
     const copy = (text) => {
         navigator.clipboard.writeText(text);
@@ -38,8 +37,8 @@ export const SwapHistory = ({ swaps }) => {
                 <span className="w-1/6 text-left text-white">Date</span>
                 <span className="w-1/6 text-center text-white">Price</span>
                 <div className="flex gap-0.5 text-[0.8em] justify-center items-center w-1/6 text-center text-white">
-                    <TokenIcon size={18} variant="mono" color="#fff" symbol={usePoolStore.getState().token0.symbol.toLowerCase()} />
-                    <span >{usePoolStore.getState().token0.symbol}</span>
+                    <TokenIcon size={18} variant="mono" color="#fff" symbol={token0.symbol.toLowerCase()} />
+                    <span >{token0.symbol}</span>
                 </div>
                 <div className="flex gap-0.5 text-[0.8em] justify-center items-center w-1/6 text-center text-white">
                     <TokenIcon size={18} variant="mono" color="#fff" symbol={usePoolStore.getState().token1.symbol.toLowerCase()} />
