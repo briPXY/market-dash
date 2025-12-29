@@ -63,7 +63,9 @@ function App() {
                 useWalletStore.getState().logoutWallet();
             }
 
-            await cycleEtherProvider();
+            try {
+                await cycleEtherProvider();
+            } catch (e) { e }
             // finalize
             setInitState("initDone", true);
         }

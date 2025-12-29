@@ -5,22 +5,12 @@ import { sortByRelevance, stdSymbol } from "../utils/utils";
 import { usePoolStore, useSourceStore } from "../stores/stores";
 import { SourceConst } from "../constants/sourceConst";
 import { searchPairListDoubleIndex } from "../idb/pairListDB";
-import { ChainId } from "../constants/constants";
 // import { IconFallback } from "../generic_components/IconFallback";
 
 const ResultItem = ({ pairInfo }) => {
-    const itemClickHandle = async (tokenObj) => {
-        if (tokenObj.token0) {
-            usePoolStore.getState().setPairFromPairObj(tokenObj);
-        }
-        else {
-            usePoolStore.getState().setPairFromListDB(tokenObj);
-        }
-    };
-
     return (
         <div
-            onClick={() => itemClickHandle(pairInfo)} className="flex items-center p-2 bg-primary-900 cursor-pointer text-xs hover:brightness-125">
+            onClick={() => usePoolStore.getState().setPairFromPairObj(pairInfo)} className="flex items-center p-2 bg-primary-900 cursor-pointer text-xs hover:brightness-125">
             <TokenIcon
                 symbol={stdSymbol(pairInfo.symbol0).toLowerCase()}
                 size={18}
@@ -48,7 +38,6 @@ export const FormPairSearch = ({ className = '' }) => {
     const sourceName = useSourceStore(state => state.src);
     const [isSearching, setIsSearching] = useState(false);
     const abortControllerRef = useRef(null);
-    const [chainName, chainId] = sourceName ? sourceName.split(':') : ["", ""];
 
     const handleInputWithAbort = async (e) => {
         setIsSearching(true);
@@ -75,7 +64,7 @@ export const FormPairSearch = ({ className = '' }) => {
         >
             <input
                 type="text"
-                placeholder={`Search ${chainName}${ChainId[useSourceStore.getState().data.blockchain] ? ` ${ChainId[useSourceStore.getState().data.blockchain][chainId]}` : ""} pairs`}
+                placeholder={`Search ${useSourceStore.getState().data?.name ?? ""} pairs`}
                 onChange={(e) => handleInputWithAbort(e.target.value)}
                 onFocus={() => setIsOpen(true)}
                 onBlur={() => setTimeout(() => setIsOpen(false), 1000)}

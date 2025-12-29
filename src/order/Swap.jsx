@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { usePoolStore, usePriceInvertStore, usePriceStore, useSourceStore } from "../stores/stores";
+import { usePoolStore, usePriceInvertStore, usePriceStore, useSourceStore} from "../stores/stores";
 import SwapForm from "./SwapForm";
 import { formatPrice } from "../utils/utils";
-import { swapDecimalRule } from "../constants/constants";
+import { swapDecimalRule} from "../constants/constants";
 import SwapQuotesPanel from "./SwapQuotesPanel";
+import { TraderPlatform } from "./TraderPlatform";
 
 function removeNonNumeric(rawValue) {
     let cleaned = rawValue
@@ -77,7 +78,7 @@ export default function Swap() {
     }, [symbols]);
 
     return (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col">
             <SwapForm
                 handleBuyChange={handleBuyChange}
                 handleSellChange={handleSellChange}
@@ -86,6 +87,7 @@ export default function Swap() {
                 handleChangeSymbols={handleChangeSymbols}
                 isDEX={useSourceStore.getState().isDEX ?? null}
             />
+            <TraderPlatform/>
             <SwapQuotesPanel
                 amount={inputFrom.current == "sellInput" ? sellAmount : buyAmount}
                 inputFrom={inputFrom.current}

@@ -1,5 +1,6 @@
-import { getUniswapQuoteFromContract } from "../order/contracts";
+import { getUniswapQuoteFromContract, validateUniswapPoolExist } from "../order/contracts";
 import { getTokenBySymbolChainId } from "../idb/tokenListDB";
+import { UniswapOptionPanel } from "../order/components/UniswapOptionPanel";
 
 export const AppSetting = {
     CacheTime_PairsPricesOnPicker: 20000, // miliseconds
@@ -56,7 +57,9 @@ export const wrappedTokenMap = {
     WXDAI: "XDAI",        // xDai (now Gnosis)
 };
 
-export const standardToWrappedTokenMap = {
+export const standardSymbolToWrapped = {};
+
+standardSymbolToWrapped.ethereum = {
     BTC: "WBTC",     // Bitcoin (The most common version) 
     ETH: "WETH",
     // Other Major Chains
@@ -68,7 +71,7 @@ export const standardToWrappedTokenMap = {
     LTC: "WLTC",     // Litecoin
     XMR: "WXMR",     // Monero 
     DOT: "wDOT",
-};
+}
 
 // Charts related constants
 export const defaultDecimalRule = { 0: 2, 99: 3, rest: 2 };
@@ -251,6 +254,7 @@ export const Traders = {};
 
 Traders.Uniswap = {
     tokenInfoGetter: getTokenBySymbolChainId,
-    wrappedMap: standardToWrappedTokenMap,
-    quoterFn: getUniswapQuoteFromContract
+    quoterFn: getUniswapQuoteFromContract,
+    pairValidator: validateUniswapPoolExist,
+    optionComponent: UniswapOptionPanel
 }

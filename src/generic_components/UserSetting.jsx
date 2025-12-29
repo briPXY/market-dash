@@ -3,6 +3,7 @@ import { TabPanelParent } from "../Layout/Layout";
 import { useModalVisibilityStore } from "../stores/stores";
 import { ModalOverlay } from "./ModalOverlay";
 import { FormTextUserSecret } from "./SettingForms";
+import { cycleEtherProvider } from "../order/contracts";
 
 export function UserSetting() {
     const visibility = useModalVisibilityStore(state => state.userSetting);
@@ -86,7 +87,8 @@ function UserSettingCustomRPCs() {
         }
     }
 
-    const addSuccessHandler = () => {
+    const addSuccessHandler = async () => {
+        await cycleEtherProvider();
         mainChartQuery.invalidateQueries({
             queryKey: ["mainchart"]
         });

@@ -10,6 +10,7 @@ import { Traders } from '../constants/constants';
 
 export default function SwapQuotesPanel({ amount, inputFrom }) {
     const pairAddress = usePoolStore(state => state.address ?? state.symbols);
+    const validatedInfo = usePoolStore(state => state.validatedInfo);
     const [isDebouncing, setIsDebouncing] = useState(false);
     const [debouncedKeyValues, setDebouncedKeyValues] = useState(null);
     const network = useSourceStore.getState().data ?? SourceConst.init;
@@ -24,12 +25,12 @@ export default function SwapQuotesPanel({ amount, inputFrom }) {
 
     // update query keys after keystroke settled for x-seconds
     useEffect(() => {
-        if (amount > 0) {
+        if (amount > 0 && validatedInfo) {
             setIsDebouncing(true);
-            debouncedUpdate({ inputAmount: amount, inputIsFrom: inputFrom });
+            debouncedUpdate({ inputAmount: amount, inputIsFrom: inputFrom, address: pairAddress });
         }
         return () => debouncedUpdate.cancel();
-    }, [amount, inputFrom, debouncedUpdate]);
+    }, [amount, inputFrom, debouncedUpdate, pairAddress, debouncedKeyValues, validatedInfo]);
 
     const { data, error, isError, isFetching } = useQuery({
         queryKey: ['tradeQuoteQuery', debouncedKeyValues],
@@ -44,7 +45,7 @@ export default function SwapQuotesPanel({ amount, inputFrom }) {
                 return PlaceholderQuoteData('error');
             }
         },
-        enabled: () => (amount > 0 && debouncedKeyValues), // Force !! boolean or component (eventually app) crashed from undefined to false transition (tanstack wtf moment)
+        enabled: () => Boolean(amount > 0 && debouncedKeyValues && validatedInfo), // Force !! boolean or component (eventually app) crashed from undefined to false transition (tanstack wtf moment)
         retry: 1,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
@@ -81,7 +82,7 @@ export default function SwapQuotesPanel({ amount, inputFrom }) {
             <div className='h-4'></div>
             <button
                 onClick={() => window.open(network.poolURL(pairAddress))}
-                className="bg-transparent text-xs flex gap-1 items-center"
+                className="bg-transparent text-xs text-washed flex gap-1 items-center"
                 title={`Go to ${network.poolURL}${pairAddress}`}
             ><ExternalLinkIcon size={14} />Trade at {network.exchangeIcon.charAt(0).toUpperCase() + network.exchangeIcon.slice(1)} <span><ExchangeIcon id={network.exchangeIcon} variant="mono" size="18" /></span>
             </button>

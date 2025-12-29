@@ -1,6 +1,7 @@
 import { dbUpdateProperty, loadState, saveState } from "../idb/stateDB";
 import { create } from "zustand";
 import { initToken } from "../constants/initData";
+import { updateMissingPairInfo } from "../idb/tokenListDB";
 
 export const usePriceStore = create((set) => ({
     trade: 0,
@@ -41,14 +42,14 @@ export const useTradingPlatformStore = create((set) => ({
 }));
 
 export const usePoolStore = create((set, get) => ({
-    idb_key:null,
-    address: null, // address of pool (case like uniswap) not each symbol
-    symbols: "init",
-    token0: initToken[0].token0,
-    token1: initToken[0].token1,
+    idb_key: null, // read-only
+    address: null, // 
+    symbols: "init", // read-only
+    token0: initToken[0].token0, // switchable
+    token1: initToken[0].token1, // switchable
     feeTier: null,
-    liquidity: null,
-    version: null,
+    liquidity: null, // read-only unless updating from null
+    validatedInfo: null,
 
     getAll: () => {
         return Object.entries(get())
@@ -57,52 +58,59 @@ export const usePoolStore = create((set, get) => ({
             .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
     },
 
+    // pair changes, set whole prop without shallow set
+    // get extra tokens infos from token-list db (if exist)
+    // set with obj from pair-list db which have object schema similiar to this store's states
+    // nullify everything (except setter/getter) that's not match store props
     setPairFromPairObj: async (obj) => {
         const currentState = get();
         const updatedState = {};
-
+        // updates missing token infos
+        const { updatedToken0, updatedToken1 } = await updateMissingPairInfo(obj, useNetworkStore.getState().chain, useNetworkStore.getState().chainId);
+        obj.token0 = updatedToken0;
+        obj.token1 = updatedToken1;
+        
         Object.keys(currentState).forEach((key) => {
             if (typeof currentState[key] !== 'function') { // prevent setter/getter being removed
                 updatedState[key] = obj[key] ? obj[key] : null;
             }
         });
-
+        
         await saveState(`savedPairStore-${useSourceStore.getState().src}`, updatedState);
         set(updatedState);
     },
 
-    setPairState: (target, value) => {
-        if (!get()[target]){
-            dbUpdateProperty("pair-list", "pair-list", get().idb_key, [target], value)
-        }
-        set({ [target]: value }); 
-    },
+    setState: (state, value) => set({ [state]: value }),
 
-    setPairSubState: (target, subTarget, value) => {
-        if (!get()[target][subTarget]){
-            dbUpdateProperty("pair-list", "pair-list", get().idb_key, [target, subTarget], value)
+    // set a store state and update a db entry with idb_key key, usage only for missing data in the entry
+    updatePairData: (target, value) => {
+        if (get().idb_key) {
+            dbUpdateProperty("pair-list", "pair-list", get().idb_key, [target], value);
+            set({ [target]: value });
+            return;
         }
-        set((state) => ({ [target]: {...state[target], [subTarget]: value }}));
+        
+        set({ [target]: value });
     },
 
     onSourceChange: async (priceSourceName, savedPairData, initPairs) => {
         let newData = {};
         const currentState = get();
         const updatedState = {};
-
+        
         if (savedPairData && savedPairData.symbols) {
             newData = savedPairData;
         }
         else { // no pair data saved
             newData = initPairs;
         }
-
+        
         Object.keys(currentState).forEach((key) => { // prevent shallow copy of props
             if (typeof currentState[key] !== 'function') { // prevent setter/getter being removed
                 updatedState[key] = newData[key] ? newData[key] : null;
             }
         });
-
+        
         await saveState(`savedPairStore-${priceSourceName}`, updatedState);
         set(updatedState);
     },

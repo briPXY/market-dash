@@ -74,30 +74,34 @@ export async function loadStateTimed(id) {
 
 // Prop/value updater for JSON db value for all db stores
 export async function dbUpdateProperty(dbName = "", storeName = "", key, path = [], newValue) {
-    const db = await openDB(dbName, 1);
-    const tx = db.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
+    try {
+        const db = await openDB(dbName, 1);
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
 
-    const data = await store.get(key);
+        const data = await store.get(key);
 
-    if (!data) {
-        throw new Error(`Entry with key ${key} not found`);
-    }
-    // drill into the object using the path array
-    let current = data;
-    for (let i = 0; i < path.length - 1; i++) {
-        const segment = path[i];
-        if (!(segment in current)) {
-            current[segment] = {};
+        if (!data) {
+            throw new Error(`Entry with key ${key} not found`);
         }
-        current = current[segment];
+        // drill into the object using the path array
+        let current = data;
+        for (let i = 0; i < path.length - 1; i++) {
+            const segment = path[i];
+            if (!(segment in current)) {
+                current[segment] = {};
+            }
+            current = current[segment];
+        }
+
+        const finalSegment = path[path.length - 1];
+        current[finalSegment] = newValue;
+
+        await store.put(data);
+        await tx.done;
+
+        return true;
+    } catch (e) {
+        e; return false; // silent
     }
-
-    const finalSegment = path[path.length - 1];
-    current[finalSegment] = newValue;
-
-    await store.put(data);
-    await tx.done;
-
-    return data;
 }

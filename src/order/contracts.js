@@ -3,10 +3,11 @@ import { ethers, parseUnits } from "ethers";
 // import { Token } from '@uniswap/sdk-core';
 import { formatPriceInternational, getAvailableRPC } from "../utils/utils";
 import { usePoolStore, useWalletStore } from "../stores/stores";
-import { get2AddressBySymbolsChain } from "../idb/tokenListDB";
+// import { getDoubleTokenInfo } from "../idb/tokenListDB";
 import { Cacheds } from "../constants/environment";
 import { RPC_URLS } from "../constants/constants";
 import { decryptAndLoadUserSecret } from "../utils/user";
+import { isSavedStateExist } from "../idb/stateDB";
 
 const GAS_QUOTER_ABI = [
     "function exactInputSingle((address tokenIn,address tokenOut,uint24 fee,address recipient,uint256 amountIn,uint256 amountOutMinimum,uint160 sqrtPriceLimitX96)) external payable returns (uint256)"
@@ -50,13 +51,28 @@ const V2_FACTORY_CHECKER_ABI = [
     "function getPair(address,address) view returns (address)"
 ]
 
+export async function getTokenDecimals(tokenAddress, provider) {
+    try {
+        const contract = new ethers.Contract(tokenAddress, ["function decimals() view returns (uint8)"], provider);
+        const decimals = await contract.decimals();
+        return Number(decimals);
+    } catch (error) {
+        console.error("Error fetching decimals:", error);
+        return 18; // Fallback to 18 if the call fails
+    }
+}
+
+
 export async function cycleEtherProvider() {
     const rpcUrl = await getAvailableRPC(RPC_URLS.default);
     Cacheds.etherProvider = new ethers.JsonRpcProvider(rpcUrl);
 
     if (useWalletStore.getState().address && useWalletStore.getState().signature && !Cacheds.sepoliaProvider) {
-        const sepoliaRPC = await decryptAndLoadUserSecret("Sepolia RPC", useWalletStore.getState().address, useWalletStore.getState().signature);
-        Cacheds.sepoliaProvider = new ethers.JsonRpcProvider(sepoliaRPC);
+        const savedSepoliaRPC = await isSavedStateExist(`Sepolia RPC_${useWalletStore.getState().address}`);
+        if (savedSepoliaRPC) {
+            const sepoliaRPC = await decryptAndLoadUserSecret("Sepolia RPC", useWalletStore.getState().address, useWalletStore.getState().signature);
+            Cacheds.sepoliaProvider = new ethers.JsonRpcProvider(sepoliaRPC);
+        }
     }
     else {
         return;
@@ -246,128 +262,41 @@ export async function getUniswapQuoteFromContract(amount, inputFrom) {
 export function initDummy() { return null }
 initDummy.props = ["Loading Network", "Loading Pool"]
 
-// const ONE_DAY = 24 * 60 * 60 * 1000
-// const CACHE_NAME = 'uniswap-pool-exists'
-
-/**
- * Check if Uniswap v4 pool exists and cache the result for 24 hours.
- */
-// export async function poolExists(provider, tokenAAddr, tokenBAddr, decimalsA = 18, decimalsB = 18, fee = 3000) {
-//     const cacheKey = `${tokenAAddr}-${tokenBAddr}-${fee}`.toLowerCase()
-
-//     // 1) Try cache
-//     const cache = await caches.open(CACHE_NAME)
-//     const cached = await cache.match(cacheKey)
-
-//     if (cached) {
-//         const data = await cached.json()
-//         if (Date.now() - data.timestamp < ONE_DAY) {
-//             return data.exists // return cached result
-//         }
-//         // expired cache → delete entry
-//         await cache.delete(cacheKey)
-//     }
-
-//     // 2) Run Uniswap SDK check
-//     const tokenA = new Token(1, tokenAAddr, decimalsA)
-//     const tokenB = new Token(1, tokenBAddr, decimalsB)
-
-//     const poolManager = new PoolManager(provider)
-
-//     let exists = false
-//     try {
-//         const poolId = await poolManager.getPoolId({
-//             currency0: tokenA,
-//             currency1: tokenB,
-//             fee,
-//             tickSpacing: 60,
-//             hooks: ethers.ZeroAddress
-//         })
-
-//         const liquidity = await poolManager.getLiquidity(poolId)
-//         exists = liquidity > 0n // bigint compare
-//     } catch {
-//         exists = false
-//     }
-
-//     // 3) Save to cache
-//     await cache.put(
-//         cacheKey,
-//         new Response(JSON.stringify({ exists, timestamp: Date.now() }), {
-//             headers: { 'Content-Type': 'application/json' }
-//         })
-//     )
-
-//     return exists
-// }
-
-
-export async function getPoolVersionInfo(provider, pairObj) {
-    const code = await provider.getCode(pairObj.address)
-    if (code === "0x") return null
-
-    try {
-        const v3Pool = new ethers.Contract(pairObj.address, ["function fee() view returns (uint24)"], provider)
-        const [fee] = await Promise.all([v3Pool.fee(), v3Pool.token0(), v3Pool.token1()]);
-        if (!pairObj.feeTier) {
-            usePoolStore.getState().setSingleState("feeTier", fee);
-        }
-        if (!pairObj.version) {
-            usePoolStore.getState().setSingleState("version", "V3");
-        }
-        return true;
-    } catch (e) { e }
-
-    try {
-        const v2Pair = new ethers.Contract(pairObj.address, ["function getReserves() view returns (uint112,uint112,uint32)"], provider)
-        await Promise.all([v2Pair.getReserves()])
-        if (!pairObj.version) {
-            usePoolStore.getState().setSingleState("version", "V2");
-        }
-        if (!pairObj.feeTier) {
-            usePoolStore.getState().setSingleState("feeTier", 3000);
-        }
-    } catch (e) { e }
-
-    return true;
-}
 
 export async function validateUniswapPoolExist(pairObj, blockchain, chainId) {
-    const factories = UNISWAP_FACTORIES[chainId]
-    if (!factories) return null;
+    const factories = UNISWAP_FACTORIES[chainId];
     const provider = Cacheds.etherProvider;
+    if (!factories) return null;
 
-    if (pairObj.address) { // check if it have uniswap pool address
-        const poolInfo = await getPoolVersionInfo(provider, pairObj.address);
-        return poolInfo;
+    // check if already have validatedInfo
+    if (usePoolStore.getState().validatedInfo) {
+        if (usePoolStore.getState().validatedInfo.v3 || usePoolStore.getState().validatedInfo.v2) {
+            return true;
+        }
     }
 
     let address0 = pairObj.token0.address;
     let address1 = pairObj.token1.address;
-
-    if (!address0 || !address1) {
-        const { address0: dbadd0, address1: dbadd1 } = await get2AddressBySymbolsChain(pairObj.token0.symbol, pairObj.token1.symbol, `${blockchain}:${chainId}`);
-        !address0 ? address0 = dbadd0 : address0;
-        !address1 ? address1 = dbadd1 : address1;
-    }
-    // if address from db not available
-    if (!address0 || !address1) {
+    
+    // if token addresses from token-list db not available
+    if (!address0 || !address1) { 
         return false;
     }
 
-    const [addr0, addrb] = address0.toLowerCase() < address1.toLowerCase() ? [address0, address1] : [address1, address0];
+    const [addr0, addr1] = address0.toLowerCase() < address1.toLowerCase() ? [address0, address1] : [address1, address0];
+    const validatedInfo = {};
+    let isValid = false; 
 
     // V3 (multi-fee)
     if (factories.v3) {
-        const factory = new ethers.Contract(factories.v3, V3_FACTORY_CHECKER_ABI, provider)
-        console.log(pairObj)
+        validatedInfo.v3 = {};
+        const factory = new ethers.Contract(factories.v3, V3_FACTORY_CHECKER_ABI, provider);
         for (const fee of V3_FEES) {
             try {
-                const pool = await factory.getPool(addr0, addrb, fee)
+                const pool = await factory.getPool(addr0, addr1, fee);
                 if (pool !== ethers.ZeroAddress) {
-                    usePoolStore.getState().setSingleState("feeTier", fee);
-                    usePoolStore.getState().setSingleState("version", "V3");
-                    return true;
+                    isValid = true;
+                    validatedInfo.v3[`${fee / 10000}%`] = pool;
                 }
 
             } catch (e) { e }
@@ -376,18 +305,28 @@ export async function validateUniswapPoolExist(pairObj, blockchain, chainId) {
 
     // V2
     if (factories.v2) {
-        console.log(pairObj)
+        validatedInfo.v2 = {};
         try {
             const factory = new ethers.Contract(factories.v2, V2_FACTORY_CHECKER_ABI, provider)
 
-            const pair = await factory.getPair(addr0, addrb)
+            const pair = await factory.getPair(addr0, addr1);
             if (pair !== ethers.ZeroAddress) {
-                usePoolStore.getState().setSingleState("feeTier", 3000);
-                usePoolStore.getState().setSingleState("version", "V2");
-                return true;
+                isValid = true;
+                validatedInfo.v2["0.3%"] = pair;
             }
         } catch (e) { e }
     }
 
-    return false;
+    if (isValid) {
+        await usePoolStore.getState().updatePairData("validatedInfo", validatedInfo);
+    }
+    
+    // cant get fee/version info then use feeTier from its own list (example case: manually-typed pair-list)
+    if (!isValid && pairObj.address) {
+        const fee = usePoolStore.getState().feeTier ? `${Number(usePoolStore.getState().feeTier) / 10000}%` : "0.3%";
+        await usePoolStore.getState().updatePairData("validatedInfo", { v3: { [fee]: pairObj.address } });
+        isValid = true;
+    }
+
+    return isValid;
 }
