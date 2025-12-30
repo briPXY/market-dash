@@ -25,6 +25,15 @@
     align-items: center;
 }
 
+@layer utilities {
+    .text-xxs {
+        font-size: 0.625rem;
+        /* 10px */
+        line-height: 1rem;
+        /* Optional: control the leading */
+    }
+}
+
 html {
     scroll-behavior: smooth;
 }

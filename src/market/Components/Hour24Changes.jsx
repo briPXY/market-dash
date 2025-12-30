@@ -36,7 +36,7 @@ export const Hour24Changes = () => {
     }, [hour24data, invertedStatus]);
 
     return (
-        <div className="flex flex-col items-start md:flex-row md:gap-7">
+        <div className="flex flex-col items-start md:flex-row gap-2 md:gap-7">
             <CardValueChange num={priceChanges.change} baseNum={0} text={`24h Changes`} />
             <CardValueChange num={priceChanges.percent} baseNum={0} unit={'%'} text="Changes" />
             <CardValueChange num={formatPrice(priceChanges.low.toString())} baseNum={priceChanges.low + 100} text={`Low 24h`} />

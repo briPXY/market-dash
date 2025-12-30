@@ -1,45 +1,41 @@
-export async function getFiatRate(symbol) {
-	if (!symbol) return;
-	
-	symbol = symbol.toLowerCase();
-	const geckoSym = {
-		eth: 'ethereum',
-		weth: 'wth',
-		usdt: 'tether',
-		wbtc: 'wrapped-bitcoin',
-		btc: 'bitcon',
-		usdc: 'usd-coin',
-		dai: 'dai',
-	}; 
+const activeIntervals = {};
 
-	if (!geckoSym[symbol]) {
-		return null;
-	}
+export async function getCoinGeckoFiatRate(symbol, fiatSymbol){
+    const res = await fetch(`https://min-api.cryptocompare.com/data/price?fsym=${symbol.toUpperCase()}&tsyms=${fiatSymbol.toUpperCase()}`); 
 
-	const priceApis = [
-		async () => {
-			const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${geckoSym[symbol]}&vs_currencies=usd`);
-			const data = await res.json();
-			return data[geckoSym[symbol]].usd;
-		},
-		async () => {
-			const res = await fetch(`https://min-api.cryptocompare.com/data/price?fsym=${symbol.toUpperCase()}&tsyms=USD`);
-			const data = await res.json();
-			return data.USD;
-		}
-	];
+    if (!res.ok) throw new Error("Network response was not ok"); 
+   
+    const data = await res.json();
+    return data[fiatSymbol.toUpperCase()];
+}
 
-	let price = null;
-	for (const api of priceApis) {
-		try {
-			price = await api();
-			if (price) break;
-		} catch (e) {
-			e;
-		}
-	}
+export async function startFiatRateUpdater(symbol, fiatSymbol = "USD", iv = "iv0", callBack = () => { }) {
+    if (activeIntervals[iv]) {
+        return;
+    }
 
-	if (!price) throw new Error('Failed to get fiat price');
+    const fetchPrice = async () => {
+        try {
+            const price = await getCoinGeckoFiatRate(symbol, fiatSymbol);
 
-	return parseFloat(price);
+            if (price) {
+                callBack(parseFloat(price));
+            }
+        } catch (error) {
+            console.error(`Fiat Rate Error (${symbol}):`, error);
+        } finally {
+            activeIntervals[iv] = setTimeout(fetchPrice, 60000);
+        }
+    };
+
+    activeIntervals[iv] = true; // prevent double call from useStrict mode
+    fetchPrice();
+
+}
+
+export function stopFiatRate(iv = "iv0") {
+    if (activeIntervals[iv]) {
+        clearTimeout(activeIntervals[iv]);
+        delete activeIntervals[iv];
+    }
 }

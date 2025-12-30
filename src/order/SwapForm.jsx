@@ -30,12 +30,12 @@ function SwapForm({ handleSellChange, sellAmount, buyAmount, handleBuyChange, ha
                             pattern="[0-9]*[.,]?[0-9]*"
                             value={sellAmount}
                             onChange={(e) => handleSellChange(e.target.value)}
-                            className="px-0 py-2 outline-0 focus-within:brightness-125 font-medium w-full text-xl decoration-0"
+                            className="px-0 py-2 outline-0 focus-within:brightness-125 font-semibold w-full text-xl decoration-0"
                         />
                         <TokenIcon symbol={stdSymbol(currentTokenIn?.symbol)?.toLowerCase()} fallback={"/icon-fallback.jpg"} size={32} color="#fff" variant="branded" />
                         <span className="ml-1 text-sm">{currentTokenIn?.symbol}</span>
                     </div>
-                    <FiatValue symbol={currentTokenIn?.symbol} value={sellAmount} />
+                    <FiatValue fiatRateSymbol={reversed ? "fiatRateSymbol0" : "fiatRateSymbol1"} value={sellAmount} />
                 </div>
 
                 <button
@@ -58,12 +58,12 @@ function SwapForm({ handleSellChange, sellAmount, buyAmount, handleBuyChange, ha
                             pattern="[0-9]*[.,]?[0-9]*"
                             value={buyAmount}
                             onChange={(e) => handleBuyChange(e.target.value)}
-                            className="px-0 py-2 outline-0 focus-within:brightness-125 font-medium w-full text-xl decoration-0"
+                            className="px-0 py-2 outline-0 focus-within:brightness-125 font-semibold w-full text-xl decoration-0"
                         />
                         <TokenIcon symbol={stdSymbol(currentTokenOut?.symbol)?.toLowerCase()} fallback={"/icon-fallback.jpg"} size={32} color="#fff" variant="branded" />
                         <span className="ml-1 text-sm">{currentTokenOut?.symbol}</span>
                     </div>
-                    <FiatValue symbol={currentTokenOut?.symbol} value={buyAmount} />
+                    <FiatValue fiatRateSymbol={reversed ? "fiatRateSymbol1" : "fiatRateSymbol0"} value={buyAmount} />
                 </div>
             </div>
 

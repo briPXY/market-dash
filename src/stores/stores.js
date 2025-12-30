@@ -1,14 +1,32 @@
 import { dbUpdateProperty, loadState, saveState } from "../idb/stateDB";
 import { create } from "zustand";
+import { persist } from 'zustand/middleware';
 import { initToken } from "../constants/initData";
 import { updateMissingPairInfo } from "../idb/tokenListDB";
 
-export const usePriceStore = create((set) => ({
-    trade: 0,
-    index: 0,
-    setTradePrice: (price) => set({ trade: price }),
-    setIndexPrice: (price) => set({ index: price }),
-}));
+export const usePriceStore = create(
+    persist(
+      (set) => ({
+        trade: 0,
+        index: 0,
+        fiatRateSymbol0: 0,
+        fiatRateSymbol1: 0,
+        fiatSymbol: "USD",
+  
+        setTradePrice: (price) => set({ trade: price }),
+        setIndexPrice: (price) => set({ index: price }),
+        setFiat0: (price) => set({ fiatRateSymbol0: price }),
+        setFiat1: (price) => set({ fiatRateSymbol1: price }),
+        setSymbol: (symbol) => set({ fiatSymbol: symbol }),
+      }),
+      {
+        name: 'price-storage',
+        partialize: (state) => ({ 
+          fiatSymbol: state.fiatSymbol 
+        }),
+      }
+    )
+  );
 
 export const useNetworkStore = create((set) => ({
     chain: "ethereum", // blockchain 
@@ -69,13 +87,13 @@ export const usePoolStore = create((set, get) => ({
         const { updatedToken0, updatedToken1 } = await updateMissingPairInfo(obj, useNetworkStore.getState().chain, useNetworkStore.getState().chainId);
         obj.token0 = updatedToken0;
         obj.token1 = updatedToken1;
-        
+
         Object.keys(currentState).forEach((key) => {
             if (typeof currentState[key] !== 'function') { // prevent setter/getter being removed
                 updatedState[key] = obj[key] ? obj[key] : null;
             }
         });
-        
+
         await saveState(`savedPairStore-${useSourceStore.getState().src}`, updatedState);
         set(updatedState);
     },
@@ -89,7 +107,7 @@ export const usePoolStore = create((set, get) => ({
             set({ [target]: value });
             return;
         }
-        
+
         set({ [target]: value });
     },
 
@@ -97,20 +115,20 @@ export const usePoolStore = create((set, get) => ({
         let newData = {};
         const currentState = get();
         const updatedState = {};
-        
+
         if (savedPairData && savedPairData.symbols) {
             newData = savedPairData;
         }
         else { // no pair data saved
             newData = initPairs;
         }
-        
+
         Object.keys(currentState).forEach((key) => { // prevent shallow copy of props
             if (typeof currentState[key] !== 'function') { // prevent setter/getter being removed
                 updatedState[key] = newData[key] ? newData[key] : null;
             }
         });
-        
+
         await saveState(`savedPairStore-${priceSourceName}`, updatedState);
         set(updatedState);
     },

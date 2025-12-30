@@ -10,7 +10,7 @@ import { Hour24Changes } from "./Components/Hour24Changes";
 import { PairSelector } from "./Components/PairSelector";
 import { NetworkSelection } from "./Components/NetworkSelection";
 import { LoadSymbol } from "./Components/LoadSymbol";
-import { PoolAddressView } from "./Components/PoolAddressView";
+// import { PoolAddressView } from "./Components/PoolAddressView";
 import { SwapHistory } from "./SwapHistory";
 import Swap from "../order/Swap";
 import { PriceSample } from "../utils/price.math";
@@ -44,15 +44,15 @@ function Market() {
             <LoadSymbol />
             <Flex className="flex-col gap-1">
                 <Flex className="justify-between flex-row gap-1 md:gap-3 bg-primary-900 p-2 py-4 md:p-3 md:items-center">
-                    <Flex className="gap-2 md:gap-5 items-center text-sm md:text-lg font-semibold">
+                    <Flex className="gap-2 items-center text-sm md:text-lg font-semibold">
                         <PairSelector />
                         <LivePriceText OHLCData={invertedStatus ? invertedHistorical : data?.ohlc} />
-                        <PoolAddressView />
+                        {/* <PoolAddressView /> */}
                     </Flex>
                     <div className="hidden md:block">
                         <Hour24Changes />
                     </div>
-                    <PopoverButton className="md:hidden" showClass="w-max p-2 rounded-md h-fit top-[100%] bg-primary-500 right-0 z-25">
+                    <PopoverButton className="md:hidden" showClass="w-max p-6 rounded-md h-fit top-[100%] bg-primary-500 right-0 z-25">
                         <button className="text-xs text-washed">24h Changes<span className="text-[12px] px-1 text-washed-dim">▼</span></button>
                         <Hour24Changes />
                     </PopoverButton>

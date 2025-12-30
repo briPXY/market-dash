@@ -249,6 +249,9 @@ ChainId.ethereum = {
     31337: "hardhat",
 };
 
+export const FiatSymbol = {
+    "USD": "$"
+};
 
 export const Traders = {};
 
