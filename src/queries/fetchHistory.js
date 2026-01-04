@@ -62,8 +62,8 @@ export async function UniswapV3Historical(symbolStoreObj, interval, network = "u
 
         const data = await response.json();
 
-        if (!data) {
-            throw new Error("Invalid data received");
+        if (!data || !response.ok) {
+            throw new Error("No data received");
         }
 
         data.data[poolInterval[interval]].reverse(); // Beucause it's desc in graphql query.
@@ -79,7 +79,7 @@ export async function UniswapV3Historical(symbolStoreObj, interval, network = "u
             trades: 0,   // Dummy value
             volume: Number(parseFloat(entry.volumeUSD)),
         }));
-
+        
         if (data.data.swaps) {
             const swapHistory = formatSwapData(data.data.swaps);
 

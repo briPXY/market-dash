@@ -4,6 +4,7 @@ import { calculateHistoricalChange } from "../../utils/price.math";
 import { useAppInitStore, usePoolStore, usePriceInvertStore, useSourceStore } from "../../stores/stores";
 import { formatPrice, invertedHistoricalPrices } from "../../utils/utils";
 import { useQuery } from "@tanstack/react-query";
+import { QueryCacheDB } from "../../idb/stateDB";
 
 export const Hour24Changes = () => {
     const pairSymbols = usePoolStore(state => state.symbols);
@@ -13,7 +14,19 @@ export const Hour24Changes = () => {
         queryKey: ["24HourHistorical", pairSymbols],
         queryFn: async () => {
             try {
+                const dbKey = ["24HourHistorical", useSourceStore.getState().src, pairSymbols];
+                const cachedData = await QueryCacheDB.getItem("price_query_cache", dbKey);
+
+                if (cachedData) {
+                    return cachedData;
+                }
+
                 const data = await useSourceStore.getState().data.h24Query(usePoolStore.getState(), useSourceStore.getState().src);
+
+                if (data && data.length > 1){
+                    await QueryCacheDB.setItem("price_query_cache", dbKey, data, 21600000); // Cache 24h data for 6 hour
+                }
+
                 return data; // Apply transformation if provided
             } catch (e) {
                 console.error(e);

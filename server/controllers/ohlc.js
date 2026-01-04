@@ -34,6 +34,11 @@ export default async function ohlc(fastify) {
 
             const ohlcData = await Subgraphs[traderChainId].queryOHLC(address, time, apiKey, Subgraphs[traderChainId].id);
 
+            if (!ohlcData || (Array.isArray(ohlcData) && ohlcData.length === 0)) {
+                reply.header('Cache-Control', 'public, max-age=0');
+                return reply.code(204).send();
+            }
+
             reply.header('Cache-Control', 'public, max-age=600'); // 10 minutes
 
             return reply.send({

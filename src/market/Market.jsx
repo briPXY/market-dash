@@ -5,7 +5,7 @@ import MarketChart from "./MarketChart";
 import { PriceUpdater } from './PriceUpdater';
 import { useChartQuery } from "../queries/chartquery";
 import { LivePriceText } from "./Components/LivePriceText";
-import { usePoolStore, usePriceInvertStore } from "../stores/stores";
+import usePriceStore, { usePoolStore, usePriceInvertStore } from "../stores/stores";
 import { Hour24Changes } from "./Components/Hour24Changes";
 import { PairSelector } from "./Components/PairSelector";
 import { NetworkSelection } from "./Components/NetworkSelection";
@@ -19,24 +19,25 @@ import { PopoverButton } from "../Layout/Elements";
 
 function Market() {
     const [range, setRange] = useState("1h");
-    const symbols = usePoolStore(state => state.symbols);
     const invertedStatus = usePriceInvertStore((state) => state.priceInvert);
 
-    const { data, isError, error, isFetching } = useChartQuery({ symbols, symbolStoreObj: usePoolStore.getState(), interval: range });
+    const { data, isError, error, isFetching } = useChartQuery({ symbolStoreObj: usePoolStore.getState(), interval: range });
 
     useEffect(() => {
-        if (!isError && data?.length > 0) {
-            PriceSample.historical = data?.ohlc[0].close;
+        if (!isError && data?.ohlc.length > 0) {
+            const sample = data?.ohlc[0].close;
+            PriceSample.historical = sample;
+            usePriceStore.getState().setDecimalCount(data?.ohlc[0].close);
+            usePriceStore.getState().setTradePrice(data?.ohlc[data?.ohlc.length - 1].close);
         }
 
     }, [data, isError]); // Dependencies: runs whenever `data` or `isError` changes
-
+    
     const invertedHistorical = useMemo(() => {
         if (invertedStatus) {
             return invertedHistoricalPrices(data?.ohlc)
         }
-    }
-        , [data, invertedStatus]);
+    }, [data, invertedStatus]);
 
     return (
         <div>
