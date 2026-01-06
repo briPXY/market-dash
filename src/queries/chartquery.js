@@ -4,7 +4,8 @@ import { useMemo } from "react";
 import { initData } from "../constants/initData.js";
 import { MissingAPIKeyError } from "../constants/environment.js";
 import { usePoolStore, useSourceStore } from "../stores/stores.js";
-import { QueryCacheDB } from "../idb/stateDB.js";
+import { GetKey, loadState, QueryCacheDB, saveState } from "../idb/stateDB.js";
+import { invertedHistoricalPricesMutate } from "../utils/utils.js";
 
 /**
  * Custom React Query hook to fetch and process candlestick data.
@@ -28,21 +29,42 @@ const useChartQuery = ({ interval, symbolStoreObj }) => {
         queryKey: queryKey,
         queryFn: async () => {
             try {
+                let data, samplePrice;
+                let shouldReversed = false; // reverse to follow order of fetch price (real order from contract call)
+                let tickPrice = await loadState(GetKey.tickSample(priceSource, symbols));
                 const cachedData = await QueryCacheDB.getItem("price_query_cache", queryKey);
 
-                if (cachedData) {
-                    return cachedData;
+                if (!cachedData) {
+                    data = await useSourceStore.getState().data.ohlcFetch(symbolStoreObj, interval, priceSource);
+                    if (!data.ohlc || data.ohlc.length <= 1) throw new Error("No data is retrieved");
+                    samplePrice = Number(data.ohlc[0].close);
+                }
+                else {
+                    samplePrice = Number(cachedData.ohlc[0].close);
                 }
 
-                const data = await useSourceStore.getState().data.ohlcFetch(symbolStoreObj, interval, priceSource);
+                if (!tickPrice) {
+                    tickPrice = await useSourceStore.getState().data.fetchPrice(usePoolStore.getState());
+                }
 
-                if (!data.ohlc || data.ohlc.length <= 1) throw new Error("No data is retrieved");
+                // decide if data should reversed or not
+                if (Number(tickPrice)) {
+                    await saveState(GetKey.tickSample(priceSource, symbols), Number(tickPrice));
+                    shouldReversed = Number(tickPrice) < 1 && samplePrice > 1 || Number(tickPrice) > 1 && samplePrice < 1;
+                }
 
-                data.symbols = symbols;
-                await QueryCacheDB.setItem("price_query_cache", queryKey, data, cacheTime);
+                if (shouldReversed) { // reverse original rate on the data
+                    invertedHistoricalPricesMutate(cachedData ? cachedData.ohlc : data.ohlc);
+                }
 
-                return data;
-            } catch (err) {
+                if (!cachedData && data.ohlc.length > 1) {
+                    data.symbols = symbols;
+                    await QueryCacheDB.setItem("price_query_cache", queryKey, data, cacheTime);
+                    return data;
+                }
+
+                return cachedData;
+            } catch (err) {console.error(err)
                 if (err instanceof MissingAPIKeyError) {
                     throw new MissingAPIKeyError(err.message);
                 }

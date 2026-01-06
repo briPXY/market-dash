@@ -68,7 +68,7 @@ export const FormPairSearch = ({ className = '' }) => {
                 onChange={(e) => handleInputWithAbort(e.target.value)}
                 onFocus={() => setIsOpen(true)}
                 onBlur={() => setTimeout(() => setIsOpen(false), 1000)}
-                className="p-2 py-3 bg-primary-100 text-xs font-light rounded-sm w-full">
+                className="p-2 py-3 bg-primary-100 border border-washed-dim text-white font-light text-xs rounded-sm w-full">
             </input>
 
             {/* Popover Content */}

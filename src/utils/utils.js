@@ -79,6 +79,15 @@ export function invertedHistoricalPrices(array) {
     }));
 }
 
+export function invertedHistoricalPricesMutate(array) {
+    array.forEach(item => {
+        item.open = 1 / item.open;
+        item.high = 1 / item.high;
+        item.low = 1 / item.low;
+        item.close = 1 / item.close;
+    });
+}
+
 export function trimmedFloatDigits(num = 0, maxFloatingNonZeros = 2) {
     const floatings = num.toString().match(/\.[0-9]+/)?.[0] || "";
     const leadingZeros = floatings.match(/0+/)?.[0].length || 0;

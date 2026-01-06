@@ -9,7 +9,7 @@ const PriceUpdater = () => {
     const symbols = usePoolStore(state => state.symbols);
     const token0 = usePoolStore(state => state.token0); // subscribe for symbol swapping 
     const fiatSymbol = usePriceStore(state => state.fiatSymbol);
-    const initDone = useAppInitStore(state=>state.initDone)
+    const initDone = useAppInitStore(state => state.initDone);
 
     useEffect(() => {
         if (symbols == "init" || !symbols) return;

@@ -12,7 +12,7 @@ export const UniswapOptionPanel = ({ validity }) => {
         usePoolStore.getState().setState("address", uniswapOptions[version][fee]);
     }, [uniswapOptions])
 
-    const activeStyle = { fontWeight: 700, color: "var(--c-primary)", background: "var(--c-primary-100)" }
+    const activeStyle = { fontWeight: 700, background: "var(--c-primary)", color: "var(--c-primary-900)" }
 
     useEffect(() => {
         if (uniswapOptions) {
@@ -27,16 +27,16 @@ export const UniswapOptionPanel = ({ validity }) => {
     }
 
     return (
-        <PopoverButton className='flex-1'>
+        <PopoverButton className='flex-1' showClass = "w-full h-full top-[100%] right-[20%] z-15">
             <button className='text-xs rounded-sm border border-primary-100 bg-primary-500 w-full p-1 px-2'>{`${versionFee[0]} (fee: ${versionFee[1]})`}</button>
-            <div>
+            <div className='p-1 pt-3 rounded-md bg-primary-500 border border-primary-100 shadow-md w-[120%]'>
                 {Object.keys(uniswapOptions).map(e => (
-                    <div className='flex p-2 border rounded-md bg-primary-500 border-primary-100' key={e}>
+                    <div className='flex mt-0.5' key={e}>
                         <div className='font-semibold text-washed p-1 gap-3'>{e}</div>
-                        <div className='flex flex-1'>
+                        <div className='flex flex-1 rounded-md'>
                             {Object.keys(uniswapOptions[e]).map(fee => (
                                 <button
-                                    className='p-1 flex-1 rounded-md bg-primary-500'
+                                    className='p-1 m-0.5 flex-1 rounded-sm border border-primary-100 bg-primary-500'
                                     style={e == versionFee[0] && fee == versionFee[1] ? activeStyle : {}}
                                     onClick={() => setFee(e, fee)} key={fee}>
                                     {fee}

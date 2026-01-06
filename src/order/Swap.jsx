@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { usePoolStore, usePriceInvertStore, usePriceStore, useSourceStore} from "../stores/stores";
+import { usePoolStore, usePriceInvertStore, usePriceStore, useSourceStore } from "../stores/stores";
 import SwapForm from "./SwapForm";
 import { formatPrice } from "../utils/utils";
-import { swapDecimalRule} from "../constants/constants";
+import { swapDecimalRule } from "../constants/constants";
 import SwapQuotesPanel from "./SwapQuotesPanel";
 import { TraderPlatform } from "./TraderPlatform";
 
@@ -45,9 +45,7 @@ export default function Swap() {
         setSellAmount(cleaned);
 
         if (!isNaN(numeric)) {
-            const isReversed = usePriceInvertStore.getState().priceInvert;
-            const amount = isReversed ? numeric / currentRate : numeric * currentRate;
-            const formatted = formatPrice(amount.toFixed(24).toString(), false, swapDecimalRule);
+            const formatted = formatPrice((numeric / currentRate).toFixed(24).toString(), false, swapDecimalRule);
             setBuyAmount(formatted);
         } else {
             setBuyAmount(0); // fallback
@@ -63,9 +61,7 @@ export default function Swap() {
         setBuyAmount(cleaned);
 
         if (!isNaN(numeric)) {
-            const isReversed = usePriceInvertStore.getState().priceInvert;
-            const amount = isReversed ? numeric * currentRate : numeric / currentRate;
-            const formatted = formatPrice(amount.toFixed(24).toString(), false, swapDecimalRule);
+            const formatted = formatPrice((numeric * currentRate).toFixed(24).toString(), false, swapDecimalRule);
             setSellAmount(formatted);
         } else {
             setSellAmount(0); // fallback
@@ -87,7 +83,7 @@ export default function Swap() {
                 handleChangeSymbols={handleChangeSymbols}
                 isDEX={useSourceStore.getState().isDEX ?? null}
             />
-            <TraderPlatform/>
+            <TraderPlatform />
             <SwapQuotesPanel
                 amount={inputFrom.current == "sellInput" ? sellAmount : buyAmount}
                 inputFrom={inputFrom.current}

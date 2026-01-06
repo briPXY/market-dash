@@ -13,7 +13,6 @@ import { LoadSymbol } from "./Components/LoadSymbol";
 // import { PoolAddressView } from "./Components/PoolAddressView";
 import { SwapHistory } from "./SwapHistory";
 import Swap from "../order/Swap";
-import { PriceSample } from "../utils/price.math";
 import { invertedHistoricalPrices } from "../utils/utils";
 import { PopoverButton } from "../Layout/Elements";
 
@@ -23,21 +22,20 @@ function Market() {
 
     const { data, isError, error, isFetching } = useChartQuery({ symbolStoreObj: usePoolStore.getState(), interval: range });
 
-    useEffect(() => {
-        if (!isError && data?.ohlc.length > 0) {
-            const sample = data?.ohlc[0].close;
-            PriceSample.historical = sample;
-            usePriceStore.getState().setDecimalCount(data?.ohlc[0].close);
-            usePriceStore.getState().setTradePrice(data?.ohlc[data?.ohlc.length - 1].close);
-        }
-
-    }, [data, isError]); // Dependencies: runs whenever `data` or `isError` changes
-    
     const invertedHistorical = useMemo(() => {
         if (invertedStatus) {
-            return invertedHistoricalPrices(data?.ohlc)
+            return invertedHistoricalPrices(data?.ohlc);
         }
     }, [data, invertedStatus]);
+
+    useEffect(() => {
+        if (!isError && data?.ohlc.length > 0) {
+            const historical = invertedStatus ? invertedHistorical : data.ohlc;
+            usePriceStore.getState().setDecimalCount(historical[0].close);
+            usePriceStore.getState().setTradePrice(historical[historical.length - 1].close);
+        }
+
+    }, [data, invertedHistorical, invertedStatus, isError]); // Dependencies: runs whenever `data` or `isError` changes
 
     return (
         <div>

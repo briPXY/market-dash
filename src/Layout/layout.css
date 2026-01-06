@@ -13,11 +13,12 @@
     font-weight: 400;
     font-size: 18px;
     --menu-size: 14px;
-    color: #dddddd;
+    color: #d9d9d9;
     --display-txt-color: #eee;
 
     --panel-background: #0f0f14;
 
+    --c-white: #d9d9d9;
     --c-primary: #5e81eb;
     --c-primary-100: #202535;
     --c-primary-500: #171a23;

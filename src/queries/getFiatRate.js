@@ -23,6 +23,7 @@ export async function startFiatRateUpdater(symbol, fiatSymbol = "USD", iv = "iv0
             }
         } catch (error) {
             console.error(`Fiat Rate Error (${symbol}):`, error);
+            callBack(null);
         } finally {
             activeIntervals[iv] = setTimeout(fetchPrice, 60000);
         }

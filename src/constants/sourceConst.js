@@ -24,6 +24,7 @@ SourceConst["uniswap:1"] = { // name must resemble indexeDB's pair-list
     h24Query: UniswapV3_24h,
     getLivePriceURL: (poolAddress) => `${WSS_DOMAIN}/liveprice/UniswapV3/${poolAddress}`,
     quoteFunction: getUniswapQuoteFromContract,
+    followWeb3TokenOrder: true,
 };
 
 // uniswap Sepolia testnet
@@ -42,6 +43,7 @@ SourceConst["uniswap:11155111"] = {
     h24Query: UniswapV3_24h,
     getLivePriceURL: (poolAddress) => `${WSS_DOMAIN}/liveprice/UniswapV3Sepolia/${poolAddress}`,
     quoteFunction: getUniswapQuoteFromContract,
+    followWeb3TokenOrder: true,
 };
 
 // Binance (this is CEX price source not L2 chain like BSC)

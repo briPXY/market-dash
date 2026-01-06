@@ -9,6 +9,9 @@ const dbPromise = openDB('dex-market-database', 1, {
     },
 });
 
+export const GetKey = {
+    tickSample: (oracle, symbols) => `tickSample_${oracle}_${symbols}`,
+}
 // Save state as a string
 export async function saveState(id, state) {
     try {
@@ -180,7 +183,7 @@ export const QueryCacheDB = {
             const db = await queryPersistDB;
             const tx = db.transaction(store, 'readwrite');
             const index = tx.store.index('by_expiry');
-            
+
             // Find everything where expiresAt <= current timestamp
             const range = IDBKeyRange.upperBound(Date.now());
             let cursor = await index.openCursor(range);

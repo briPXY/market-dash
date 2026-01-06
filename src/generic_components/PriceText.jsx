@@ -6,7 +6,8 @@ export function PriceText({ input, isRaw = false, className, style = {} }) {
     const invertedStatus = usePriceInvertStore((state) => state.priceInvert);
 
     const price = useMemo(() => {
-        const priceString = invertedStatus ? (1 / input).toString() : input;
+        if (!input) return '-';
+        const priceString = invertedStatus ? (1 / input).toString() : input.toString();
         return formatPrice(priceString, isRaw);
     }, [input, invertedStatus, isRaw]);
 

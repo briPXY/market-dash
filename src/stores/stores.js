@@ -6,27 +6,42 @@ import { updateMissingPairInfo } from "../idb/tokenListDB";
 
 export const usePriceStore = create(
     persist(
-      (set) => ({
-        trade: 0,
-        index: 0,
-        fiatRateSymbol0: 0,
-        fiatRateSymbol1: 0,
-        fiatSymbol: "USD",
-  
-        setTradePrice: (price) => set({ trade: price }),
-        setIndexPrice: (price) => set({ index: price }),
-        setFiat0: (price) => set({ fiatRateSymbol0: price }),
-        setFiat1: (price) => set({ fiatRateSymbol1: price }),
-        setSymbol: (symbol) => set({ fiatSymbol: symbol }),
-      }),
-      {
-        name: 'price-storage',
-        partialize: (state) => ({ 
-          fiatSymbol: state.fiatSymbol 
+        (set) => ({
+            trade: 0,
+            index: 0,
+            fiatRateSymbol0: 0,
+            fiatRateSymbol1: 0,
+            fiatSymbol: "USD",
+            decimalCount: 2,
+
+            setTradePrice: (price) => set({ trade: price }),
+            setIndexPrice: (price) => set({ index: price }),
+            setFiat0: (price) => set({ fiatRateSymbol0: price }),
+            setFiat1: (price) => set({ fiatRateSymbol1: price }),
+            setSymbol: (symbol) => set({ fiatSymbol: symbol }),
+            setDecimalCount: (sample) => {
+                let count = 2, leading0 = 0;
+                const decimalDigits = String(sample).split('.')[1];
+
+                if (decimalDigits) {
+                    leading0 = decimalDigits.match(/^0+/);
+                }
+
+                if (leading0) {
+                    count = leading0[0].length + 2;
+                }
+
+                set({ decimalCount: count });
+            }
         }),
-      }
+        {
+            name: 'price-storage',
+            partialize: (state) => ({
+                fiatSymbol: state.fiatSymbol
+            }),
+        }
     )
-  );
+);
 
 export const useNetworkStore = create((set) => ({
     chain: "ethereum", // blockchain 
@@ -42,12 +57,12 @@ export const useSourceStore = create((set) => ({
     src: null,
     data: null,
     setSaved: (bool) => { set({ saved: bool }) },
-    setSrc: async (value, sourceConstObj) => { // Now must include source constant obj to prevent access init error
+    setSrc: async (value, oraclesList) => { // Now must include source constant obj to prevent access init error
         await saveState(`savedSource`, value);
-        await saveState(`savedSource.data`, sourceConstObj[value]);
+        await saveState(`savedSource.data`, oraclesList[value]);
         const savedPairData = await loadState(`savedPairStore-${value}`);
-        usePoolStore.getState().onSourceChange(value, savedPairData, sourceConstObj[value].initPairs[0]);
-        set({ src: value, init: false, saved: true, data: sourceConstObj[value] });
+        usePoolStore.getState().onSourceChange(oraclesList[value], savedPairData);
+        set({ src: value, init: false, saved: true, data: oraclesList[value] });
     },
 }));
 
@@ -60,14 +75,17 @@ export const useTradingPlatformStore = create((set) => ({
 }));
 
 export const usePoolStore = create((set, get) => ({
+    // all non-key props are mutable in one batch
     idb_key: null, // read-only
-    address: null, // 
+    address: null,
     symbols: "init", // read-only
-    token0: initToken[0].token0, // switchable
-    token1: initToken[0].token1, // switchable
+    token0: initToken[0].token0,
+    token1: initToken[0].token1,
     feeTier: null,
-    liquidity: null, // read-only unless updating from null
+    liquidity: null, // read-only?
     validatedInfo: null,
+    premutated: null,
+    tokenOrderSwapped: null,
 
     getAll: () => {
         return Object.entries(get())
@@ -76,17 +94,18 @@ export const usePoolStore = create((set, get) => ({
             .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
     },
 
-    // pair changes, set whole prop without shallow set
-    // get extra tokens infos from token-list db (if exist)
+    // Set whole states without shallow set with FRESH data (from db or preloaded pair)
     // set with obj from pair-list db which have object schema similiar to this store's states
     // nullify everything (except setter/getter) that's not match store props
     setPairFromPairObj: async (obj) => {
+        if (!obj || obj.premutated) {
+            console.error("Only pass original pair object");
+            return;
+        }
+
         const currentState = get();
         const updatedState = {};
-        // updates missing token infos
-        const { updatedToken0, updatedToken1 } = await updateMissingPairInfo(obj, useNetworkStore.getState().chain, useNetworkStore.getState().chainId);
-        obj.token0 = updatedToken0;
-        obj.token1 = updatedToken1;
+        // updates missing token infos from token-list db (if exist)
 
         Object.keys(currentState).forEach((key) => {
             if (typeof currentState[key] !== 'function') { // prevent setter/getter being removed
@@ -94,43 +113,63 @@ export const usePoolStore = create((set, get) => ({
             }
         });
 
-        await saveState(`savedPairStore-${useSourceStore.getState().src}`, updatedState);
+        updatedState.premutated = { ...obj };
+
+        const { updatedToken0, updatedToken1 } = await updateMissingPairInfo(obj, useNetworkStore.getState().chain, useNetworkStore.getState().chainId);
+        updatedState.token0 = updatedToken0;
+        updatedState.token1 = updatedToken1;
+        updatedState.orderTokenSwapped = false;
+
+        // Follow web3 standard order (address1 > address0) if live price fetch from web3/smartcontract
+        if (updatedState.token0.address && updatedState.token1.address) {
+            const ordered = updatedToken0.address.toLowerCase() < updatedToken1.address.toLowerCase();
+            const [t0, t1] = ordered ? [updatedToken0, updatedToken1] : [updatedToken1, updatedToken0];
+
+            // only flip if followWeb3TokenOrder explicitly set (true)
+            if (useSourceStore.getState().data?.followWeb3TokenOrder) {
+                updatedState.token0 = t0;
+                updatedState.token1 = t1;
+            }
+            // still need to set so fiat price follow token order
+            updatedState.orderTokenSwapped = ordered ? false : true;
+        }
+
+        if (usePriceInvertStore.getState().priceInvert) { // User triggered flip
+            const temp = updatedState.token0;
+            updatedState.token0 = updatedState.token1;
+            updatedState.token1 = temp;
+        }
+        // Only persist original pair data (db version) because states mutated in runtime 
+        await saveState(`savedPairStore-${useSourceStore.getState().src}`, obj);
         set(updatedState);
     },
 
-    setState: (state, value) => set({ [state]: value }),
+    setState: (state, value) => {
+        if (state != "symbols" && state != "idb_key") {
+            set({ [state]: value })
+        }
+    },
 
-    // set a store state and update a db entry with idb_key key, usage only for missing data in the entry
-    updatePairData: (target, value) => {
+    // Set state that also update original data in db entry 
+    updatePairData: async (target, value) => {
         if (get().idb_key) {
-            dbUpdateProperty("pair-list", "pair-list", get().idb_key, [target], value);
-            set({ [target]: value });
+            await dbUpdateProperty("pair-list", "pair-list", get().idb_key, [target], value);
+        }
+
+        const updatedPremutatedData = { ...get().premutated, [target]: value }; // Since it basically db/original data, value also put in premutated 
+        await saveState(`savedPairStore-${useSourceStore.getState().src}`, updatedPremutatedData);
+        set({ [target]: value, premutated: updatedPremutatedData });
+    },
+
+    onSourceChange: async (oracleData, savedPairData) => {
+        if (savedPairData) {
+            await get().setPairFromPairObj(savedPairData);
             return;
         }
-
-        set({ [target]: value });
-    },
-
-    onSourceChange: async (priceSourceName, savedPairData, initPairs) => {
-        let newData = {};
-        const currentState = get();
-        const updatedState = {};
-
-        if (savedPairData && savedPairData.symbols) {
-            newData = savedPairData;
+        else {
+            await get().setPairFromPairObj(oracleData.initPairs[0]);
+            return;
         }
-        else { // no pair data saved
-            newData = initPairs;
-        }
-
-        Object.keys(currentState).forEach((key) => { // prevent shallow copy of props
-            if (typeof currentState[key] !== 'function') { // prevent setter/getter being removed
-                updatedState[key] = newData[key] ? newData[key] : null;
-            }
-        });
-
-        await saveState(`savedPairStore-${priceSourceName}`, updatedState);
-        set(updatedState);
     },
 
     // internal symbol swapper, only called from setPriceInvert

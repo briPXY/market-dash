@@ -141,7 +141,7 @@ async function _setProvider(network, url, idx) {
     // destroy old one if any
     if (_RPCProviders[network]) {
         _RPCProviders[network].destroy?.();
-        console.log(`Destroyed old provider for ${network}`);
+        console.info(`Destroyed old provider for ${network}`);
     }
 
     const provider = new ethers.JsonRpcProvider(url);
@@ -168,7 +168,6 @@ function _delay(ms) {
 
 export const fetchUniswapPoolPrice = async (network, pairObj) => {
     try {
-        await _delay(Math.floor(Math.random() * (2000 - 100 + 1)) + 100);
         const [, chainId] = network.split(":");
         let provider;
 
@@ -263,7 +262,7 @@ export async function ethereurmLivePriceLoopers(priceSourceObj, pairObj, setPric
 
         if (!_LivePriceLoops[looperName]) return;
 
-        await _delay(8000);
+        await _delay(15000);
 
         if (!_LivePriceLoops[looperName]) return;
     }

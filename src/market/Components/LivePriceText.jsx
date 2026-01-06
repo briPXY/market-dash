@@ -3,7 +3,7 @@ import usePriceStore, { usePriceInvertStore } from "../../stores/stores";
 import { PriceText } from "../../generic_components/PriceText";
 import { SwapIcon } from "../../Layout/svg";
 import { SvgMemo } from "../../Layout/Layout";
-import { FiatSymbol } from "../../constants/constants";
+import { CurrentRateFiatView } from "../../generic_components/CurrentRateFiatView";
 
 export const LivePriceText = ({ OHLCData }) => {
     const setInverted = usePriceInvertStore((fn) => fn.setPriceInvert);
@@ -16,7 +16,6 @@ export const LivePriceText = ({ OHLCData }) => {
     }, [OHLCData]);
 
     const textColor = useMemo(() => Number(tradePrice) >= lastClosePrice ? "text-accent" : "text-accent-negative", [lastClosePrice, tradePrice]);
-    const fiatPrice = invertedStatus ? 1 / (tradePrice / usePriceStore.getState().fiatRateSymbol1) : tradePrice / usePriceStore.getState().fiatRateSymbol0;
 
     return (
         <div className="flex gap-2">
@@ -26,8 +25,8 @@ export const LivePriceText = ({ OHLCData }) => {
                 </SvgMemo>
             </button>
             <div className="flex flex-col gap-0 items-start">
-                <PriceText input={tradePrice?.toString()} className={`leading-5 text-base font-semibold ${textColor}`} />
-                <div className="text-xxs text-washed font-normal"><span className='mr-0.5'>{FiatSymbol[usePriceStore.getState().fiatSymbol]}</span>{fiatPrice.toFixed(2)}</div>
+                <PriceText input={tradePrice} className={`leading-5 text-base font-semibold ${textColor}`} />
+                <CurrentRateFiatView className="flex text-xxs text-washed font-normal" />
             </div>
         </div>
     );

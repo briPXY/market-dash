@@ -20,7 +20,7 @@ export const PairSelector = () => {
         <PopoverButton showClass={"bg-primary-500 w-[85vw] md:w-90 h-fit top-[100%] p-1 py-2 left-0 z-65 rounded-md"}>
             <div className="flex cursor-pointer font-medium items-center gap-1 justify-start p-1 md:pr-4 bg-primary-500 border border-primary-100 rounded-full px-2 md:px-3 hover:brightness-125">
                 <div className="inline-block font-light text-sm md:text-lg text-start text-nowrap">
-                    {`${stdSymbol(token0?.symbol)} / ${stdSymbol(usePoolStore.getState().token1?.symbol)}`}
+                    {`${token0?.symbol} / ${usePoolStore.getState().token1?.symbol}`}
                 </div>
                 <PairIcon className="w-1/3 flex"
                     symbol0={stdSymbol(token0?.symbol)}
@@ -30,7 +30,7 @@ export const PairSelector = () => {
                     className1="shadow-[0_4px_6px_-1px_rgba(0,0,0,0.5)] rounded-full"
                 />
             </div>
-            <div className="flex flex-col p-1 gap-0">
+            <div className="flex flex-col p-1 py-3 gap-0">
                 {/* <div className="flex items-center mb-1 gap-1 w-full">
                     <FormTokenSearch className="flex-1" target={inverted ? "token0" : "token1"} />
                     <div className="text-washed-dim font-light">/</div>
@@ -48,7 +48,7 @@ export const PairSelector = () => {
                     {priceSrcData && priceSrcData.initPairs.map((pairObj) => (
                         <SymbolSelectorItem
                             key={pairObj.symbols}
-                            pairObj={pairObj}
+                            pairObj={{ ...pairObj }}
                         />
                     ))}
                 </div>
@@ -76,9 +76,16 @@ const SymbolSelectorItem = ({ pairObj }) => {
                 return;
             }
 
+            if (useSourceStore.getState().data?.followWeb3TokenOrder && pairObj.token0.address && pairObj.token1.address) {
+                const [t0, t1] = pairObj.token0.address.toLowerCase() < pairObj.token1.address.toLowerCase() ? [pairObj.token0, pairObj.token1] : [pairObj.token1, pairObj.token0];
+                pairObj.token0 = t0;
+                pairObj.token1 = t1;
+            }
+
             await delay(Math.floor(Math.random() * (2000 - 100 + 1)) + 100);
             const livePrice = await priceSrcData.fetchPrice(pairObj);
             setPrice(livePrice.toString());
+
             localStorage.setItem(`rtick-${pairObj.symbols}`, JSON.stringify({ value: livePrice, timestamp: Date.now() }));
         }
 
@@ -92,7 +99,7 @@ const SymbolSelectorItem = ({ pairObj }) => {
     return (
         <button onClick={() => setPairFromPairObj(pairObj)} className="flex w-full px-3 py-2 hover:brightness-125 rounded-sm bg-primary-500 text-sm items-center justify-between">
             <div className="flex gap-2">
-                <SymbolPair symbol0={stdSymbol(pairObj.token0.symbol)} symbol1={stdSymbol(pairObj.token1.symbol)} className="text-sm" />
+                <SymbolPair symbol0={pairObj.token0.symbol} symbol1={pairObj.token1.symbol} className="text-sm" />
                 <PairIcon symbol0={stdSymbol(pairObj.token0.symbol)} symbol1={stdSymbol(pairObj.token1.symbol)} size={18} spacing="2px" />
             </div>
             <PriceText className="font-medium text-xs" input={price} />

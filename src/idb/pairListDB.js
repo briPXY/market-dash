@@ -110,7 +110,7 @@ export async function createPaiListsDB(pathToDive, sourceURL, priceOracle = "", 
     await tx.done;
 
     localStorage.setItem(`pair-list:${priceOracle}`, "true");
-    console.log(`${priceOracle} pair list database has installed`);
+    console.info(`${priceOracle} pair list database has installed`);
     return true;
 } // v1
 
@@ -149,7 +149,7 @@ export async function searchPairListDoubleIndex(
 
             const record = cursor.value;
             // check for both exchange and uniqueness before pushing
-            if (record.exchange === exchangeName) {
+            if (record.priceOracle === exchangeName) {
                 fastResults.push(record);
                 count++;
 
@@ -228,7 +228,7 @@ export async function searchPairListSingleIndex(
         if (signal.aborted) throw new DOMException("Aborted", "AbortError");
 
         const record = cursor.value;
-        if (record.exchange === exchangeName) {
+        if (record.priceOracle === exchangeName) {
             fastResults.push(record);
             count++;
 
