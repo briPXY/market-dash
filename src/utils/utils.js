@@ -35,6 +35,11 @@ export function isTickPriceReversed(network, pool) {
     }
 }
 
+export function countLeadingDecimalZeros(n) {
+    if (n <= 0 || n >= 1) return 0; // Only for decimals between 0 and 1
+    return Math.abs(Math.floor(Math.log10(n))) - 1;
+}
+
 export function formatPrice(str, isRaw = false, rule = defaultDecimalRule) {
     const num = parseFloat(str);
 
@@ -55,13 +60,21 @@ export function formatPrice(str, isRaw = false, rule = defaultDecimalRule) {
     return Number(num).toFixed(rule.rest);
 }
 
-export function formatPriceInternational(str, rule = { max: 3 }) {
-    const num = parseFloat(str);
-    if (isNaN(num)) return str;
+export function formatPriceInternational(input, rule = { min: 0, max: 6, ignoreLeadingZeroes: true }) {
+    const num = parseFloat(String(input));
+    if (isNaN(num)) return input;
 
+    if (rule.ignoreLeadingZeroes) {
+        return new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: rule.min,
+            maximumFractionDigits: num < 100 ? rule.max : 2,
+        }).format(num);
+    }
+
+    let trailZeroes = countLeadingDecimalZeros(Number(input));
     return new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: num < 100 ? rule.max : 2,
+        minimumFractionDigits: rule.min ?? 0,
+        maximumFractionDigits: trailZeroes + (rule.max ?? 0),
     }).format(num);
 }
 

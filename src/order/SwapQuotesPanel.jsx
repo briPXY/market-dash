@@ -30,7 +30,7 @@ export default function SwapQuotesPanel({ amount, inputFrom }) {
             debouncedUpdate({ inputAmount: amount, inputIsFrom: inputFrom, address: pairAddress });
         }
         return () => debouncedUpdate.cancel();
-    }, [amount, inputFrom, debouncedUpdate, pairAddress, debouncedKeyValues, validatedInfo]);
+    }, [amount, inputFrom, debouncedUpdate, pairAddress, validatedInfo]);
 
     const { data, error, isError, isFetching } = useQuery({
         queryKey: ['tradeQuoteQuery', debouncedKeyValues],
@@ -72,7 +72,7 @@ export default function SwapQuotesPanel({ amount, inputFrom }) {
                                 style={{ fontStyle: isFetching || isDebouncing ? "italic" : "normal", fontWeight: i < 2 ? "700" : "400" }}
                                 key={e}
                             >
-                                {isDebouncing ? "pending" : isFetching ? "fetching" : data[e]}
+                                {isDebouncing ? "..." : isFetching ? "fetching" : data[e]}
                             </div>
                         ))
                     }

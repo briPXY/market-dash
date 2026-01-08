@@ -129,11 +129,11 @@ export async function contractCallWrite({ abi, contractAddress, rpcUrl, method, 
 
         // Call the method with parameters
         const tx = await contract[method](...params);
-        console.log("Transaction sent:", tx.hash);
+        console.info("Transaction sent:", tx.hash);
 
         // Wait for confirmation
         const receipt = await tx.wait();
-        console.log("Transaction mined:", receipt.transactionHash);
+        console.info("Transaction mined:", receipt.transactionHash);
 
         return receipt;
     } catch (error) {
@@ -166,8 +166,12 @@ export async function getUniswapQuoteFromContract(amount, inputFrom) {
 
     const method = inputFrom == "sellInput" ? "quoteExactInputSingle" : "quoteExactOutputSingle";
 
-    const safeAmount = truncateToDecimals(amount, pairStoreObj.token1.decimals || 18)
-    const amountInBase = parseUnits(safeAmount, Number(pairStoreObj.token1.decimals));
+    const decimals0 = pairStoreObj.token0.decimals;
+    const decimals1 = pairStoreObj.token1.decimals;
+
+    const safeAmount = truncateToDecimals(amount, inputFrom == "sellInput" ? decimals1 || 18 : decimals0 || 18)
+    const amountInBase = parseUnits(safeAmount, Number(inputFrom == "sellInput" ? decimals1 || 18 : decimals0 || 18));
+    const decimalRule = { min: 0, max: 4 }
 
     const quoter = new ethers.Contract("0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6", SWAP_QUOTER_ABI[method], Cacheds.etherProvider);
 
@@ -176,13 +180,7 @@ export async function getUniswapQuoteFromContract(amount, inputFrom) {
     let amountOut;
 
     try {
-        amountOut = await quoter[method].staticCall(
-            pairStoreObj.token1.address,
-            pairStoreObj.token0.address,
-            fee,
-            amountInBase,
-            0
-        );
+        amountOut = await quoter[method].staticCall(pairStoreObj.token1.address, pairStoreObj.token0.address, fee, amountInBase, 0);
     } catch (err) {
         console.error(err);
         throw new Error("Failed to fetch on-chain quote");
@@ -205,35 +203,37 @@ export async function getUniswapQuoteFromContract(amount, inputFrom) {
     let gasEstimateUnits = "N/A";
     let gasCostETH = "N/A";
 
-    // Calculation for return object (Existing Code)
-    const decIn = Number(pairStoreObj.token1.decimals ?? 18);
-    const decOut = Number(pairStoreObj.token0.decimals ?? 18);
-
+    // Calculation for return object (Existing Code) 
     const isInputSell = method == "quoteExactInputSingle";
-    const formattedIn = Number(ethers.formatUnits(amountInBase, decIn));
-    const formattedOut = Number(ethers.formatUnits(amountOut, decOut));
-    const executionPrice = formattedOut / formattedIn;
+    // If selling, amountInBase is Token1. If buying, amountInBase is Token0.
 
     // Return the combined result
+    const rawToken1Amount = isInputSell ? amountInBase : amountOut;
+    const rawToken0Amount = isInputSell ? amountOut : amountInBase;
+
+    const formattedToken1 = Number(ethers.formatUnits(rawToken1Amount, Number(decimals1)));
+    const formattedToken0 = Number(ethers.formatUnits(rawToken0Amount, Number(decimals0)));
+
     const sellText = `Sell (${pairStoreObj.token1.symbol})`;
     const receiveText = `Receive (${pairStoreObj.token0.symbol})`;
-    const priceText = `Avg. Price (${pairStoreObj.token1.symbol}/${pairStoreObj.token0.symbol})`;
-    const sellValue = isInputSell ? formattedIn : formattedOut;
-    const buyValue = isInputSell ? formattedOut : formattedIn;
+    const priceText = `Avg. Price (${pairStoreObj.token0.symbol}/${pairStoreObj.token1.symbol})`;
+    const sellValue = formattedToken1; // Always Token 1
+    const buyValue = formattedToken0;  // Always Token 0
+    const executionPrice = sellValue / buyValue;
 
     if (!userAddress) {
         return {
-            [sellText]: `${formatPriceInternational(sellValue.toString())}`,
-            [receiveText]: `${formatPriceInternational(buyValue.toString())}`,
+            [receiveText]: `${formatPriceInternational(buyValue, decimalRule)}`,
+            [sellText]: `${formatPriceInternational(sellValue, decimalRule)}`,
             [priceText]: `${executionPrice.toPrecision(6)}`,
-            "Fee tier": `${fee / 100000}%`,
+            "Fee tier": `${fee / 10000}%`,
             "Est. Gas (Units)": "login needed",
             "Network Cost (ETH)": "login needed"
         };
     }
 
     try {
-        const estimatedGas = await router.exactInputSingle.estimateGas(swapParams, { from: userAddress });
+        const estimatedGas = await router[method].estimateGas(swapParams, { from: userAddress });
         gasEstimateUnits = estimatedGas.toString();
         // Convert Gas Units to ETH Value
         const gasPriceWei = await getEffectiveGasPrice(Cacheds.etherProvider);
@@ -250,12 +250,12 @@ export async function getUniswapQuoteFromContract(amount, inputFrom) {
     }
 
     return {
-        [sellText]: `${formatPriceInternational(sellValue.toString())}`,
-        [receiveText]: `${formatPriceInternational(buyValue.toString())}`,
+        [receiveText]: `${formatPriceInternational(buyValue, decimalRule)}`,
+        [sellText]: `${formatPriceInternational(sellValue, decimalRule)}`,
         [priceText]: `${executionPrice.toPrecision(6)}`,
         "Fee tier": `${fee / 10000}%`,
         "Est. Gas (Units)": gasEstimateUnits,
-        "Network Cost (ETH)": formatPriceInternational(gasCostETH, false, 8)
+        "Network Cost (ETH)": formatPriceInternational(gasCostETH, decimalRule)
     };
 }
 
@@ -277,15 +277,15 @@ export async function validateUniswapPoolExist(pairObj, blockchain, chainId) {
 
     let address0 = pairObj.token0.address;
     let address1 = pairObj.token1.address;
-    
+
     // if token addresses from token-list db not available
-    if (!address0 || !address1) { 
+    if (!address0 || !address1) {
         return false;
     }
 
     const [addr0, addr1] = address0.toLowerCase() < address1.toLowerCase() ? [address0, address1] : [address1, address0];
     const validatedInfo = {};
-    let isValid = false; 
+    let isValid = false;
 
     // V3 (multi-fee)
     if (factories.v3) {
@@ -320,7 +320,7 @@ export async function validateUniswapPoolExist(pairObj, blockchain, chainId) {
     if (isValid) {
         await usePoolStore.getState().updatePairData("validatedInfo", validatedInfo);
     }
-    
+
     // cant get fee/version info then use feeTier from its own list (example case: manually-typed pair-list)
     if (!isValid && pairObj.address) {
         const fee = usePoolStore.getState().feeTier ? `${Number(usePoolStore.getState().feeTier) / 10000}%` : "0.3%";

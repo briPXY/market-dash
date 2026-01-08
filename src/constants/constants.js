@@ -76,6 +76,7 @@ standardSymbolToWrapped.ethereum = {
 // Charts related constants
 export const defaultDecimalRule = { 0: 2, 99: 3, rest: 2 };
 export const swapDecimalRule = { 0: 4, 99: 3, rest: 2 };
+export const quoteDecimalRule = { 0: 5, 99: 4, rest: 2 };
 
 export const d3TimeFormats = {
     "1m": "%H:%M",
