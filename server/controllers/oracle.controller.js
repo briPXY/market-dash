@@ -1,6 +1,7 @@
 import axios from "axios";
 import dns from 'dns';
 import Subgraphs from "../constants/subgraph.adapter.js";
+import { subgraphTradeHistoryQuery } from "../services/subgraph.query.js";
 
 const resolver = new dns.Resolver();
 resolver.setServers(['1.1.1.1', '1.0.0.1']); // cloudflare DNS
@@ -25,7 +26,7 @@ function resolveBinanceIP(resolver) {
 }
 
 
-export default async function ohlc(fastify) {
+export default async function oracleController(fastify) {
     fastify.get("/api/v1/his/:time/:addressTraderChainId", schemaWithAPIKey, async (request, reply) => {
         try {
             const { time, addressTraderChainId } = request.params;
@@ -87,6 +88,29 @@ export default async function ohlc(fastify) {
         }
     });
 
+    fastify.get("/api/v1/trades/subgraph/:items/:address", schemaWithAPIKey, async (request, reply) => {
+        try {
+            const { items, address } = request.params;
+            const { 'x-api-key': apiKey } = request.headers; 
 
+            const latestTradesList = await subgraphTradeHistoryQuery(address, items ?? 32, apiKey, "5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV");
+
+            if (!latestTradesList || (Array.isArray(latestTradesList) && latestTradesList.length === 0)) {
+                reply.header('Cache-Control', 'public, max-age=0');
+                return reply.code(204).send();
+            }
+
+            reply.header('Cache-Control', 'public, max-age=60'); // 1 minutes
+
+            return reply.send({
+                success: true,
+                data: latestTradesList,
+            });
+
+        }
+        catch (error) {
+            reply.status(400).send({ success: false, message: error.message, });
+        }
+    });
 
 }

@@ -11,6 +11,7 @@
     --color-accent-negative: var(--c-accent-negative);
     --color-washed: var(--c-washed);
     --color-washed-dim: var(--c-washed-dim);
+    --color-white: var(--c-white);
 }
 
 #root {

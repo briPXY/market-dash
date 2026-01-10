@@ -56,7 +56,7 @@ function Market() {
                         <Hour24Changes />
                     </PopoverButton>
                 </Flex>
-                <Flex className="flex flex-col md:flex-row gap-1">
+                <Flex className="flex flex-col md:flex-row md:items-stretch gap-1">
                     <MarketChart
                         setRange={setRange}
                         range={range}
@@ -66,14 +66,19 @@ function Market() {
                         isFetching={isFetching}
                         dataSymbols={data?.symbols}
                     />
-                    <TabPanelParent className="md:flex-1" tabClassName="flex-1 rounded-t-lg px-3 py-2 bo text-sm font-semibold" btnContainerClassName="flex px-3 pt-4 justify-center items-center bg-primary-900">
+                    <TabPanelParent className="md:flex-1 h-full" tabClassName="flex-1 rounded-t-lg px-3 py-2 bo text-sm font-semibold" btnContainerClassName="flex px-3 pt-4 justify-center items-center bg-primary-900">
                         <Swap label="Swap" />
                     </TabPanelParent>
                 </Flex>
 
-                <div className="flex w-full bg-primary-900 p-2 md:p-4 justify-center">
-                    <SwapHistory swaps={data?.swaps ? data?.swaps : []} />
-                </div>
+                <Flex className="flex flex-col md:h-64 md:flex-row gap-1 items-stretch">
+                    <div className="bg-primary-900 p-2 md:p-4 2xl:w-[79%] xl:w-[74%] lg:w-[72%] md:w-[65%]">
+
+                    </div>
+                    <div className="flex-1 h-full bg-primary-900">
+                        <SwapHistory />
+                    </div>
+                </Flex>
             </Flex>
 
             {/* Non display / non pure component*/}

@@ -20,7 +20,7 @@ function MarketChart({ OHLCData, isError, isFetching, error, setRange, range, da
     const [isLogScale, setYscale] = useState("LOG"); 
 
     return (
-        <div className={`bg-primary-900 p-2 md:p-4 h-full w-full 2xl:w-[79%] xl:w-[74%] lg:w-[72%] md:w-[65%] sm:w-[60%] md:flex-none`}>
+        <div className={`bg-primary-900 p-2 md:p-4 h-full w-full 2xl:w-[79%] xl:w-[74%] lg:w-[72%] md:w-[65%] md:flex-none`}>
             <Flex className="flex-col h-full relative">
                 <Flex className="pb-4 pt-0 items-center gap-2 justify-between">
                     <RangeSelector setRange={setRange} selected={range} />

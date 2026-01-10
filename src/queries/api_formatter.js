@@ -3,7 +3,7 @@ import { WSS_DOMAIN } from "../constants/environment";
 function binance(symbols, range = "50") {
     const result = {}
     result.hour24 = `https://api.binance.com/api/v3/klines?symbol=${symbols}&interval=5m&limit=288`
-    result.historical = `https://api.binance.com/api/v3/klines?symbol=${symbols}&interval=${range}&limit=500`;
+    result.historical = `https://api.binance.com/api/v3/klines?symbol=${symbols}&interval=${range}&limit=900`;
     result.index = `wss://stream.binance.com:9443/ws/${symbols.toLowerCase()}@indexPrice`;
     result.mark = `wss://stream.binance.com:9443/ws/${symbols.toLowerCase()}@markPrice`;
     result.trade = `wss://stream.binance.com:9443/ws/${symbols.toLowerCase()}@trade`;

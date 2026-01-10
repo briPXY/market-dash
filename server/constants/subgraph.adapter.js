@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import tokenList from '../data/tokenList.json' with { type: 'json' };
-import { subgraphHistoricalPriceQuery } from "../services/subgraph.query.js";
+import { subgraphHistoricalPriceQuery, subgraphTradeHistoryQuery } from "../services/subgraph.query.js";
 
 const Subgraphs = {}
 
@@ -18,6 +18,7 @@ Subgraphs["uniswap:1"] = {
     info: await import('../data/UniswapV3.poolinfo.json', {
         with: { type: 'json' }
     }).then(mod => mod.default),
+    trades: subgraphTradeHistoryQuery,
 }
 
 Subgraphs["uniswap:11155111"] = {
@@ -28,6 +29,7 @@ Subgraphs["uniswap:11155111"] = {
     info: await import('../data/UniswapV3Sepolia.poolinfo.json', {
         with: { type: 'json' }
     }).then(mod => mod.default),
+    trades: subgraphTradeHistoryQuery,
 }
 
 export default Subgraphs;

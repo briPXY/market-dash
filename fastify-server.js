@@ -19,11 +19,11 @@ fastify.register(await import("@fastify/cors"), {
 fastify.register(await import("@fastify/websocket"));
 
 // Source modules
-import ohlc from "./server/controllers/ohlc.js";
+import oracleController from "./server/controllers/oracle.controller.js";
 import livePriceWebSocket from "./server/ws/livePrice.websocket.js";
-import userHttp from "./server/controllers/user.http.js"
+import userHttp from "./server/controllers/user.controller.js"
 
-await fastify.register(ohlc);
+await fastify.register(oracleController);
 await fastify.register(livePriceWebSocket);
 await fastify.register(userHttp);
 

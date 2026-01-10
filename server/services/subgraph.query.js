@@ -16,9 +16,7 @@ export async function subgraphHistoricalPriceQuery(poolAddress, timeframe, API_K
                 first: 500,
                 orderBy: ${timeField},
                 orderDirection: desc,
-                where: { 
-                    pool: "${poolAddress}"
-                    }
+                where: { pool_: { id: "${poolAddress.toLowerCase()}" } }
             ) {
                 ${timeField}
                 open
@@ -27,12 +25,35 @@ export async function subgraphHistoricalPriceQuery(poolAddress, timeframe, API_K
                 close
                 volumeUSD
             }
+    }`;
 
+    try {
+        const response = await axios.post(
+            `https://gateway.thegraph.com/api/${API_KEY}/subgraphs/id/${subGraphId}`,
+            { query },
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        return response.data.data;
+    } catch (error) {
+        console.error("\x1b[31m Subgraph historical graphQL querying error:\x1b[0m", error);
+        throw new Error(error);
+    }
+}
+
+
+export async function subgraphTradeHistoryQuery(poolAddress, items = 32, API_KEY, subGraphId) {
+
+    const query = `{ 
             swaps(
-                first: 32,
+                first: ${items},
                 orderBy: timestamp,
                 orderDirection: desc,
-                where: { pool: "${poolAddress}" }
+                where: { pool_: { id: "${poolAddress.toLowerCase()}" } }
             ) {
                 timestamp
                 amount0
@@ -64,8 +85,7 @@ export async function subgraphHistoricalPriceQuery(poolAddress, timeframe, API_K
 
         return response.data.data;
     } catch (error) {
-        console.error("\x1b[31m Subgraph historical graphQL querying error:\x1b[0m", error);
+        console.error("\x1b[31m subgraphTradeHistoryQuery graphQL querying error:\x1b[0m", error);
         throw new Error(error);
     }
 }
-

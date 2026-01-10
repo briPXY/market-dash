@@ -4,7 +4,12 @@ import { SourceConst } from "../constants/sourceConst";
 export const formatSwapData = (swaps) => {
     // console.log("SWAPS", swaps);
     return swaps.map((trade) => {
-        const date = new Date(parseInt(trade.timestamp) * 1000).toLocaleString();
+        const date = new Date(parseInt(trade.timestamp) * 1000).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+        });
         const price = Math.abs(parseFloat(trade.amount1) / parseFloat(trade.amount0)).toFixed(6);
         const total = parseFloat(trade.amount0).toFixed(4);
         const amount = Math.abs(parseFloat(trade.amount1)).toFixed(2);
