@@ -9,7 +9,7 @@ export const TopBar = () => {
     const addressText = address ? `${address.slice(0, 6)}...${address.slice(address.length - 5)}` : "Not logged-in";
 
     return (
-        <Flex className="justify-between items-center w-full bg-primary-900 py-3 px-2 md:px-4">
+        <Flex className="justify-between items-center w-full bg-primary-900 py-3 px-2 md:px-4 rounded-md">
             <NetworkSelector />
             <Flex className="justify-end">
                 {!address && <button onClick={() => setModalVisibility("wallet", true)} className="text-xs px-3 py-1 rounded-full border border-washed" >Login</button>}

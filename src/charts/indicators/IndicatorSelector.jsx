@@ -108,9 +108,9 @@ const IndicatorItem = ({ abbreviation, name, fn, addNewIndicator }) => {
                     <div className="text-xs text-washed font-light text-left"><i>{name}</i></div>
                 </div>
                 <div className="flex gap-1 h-full items-center">
-                    <input className="w-5 h-4 border-none cursor-pointer" type="color" value={color} onChange={(e) => setColor(e.target.value)} name="colorPicker"></input>
-                    <button className="text-xs cursor-pointer rounded-sm h-full p-1.5 border box-border border-washed-dim" onClick={() => setShowOpt(!showOpt)}>Options</button>
-                    <button className="text-xs cursor-pointer rounded-sm bg-washed-dim p-1.5" onClick={() => addNewIndicator(abbreviation, { color: color, fn: fn, ...param })}>Insert</button>
+                    <input className="w-4 h-4 rounded-full cursor-pointer" type="color" value={color} onChange={(e) => setColor(e.target.value)} name="colorPicker"></input>
+                    <button className="text-xs rounded-sm h-full p-1.5 text-washed bg-primary-300 border border-primary-100" onClick={() => setShowOpt(!showOpt)}>Options</button>
+                    <button className="text-xs rounded-sm border border-washed-dim bg-primary-100 p-1.5" onClick={() => addNewIndicator(abbreviation, { color: color, fn: fn, ...param })}>Insert</button>
                 </div>
             </div>
             <ListOfInput fParam={param} updateParam={updateParam} style={{ display: showOpt ? "flex" : "none" }} />

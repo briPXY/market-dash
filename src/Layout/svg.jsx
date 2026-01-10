@@ -1,4 +1,4 @@
-import React from "react";
+import { memo } from 'react';
 
 export const SwapIcon = ({ color = "#ffffff", className }) => {
     return (
@@ -11,7 +11,7 @@ export const SwapIcon = ({ color = "#ffffff", className }) => {
     );
 };
 
-export const LoadingIcon = ({ className, style, fill = "#fff" }) => {
+export const LoadingIcon = memo(({ className, style, fill = "#fff" }) => {
     return (
         <svg
             className={className}
@@ -56,7 +56,9 @@ export const LoadingIcon = ({ className, style, fill = "#fff" }) => {
             </rect>
         </svg>
     );
-};
+});
+
+LoadingIcon.displayName = 'LoadingIcon';
 
 export const InlineCopyIcon = ({ className = "w-3 h-3 inline" }) => {
     return (
@@ -115,7 +117,7 @@ export const CopyIcon = ({ width = "19", height = "22", className, ...rest }) =>
     );
 };
 
-export const ExternalLinkIcon = React.memo(({
+export const ExternalLinkIcon = memo(({
     color = 'currentColor', // Default stroke color
     size = 24,       // Default size in pixels
     strokeWidth = 2, // Default stroke width
@@ -160,7 +162,7 @@ function getBits(addr, count) {
     return bits;
 }
 
-export const BlockyAvatar = React.memo(function BlockyAvatar({
+export const BlockyAvatar = memo(function BlockyAvatar({
     address,
     size = 64,
     cells = 8,           // 8x8 block grid
@@ -213,3 +215,24 @@ export const BlockyAvatar = React.memo(function BlockyAvatar({
         </svg>
     );
 });
+
+export const RefreshIcon = memo(({ size = 24, color, viewBox="3 3 18 18", ...props }) => {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox={viewBox}
+            width={size}
+            height={size}
+            fill="currentColor" 
+            style={{ color }}  
+            {...props}
+        >
+            <title>Refresh Icon</title>
+            <g>
+                <path d="M21,12a9.0507,9.0507,0,1,1-3-6.68V3h2V8a1,1,0,0,1-1,1H14V7h2.8906A6.9942,6.9942,0,1,0,19,12Z" />
+            </g>
+        </svg>
+    );
+});
+
+RefreshIcon.displayName = 'RefreshIcon';

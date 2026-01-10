@@ -19,12 +19,13 @@
     --panel-background: #0f0f14;
 
     --c-white: #d9d9d9;
-    --c-primary: #5e81eb;
+    --c-primary: #3988ff;
     --c-primary-100: #202535;
-    --c-primary-500: #171a23;
+    --c-primary-300: #1a1d2a;
+    --c-primary-500: #161821;
     --c-primary-900: #0f1016;
     --c-accent: #46BA84;
-    --c-accent-negative: #C64455;
+    --c-accent-negative: #d34a5c;
     --c-washed: #b4c7ff9e;
     --c-washed-dim: #aec2ff35;
 }

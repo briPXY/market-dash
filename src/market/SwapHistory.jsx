@@ -2,7 +2,7 @@ import { usePoolStore, useTradingPlatformStore, useWalletStore } from "../stores
 import { PriceText } from "../generic_components/PriceText";
 import { useEffect, useRef, useState } from "react";
 // import { ToggleButton } from "../Layout/Elements";
-import { CopyIcon, LoadingIcon } from "../Layout/svg";
+import { CopyIcon, LoadingIcon, RefreshIcon } from "../Layout/svg";
 import { SvgMemo } from "../Layout/Layout";
 import { decryptAndLoadUserSecret } from "../utils/user";
 import { DOMAIN } from "../constants/environment";
@@ -78,7 +78,10 @@ export const SwapHistory = () => {
                 <div className="text-xs text-white">Swap History</div>
                 <div>{`${address.slice(0, 6)}...${address.slice(-6)}`}</div>
                 <div>{`Fee: ${usePoolStore.getState().feeTier / 10000}%`}</div>
-                <button className="border border-primary-100 rounded-sm bg-primary-500 px-1" onClick={() => onRefreshClick()}>Refresh</button>
+                <button className="flex items-center gap-0.5 border border-primary-100 rounded-sm bg-primary-500 px-1" onClick={() => onRefreshClick()}>
+                    <RefreshIcon size={8} />
+                    <span>Refresh</span>
+                </button>
             </div>
 
             {/* Column Labels */}
@@ -92,7 +95,7 @@ export const SwapHistory = () => {
             {/* Swap Data Rows */}
             <div
                 ref={listBoxRef}
-                style={{ 
+                style={{
                     scrollbarWidth: 'none',       // Hides scrollbar in Firefox
                     msOverflowStyle: 'none',     // Hides scrollbar in IE/Edge
                     scrollbarGutter: 'stable'    // Prevents layout shift (scrollbar doesn't change width)

@@ -287,7 +287,7 @@ BulletText.propTypes = {
     style: PropTypes.object,
 };
 
-export function TabPanelParent({ children, className = "w-full bg-primary-900 max-w-md mx-auto", tabClassName = "flex-1 py-2 text-sm font-medium ", activeTabClassName = "bg-primary-100 border-primary", inactiveTabClassName = "bg-primary-500 hover:bg-primary-900", btnContainerClassName = "flex w-full space-x-2", style = {} }) {
+export function TabPanelParent({ children, className = "w-full bg-primary-900 max-w-md mx-auto", tabClassName = "flex-1 py-2 text-sm font-medium ", activeTabClassName = "bg-primary-100 border-primary", inactiveTabClassName = "bg-primary-500 hover:bg-primary-900", btnContainerClassName = "flex w-full space-x-2", childrensClassName = "w-full h-full", activeDisplay = "block", style = {} }) {
     const [activeTab, setActiveTab] = useState(0);
 
     return (
@@ -304,7 +304,7 @@ export function TabPanelParent({ children, className = "w-full bg-primary-900 ma
             </div>
             <>
                 {React.Children.map(children, (child, index) => (
-                    <div key={index} style={{ display: activeTab === index ? "block" : "none" }} className={"w-full h-full"}>
+                    <div key={index} style={{ display: activeTab === index ? activeDisplay : "none" }} className={childrensClassName}>
                         {child}
                     </div>
                 ))}

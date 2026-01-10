@@ -5,6 +5,7 @@
     --font-mono: "IBMPlexMono", monospace;
     --color-primary: var(--c-primary);
     --color-primary-100: var(--c-primary-100);
+    --color-primary-300: var(--c-primary-300);
     --color-primary-500: var(--c-primary-500);
     --color-primary-900: var(--c-primary-900);
     --color-accent: var(--c-accent);
@@ -132,4 +133,27 @@ input[type=number]::-webkit-outer-spin-button {
 input[type=number] {
     appearance: textfield;
     -moz-appearance: textfield;
+}
+
+/* color picker container */
+input[type="color"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+}
+
+/* Chrome, Edge, Safari */
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none; 
+}
+
+/* Firefox */
+input[type="color"]::-moz-color-swatch {
+  border: none; 
 }

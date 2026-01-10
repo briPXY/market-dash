@@ -107,7 +107,7 @@ const SvgContainer = ({
     }, [OHLCData, bandXScale, innerHeight, innerWidth, mainSvg, range]);
 
     return (
-        <div ref={containerRef} style={{ height: `${chartDim.containerHeight}px` }} className="relative">
+        <div ref={containerRef} className="relative">
             <div className="flex gap-0">
                 <div
                     className={`overflow-auto whitespace-nowrap flex-1 hide-scrollbar scroll-stick-left cursor-crosshair select-none ${isDown ? "cursor-grabbing" : ""}`}

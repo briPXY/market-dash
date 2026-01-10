@@ -277,5 +277,6 @@ Traders.Uniswap = {
     tokenInfoGetter: getTokenBySymbolChainId,
     quoterFn: getUniswapQuoteFromContract,
     pairValidator: validateUniswapPoolExist,
-    optionComponent: UniswapOptionPanel
+    optionComponent: UniswapOptionPanel,
+    standarizedSymbol: (symbol) => standardSymbolToWrapped.ethereum[symbol] ?? symbol
 }

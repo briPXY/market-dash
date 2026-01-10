@@ -4,7 +4,7 @@ import './elements.css';
 
 const Button = ({ className = '', children, ...props }) => {
     return (
-        <button className={`${className} flex items-center p-1 hover:brightness-125 justify-center bg-primary-500 rounded-sm`} {...props}>
+        <button className={`${className} flex items-center p-1 hover:brightness-125 justify-center rounded-sm`} {...props}>
             {children}
         </button>
     );
@@ -152,7 +152,7 @@ const PopoverButton = ({
             </div>
 
             {/* Popover Content */}
-            <div className={`absolute shadow-md ${isOpen ? showClass : hideClass}`}>
+            <div className={`absolute z-60 shadow-md ${isOpen ? showClass : hideClass}`}>
                 {isOpen && children[1]}
             </div>
         </div>

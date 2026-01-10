@@ -34,7 +34,7 @@ export function RangeSelector({ setRange, selected }) {
                 <button
                     key={tf}
                     onClick={() => setRange(tf)}
-                    className={`px-1.5 md:px-2 py-0.5 rounded-xs text-xs transition-all ${selected === tf ? "text-primary font-bold bg-primary-100 " : "font-light text-washed hover:brightness-120"}`}
+                    className={`px-1.5 md:px-2 py-0.5 rounded-sm text-xs transition-all ${selected === tf ? "text-primary font-bold bg-primary-300 " : "font-light text-washed hover:brightness-120"}`}
                 >
                     {timeFrameText[tf]}
                 </button>

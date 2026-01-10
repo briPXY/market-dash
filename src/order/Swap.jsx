@@ -74,7 +74,7 @@ export default function Swap() {
     }, [symbols]);
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col grow">
             <SwapForm
                 handleBuyChange={handleBuyChange}
                 handleSellChange={handleSellChange}

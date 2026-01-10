@@ -34,9 +34,9 @@ export const TraderPlatform = () => {
     }, [chainId, platform, symbols]);
 
     return (
-        <div className="flex flex-wrap items-center px-3 py-3 box bg-primary-900 text-xs mt-1.5">
+        <div className="flex flex-wrap items-center px-3 py-3 box bg-primary-900 text-xs mt-1.5 rounded-t-md">
             <PopoverButton className="flex-1">
-                <button className="cursor-pointer gap-1 p-1 px-2 bg-primary-500 border border-primary-100 rounded-sm flex justify-center items-center w-full">
+                <button className="cursor-pointer gap-1 p-1 px-2 bg-primary-300 border border-primary-100 rounded-sm flex justify-center items-center w-full">
                     <div className="text-washed">Trader:</div>
                     <div className="font-medium">{platform}</div>
                     <ExchangeIcon id={platform} size={18} variant="branded" />

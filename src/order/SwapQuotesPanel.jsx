@@ -57,7 +57,7 @@ export default function SwapQuotesPanel({ amount, inputFrom }) {
     }
 
     return (
-        <div className="overflow-y-scroll bg-primary-900 p-3">
+        <div className="flex flex-col justify-between overflow-y-scroll bg-primary-900 p-3 rounded-b-md grow">
 
             <div className='flex justify-between text-xs'>
                 <div key={pairAddress} className='text-washed flex flex-col flex-1 items-start gap-2'>
@@ -79,7 +79,6 @@ export default function SwapQuotesPanel({ amount, inputFrom }) {
                 </div>
             </div>
             {error && <div className='w-full text-xs text-washed'>{error.message}</div>}
-            <div className='h-4'></div>
             <button
                 onClick={() => window.open(network.poolURL(pairAddress))}
                 className="bg-transparent text-xs text-washed flex gap-1 items-center"

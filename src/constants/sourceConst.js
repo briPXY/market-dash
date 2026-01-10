@@ -10,8 +10,8 @@ export const SourceConst = {};
 
 // uniswap v3
 SourceConst["uniswap:1"] = { // name must resemble indexeDB's pair-list
-    name: "Uniswap Mainnet",
-    desc: "Uniswap V3 Ethereum Mainnet",
+    name: "Uniswap Ethereum",
+    desc: "Top 1000 Uniswap Mainnet Pairs",
     exchangeIcon: "uniswap",
     blockchain: "ethereum",
     isDex: true,
