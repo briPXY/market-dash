@@ -55,23 +55,40 @@ export const wrappedTokenMap = {
     WCELO: "CELO",        // Celo
     WHT: "HT",            // Huobi Token
     WXDAI: "XDAI",        // xDai (now Gnosis)
+    wXRP: "XRP",
+    wDOGE: "DOGE",
+    wADA: "ADA",
+    wSOL: "SOL",
+    wDOT: "DOT",
+    wLTC: "LTC",
+    wTRX: "TRX",
+    WXMR: "XMR",
+};
+
+const reverseMap = (map) => {
+    return Object.fromEntries(
+        Object.entries(map).map(([wrapped, standard]) => [standard, wrapped])
+    );
 };
 
 export const standardSymbolToWrapped = {};
 
-standardSymbolToWrapped.ethereum = {
-    BTC: "WBTC",     // Bitcoin (The most common version) 
-    ETH: "WETH",
-    // Other Major Chains
-    BNB: "WBNB",     // BNB Coin
-    SOL: "WSOL",     // Solana
-    FIL: "WFIL",     // Filecoin
-    ZEC: "WZEC",     // Zcash (or renZEC)
-    DOGE: "WDOGE",   // Dogecoin (or renDOGE)
-    LTC: "WLTC",     // Litecoin
-    XMR: "WXMR",     // Monero 
-    DOT: "wDOT",
-}
+// standardSymbolToWrapped.ethereum = {
+//     BTC: "WBTC",     // Bitcoin (The most common version) 
+//     ETH: "WETH",
+//     // Other Major Chains
+//     BNB: "WBNB",     // BNB Coin
+//     SOL: "WSOL",     // Solana
+//     FIL: "WFIL",     // Filecoin
+//     ZEC: "WZEC",     // Zcash (or renZEC)
+//     DOGE: "WDOGE",   // Dogecoin (or renDOGE)
+//     LTC: "WLTC",     // Litecoin
+//     XMR: "WXMR",     // Monero 
+//     DOT: "wDOT",
+//     XRP: "wXRP"
+// }
+
+standardSymbolToWrapped.ethereum = reverseMap(wrappedTokenMap);
 
 // Charts related constants
 export const defaultDecimalRule = { 0: 2, 99: 3, rest: 2 };

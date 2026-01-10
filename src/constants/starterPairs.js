@@ -21,7 +21,7 @@ export const binanceHighlights = [
             // Note: ETH itself is the native coin, but is often WETH (Wrapped Ether) for pools
             "decimals": "18",
             "name": "Wrapped Ether",
-            "symbol": "WETH",
+            "symbol": "ETH",
             "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
         },
         "token1": {
@@ -54,7 +54,7 @@ export const binanceHighlights = [
             // Note: XRP on Ethereum is a wrapped/bridged token (e.g., wXRP). This is a placeholder as the canonical address can vary based on the bridge.
             "decimals": "6",
             "name": "Wrapped XRP",
-            "symbol": "wXRP",
+            "symbol": "XRP",
             "address": "0x1D2F17dE01e233C2f3c0519E16c52b2253816223" // Example Placeholder
         },
         "token1": {
@@ -70,7 +70,7 @@ export const binanceHighlights = [
             // Note: DOGE on Ethereum is a wrapped/bridged token (e.g., wDOGE). This is a placeholder.
             "decimals": "8",
             "name": "Wrapped Dogecoin",
-            "symbol": "wDOGE",
+            "symbol": "DOGE",
             "address": "0xBA5C2bC684534484E4324f4e24694469a5382D4d" // Example Placeholder
         },
         "token1": {
@@ -86,7 +86,7 @@ export const binanceHighlights = [
             // Note: ADA on Ethereum is a wrapped/bridged token (e.g., wADA). This is a placeholder.
             "decimals": "6",
             "name": "Wrapped Cardano",
-            "symbol": "wADA",
+            "symbol": "ADA",
             "address": "0x97a3aE8c6B99b11b5167b579124E5649fD04e222" // Example Placeholder
         },
         "token1": {
@@ -102,7 +102,7 @@ export const binanceHighlights = [
             // Note: SOL on Ethereum is a wrapped/bridged token (e.g., wSOL). This is a placeholder.
             "decimals": "9",
             "name": "Wrapped Solana",
-            "symbol": "wSOL",
+            "symbol": "SOL",
             "address": "0xd31a89c3755c3c0b05b382098693c4e365D65A46" // Example Placeholder
         },
         "token1": {
@@ -118,7 +118,7 @@ export const binanceHighlights = [
             // Note: DOT on Ethereum is a wrapped/bridged token (e.g., wDOT). This is a placeholder.
             "decimals": "10",
             "name": "Wrapped Polkadot",
-            "symbol": "wDOT",
+            "symbol": "DOT",
             "address": "0x789b9809F0854c868172c723f05354F9D46199a5" // Example Placeholder
         },
         "token1": {
@@ -150,7 +150,7 @@ export const binanceHighlights = [
             // Note: LTC on Ethereum is a wrapped/bridged token (e.g., wLTC). This is a placeholder.
             "decimals": "8",
             "name": "Wrapped Litecoin",
-            "symbol": "wLTC",
+            "symbol": "LTC",
             "address": "0x5d9b5e5D450702f2389d4289873d6118D602f347" // Example Placeholder
         },
         "token1": {
@@ -166,7 +166,7 @@ export const binanceHighlights = [
             // Note: TRX on Ethereum is a wrapped/bridged token (e.g., wTRX). This is a placeholder.
             "decimals": "6",
             "name": "Wrapped TRON",
-            "symbol": "wTRX",
+            "symbol": "TRX",
             "address": "0xf266d6d74E8640726d48807F63D995779c17C5a0" // Example Placeholder
         },
         "token1": {
@@ -198,7 +198,7 @@ export const binanceHighlights = [
             // Note: AVAX on Ethereum is a wrapped/bridged token (e.g., AVAX on the C-Chain is wrapped to be an ERC-20 on Ethereum). This is a placeholder.
             "decimals": "18",
             "name": "Wrapped Avalanche",
-            "symbol": "WAVAX",
+            "symbol": "AVAX",
             "address": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7" // This is the address of WAVAX on the Avalanche C-Chain, not Ethereum. The actual ERC-20 bridged token contract on Ethereum varies by bridge.
         },
         "token1": {
